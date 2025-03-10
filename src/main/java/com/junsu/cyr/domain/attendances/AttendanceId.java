@@ -1,4 +1,4 @@
-package com.junsu.cyr.domain.attendance;
+package com.junsu.cyr.domain.attendances;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

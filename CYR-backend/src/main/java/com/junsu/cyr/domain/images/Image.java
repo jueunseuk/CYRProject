@@ -8,8 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Builder
 @Getter
@@ -23,11 +21,11 @@ public class Image extends BaseTime {
     private Long imageId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    @Column(name = "index", nullable = false)
-    private Integer index;
+    @Column(name = "sequence", nullable = false)
+    private Integer sequence;
 
     @Column(name = "url", nullable = false)
     private String url;

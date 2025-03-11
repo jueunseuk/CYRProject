@@ -44,7 +44,7 @@ public class Complaint extends BaseTime {
     @Column(name = "capture_url")
     private String captureUrl;
 
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     private Status status;
 
     @Column(name = "processed_at")

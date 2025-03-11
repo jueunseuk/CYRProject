@@ -1,4 +1,4 @@
-package com.junsu.cyr.domain.attendances;
+package com.junsu.cyr.domain.cheers;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,11 +11,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "attendance")
-public class Attendance {
+@Table(name = "cheer")
+public class Cheer {
     @EmbeddedId
-    private AttendanceId attendanceId;
-
-    @Column(name = "comment", nullable = false)
-    private String comment;
+    private CheerId cheerId;
 }

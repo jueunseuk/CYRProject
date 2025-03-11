@@ -18,12 +18,12 @@ public class Board {
     @Column(name = "board_id", nullable = false)
     private Integer boardId;
 
-    @Column(name = "board_name", nullable = false)
-    private String boardName;
+    @Column(name = "name", nullable = false)
+    private String name;
 
-    @Column(name = "board_description", nullable = false)
-    private String boardDescription;
+    @Column(name = "description", nullable = false)
+    private String description;
 
-    @Column(name = "board_permission", nullable = false)
-    private Permission boardPermission;
+    @Column(name = "permission", nullable = false)
+    private Permission permission;
 }

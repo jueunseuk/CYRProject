@@ -1,4 +1,4 @@
-package com.junsu.cyr.domain.experiences;
+package com.junsu.cyr.domain.cheers;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Embeddable
@@ -15,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class ExperienceLogId implements Serializable {
+public class CheerId {
     @Column(name = "user_id", nullable = false)
     private Integer userId;
 

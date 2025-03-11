@@ -30,15 +30,15 @@ public class Comment {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "comment_content", nullable = false)
-    private String commentContent;
+    @Column(name = "content", nullable = false)
+    private String content;
 
-    @Column(name = "comment_fixed", nullable = false)
-    private Fixed commentFixed;
+    @Column(name = "fixed", nullable = false)
+    private Fixed fixed;
 
-    @Column(name = "comment_created_at", updatable = false)
-    private LocalDateTime commentCreatedAt;
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 
-    @Column(name = "comment_updated_at")
-    private LocalDateTime commentUpdatedAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }

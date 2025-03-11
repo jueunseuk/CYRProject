@@ -25,12 +25,12 @@ public class Image {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @Column(name = "image_index", nullable = false)
-    private Integer imageIndex;
+    @Column(name = "index", nullable = false)
+    private Integer index;
 
-    @Column(name = "image_url", nullable = false)
-    private String imageUrl;
+    @Column(name = "url", nullable = false)
+    private String url;
 
-    @Column(name = "image_created_at", nullable = false, updatable = false)
-    private LocalDateTime imageCreatedAt;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 }

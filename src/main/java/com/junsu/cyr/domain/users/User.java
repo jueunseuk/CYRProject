@@ -50,9 +50,11 @@ public class User extends BaseTime {
     @Column(name = "method", nullable = false)
     private Method method;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status status;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Role role;
 

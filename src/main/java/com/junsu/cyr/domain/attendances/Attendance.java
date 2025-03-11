@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "attendance")
 public class Attendance {
     @EmbeddedId
-    private AttendanceId id;
+    private AttendanceId attendanceId;
 
     @Column(name = "attendance_comment", nullable = false)
     private String comment;

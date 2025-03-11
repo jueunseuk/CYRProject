@@ -1,4 +1,4 @@
-package com.junsu.cyr.domain.attendances;
+package com.junsu.cyr.domain.experiences;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -15,10 +15,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class AttendanceId implements Serializable {
-    @Column(name = "attendance_user_id", nullable = false)
-    private Integer userId;
+public class ExperienceLogId implements Serializable {
+    @Column(name = "experience_log_created_at", nullable = false, updatable = false)
+    private LocalDateTime experienceLogCreatedAt;
 
-    @Column(name = "attendance_created_at", nullable = false, updatable = false)
-    private LocalDateTime attendanceCreatedAt;
+    @Column(name = "experience_log_user_id", nullable = false)
+    private Integer userId;
 }

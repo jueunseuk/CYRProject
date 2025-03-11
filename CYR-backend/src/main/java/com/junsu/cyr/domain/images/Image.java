@@ -1,5 +1,6 @@
 package com.junsu.cyr.domain.images;
 
+import com.junsu.cyr.domain.globals.BaseTime;
 import com.junsu.cyr.domain.posts.Post;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "image")
-public class Image {
+public class Image extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "image_id", nullable = false)
@@ -30,7 +31,4 @@ public class Image {
 
     @Column(name = "url", nullable = false)
     private String url;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
 }

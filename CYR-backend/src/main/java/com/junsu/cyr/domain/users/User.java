@@ -1,11 +1,11 @@
 package com.junsu.cyr.domain.users;
 
+import com.junsu.cyr.domain.globals.BaseTime;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.XSlf4j;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user")
-public class User {
+public class User extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
@@ -49,9 +49,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "method", nullable = false)
     private Method method;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
 
     @Column(name = "status", nullable = false)
     private Status status;

@@ -18,9 +18,9 @@ public class Experience {
     @Column(name = "experience_id", nullable = false)
     private Integer experienceId;
 
-    @Column(name = "experience_name", nullable = false)
-    private String experienceName;
+    @Column(name = "name", nullable = false)
+    private String name;
 
-    @Column(name = "experience_amount", nullable = false)
-    private Integer experienceAmount;
+    @Column(name = "amount", nullable = false)
+    private Integer amount;
 }

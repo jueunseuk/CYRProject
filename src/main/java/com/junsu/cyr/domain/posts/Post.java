@@ -30,23 +30,23 @@ public class Post {
     @JoinColumn(name = "board_id")
     private Board board;
 
-    @Column(name = "post_title", nullable = false, length = 1000)
-    private String postTitle;
+    @Column(name = "title", nullable = false, length = 1000)
+    private String title;
 
-    @Column(name = "post_content", nullable = false)
-    private String postContent;
+    @Column(name = "content", nullable = false)
+    private String content;
 
-    @Column(name = "post_view", nullable = false)
-    private Long postView;
+    @Column(name = "view", nullable = false)
+    private Long view;
 
-    @Column(name = "post_comment_cnt", nullable = false)
-    private Long postCommentCnt;
+    @Column(name = "comment_cnt", nullable = false)
+    private Long commentCnt;
 
-    @Column(name = "post_empathy_cnt", nullable = false)
-    private Long postEmpathyCnt;
+    @Column(name = "empathy_cnt", nullable = false)
+    private Long empathyCnt;
 
-    @Column(name = "post_created_at", nullable = false, updatable = false)
-    private LocalDateTime postCreatedAt;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     @Column(name = "post_updated_at")
     private LocalDateTime postUpdatedAt;

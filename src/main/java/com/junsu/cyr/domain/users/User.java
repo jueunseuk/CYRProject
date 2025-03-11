@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.XSlf4j;
 
 import java.time.LocalDateTime;
 
@@ -20,52 +21,55 @@ public class User {
     @Column(name = "user_id", nullable = false)
     private Integer userId;
 
-    @Column(name = "user_name", nullable = false, length = 100)
-    private String userName;
+    @Column(name = "name", nullable = false, length = 100)
+    private String name;
 
-    @Column(name = "user_nickname", nullable = false, length = 100)
-    private String userNickname;
+    @Column(name = "nickname", nullable = false, length = 100)
+    private String nickname;
 
-    @Column(name = "user_email", nullable = false, unique = true)
-    private String userEmail;
+    @Column(name = "email", nullable = false, unique = true)
+    private String umail;
 
-    @Column(name = "user_profile_url")
-    private String userProfileUrl;
+    @Column(name = "profile_url")
+    private String profileUrl;
 
-    @Column(name = "user_introduction", length = 2000)
-    private String userIntroduction;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "user_gender")
-    private Gender userGender;
-
-    @Column(name = "user_age")
-    private Integer userAge;
-
-    @Column(name = "user_exp_cnt", nullable = false)
-    private Long userExpCnt;
+    @Column(name = "introduction", length = 2000)
+    private String introduction;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "user_method", nullable = false)
-    private Method userMethod;
+    @Column(name = "gender")
+    private Gender gender;
 
-    @Column(name = "user_registered_at", nullable = false, updatable = false)
-    private LocalDateTime userRegisteredAt;
+    @Column(name = "age")
+    private Integer age;
 
-    @Column(name = "user_status", nullable = false)
-    private Status userStatus;
+    @Column(name = "exp_cnt", nullable = false)
+    private Long epxCnt;
 
-    @Column(name = "user_role", nullable = false)
-    private Role userRole;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "method", nullable = false)
+    private Method method;
 
-    @Column(name = "user_refresh_token")
-    private String userRefreshToken;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
-    @Column(name = "user_warn")
-    private Integer userWarn;
+    @Column(name = "status", nullable = false)
+    private Status status;
 
-    @Column(name = "user_attendance_cnt")
-    private Integer userAttendanceCnt;
+    @Column(name = "role", nullable = false)
+    private Role role;
+
+    @Column(name = "refresh_token")
+    private String refreshToken;
+
+    @Column(name = "warn")
+    private Integer warn;
+
+    @Column(name = "attendance_cnt")
+    private Integer attendanceCnt;
+
+    @Column(name = "cheer_cnt")
+    private Long cheerCnt;
 
     @Column(name = "user_deleted_at")
     private LocalDateTime userDeletedAt;

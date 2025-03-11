@@ -1,5 +1,6 @@
 package com.junsu.cyr.domain.comments;
 
+import com.junsu.cyr.domain.globals.BaseTime;
 import com.junsu.cyr.domain.posts.Post;
 import com.junsu.cyr.domain.users.User;
 import jakarta.persistence.*;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "comment")
-public class Comment {
+public class Comment extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id", nullable = false)
@@ -35,9 +36,6 @@ public class Comment {
 
     @Column(name = "fixed", nullable = false)
     private Fixed fixed;
-
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;

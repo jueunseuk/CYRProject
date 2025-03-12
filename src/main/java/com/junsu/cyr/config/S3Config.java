@@ -1,5 +1,6 @@
 package com.junsu.cyr.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -10,11 +11,14 @@ import software.amazon.awssdk.services.s3.S3Client;
 @Configuration
 public class S3Config {
 
-    private String accessKey = "AKIA34AMCZPTY3VB5EO7";
+    @Value("${AWS_ACCESS_KEY}")
+    private String accessKey;
 
-    private String secretKey = "WN0gC94u4OBAJetbv/IJtDNpextq67mjVS9FO0bK";
+    @Value("${AWS_SECRET_KEY}")
+    private String secretKey;
 
-    private String region = "ap-northeast-1";
+    @Value("${AWS_REGION}")
+    private String region;
 
     @Bean
     public S3Client s3Client() {

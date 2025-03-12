@@ -46,6 +46,10 @@ public class Post extends BaseTime {
     @Column(name = "empathy_cnt", nullable = false)
     private Long empathyCnt;
 
-    @Column(name = "post_updated_at")
+    @Column(name = "updated_at")
     private LocalDateTime postUpdatedAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "locked")
+    private Locked locked;
 }

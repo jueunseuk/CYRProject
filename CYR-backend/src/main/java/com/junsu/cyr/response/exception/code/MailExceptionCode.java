@@ -1,0 +1,19 @@
+package com.junsu.cyr.response.exception.code;
+
+import com.junsu.cyr.response.exception.ExceptionCode;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
+@Getter
+@AllArgsConstructor
+public enum MailExceptionCode implements ExceptionCode {
+    FAILED_TO_GENERATE_NUMBER("MAIL_001", "확인 코드를 생성하는데 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    FAILED_TO_SEND_NUMBER("MAIL_002", "확인 코드를 전송하는데 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+
+    ;
+
+    private final String code;
+    private final String message;
+    private final HttpStatus status;
+}

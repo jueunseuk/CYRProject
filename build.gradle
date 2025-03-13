@@ -16,7 +16,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'com.mysql:mysql-connector-j'
+
+    // authentication
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-oauth2-client'
+    implementation 'org.springframework.boot:sprint-boot-starter-mail'
+    implementation 'io.jsonwebtoken:jjwt:0.11.5'
 
     // lombok
     implementation 'org.projectlombok:lombok'

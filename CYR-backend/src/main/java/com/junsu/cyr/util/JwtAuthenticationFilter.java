@@ -30,14 +30,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = getTokenFromRequest(request);
 
-        Claims claims = jwtTokenProvider.parseClaims(token);
-
-        // 토큰 검증 및 인증 처리
         if (token != null && jwtTokenProvider.validateToken(token)) {
+            Claims claims = jwtTokenProvider.parseClaims(token);
+
             request.setAttribute("userId", claims.getSubject());
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    claims.getSubject(), null, List.of(new SimpleGrantedAuthority(claims.get("role", String.class)))
+                    claims.getSubject(),
+                    null, List.of(new SimpleGrantedAuthority(claims.get("role", String.class)))
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

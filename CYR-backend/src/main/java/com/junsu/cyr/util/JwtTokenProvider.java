@@ -1,9 +1,9 @@
 package com.junsu.cyr.util;
 
+import com.junsu.cyr.domain.users.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -25,28 +25,25 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(jwtSecretKey.getBytes());
     }
 
-    public String generateAccessToken(Authentication authentication) {
-        return createToken(authentication.getName(), accessTokenExpiration);
+    public String generateAccessToken(User user) {
+        return createToken(user, accessTokenExpiration);
     }
 
-    public String generateRefreshToken(Authentication authentication) {
-        return createToken(authentication.getName(), refreshTokenExpiration);
+    public String generateRefreshToken(User user) {
+        return createToken(user, refreshTokenExpiration);
     }
 
-    private String createToken(String username, long expirationTime) {
+    private String createToken(User user, long expirationTime) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expirationTime);
 
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(String.valueOf(user.getUserId()))
+                .claim("role", user.getRole())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
-    }
-
-    public String getUsernameFromToken(String token) {
-        return parseClaims(token).getSubject();
     }
 
     public boolean validateToken(String token) {
@@ -59,7 +56,7 @@ public class JwtTokenProvider {
         return false;
     }
 
-    private Claims parseClaims(String token) {
+    public Claims parseClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()

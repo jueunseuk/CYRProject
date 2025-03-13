@@ -1,5 +1,6 @@
 package com.junsu.cyr.domain.users;
 
+import com.junsu.cyr.domain.globals.BaseTime;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,15 +13,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "email")
-public class Email {
+public class Email extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "email_id")
     private Long emailId;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "code")
+    @Column(name = "code", nullable = false)
     private String code;
+
+    public void updateCode(String newCode) {
+        this.code = newCode;
+    }
 }

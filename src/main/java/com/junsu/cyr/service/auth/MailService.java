@@ -1,38 +1,55 @@
 package com.junsu.cyr.service.auth;
 
+import com.junsu.cyr.domain.users.Email;
+import com.junsu.cyr.repository.EmailRepository;
+import com.junsu.cyr.response.exception.BaseException;
+import com.junsu.cyr.response.exception.code.EmailExceptionCode;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 public class MailService {
 
+    private final EmailRepository emailRepository;
     private final JavaMailSender mailSender;
-    private final StringRedisTemplate redisTemplate;
 
-    public boolean sendMail(String email) {
+    @Transactional
+    public void sendMail(String inputEmail) {
         String authCode = generateVerificationCode();
 
-        redisTemplate.opsForValue().set("EMAIL_VERIFICATION:" + email, authCode, 10, TimeUnit.MINUTES);
+        emailRepository.findByEmail(inputEmail)
+                .ifPresentOrElse(
+                        existingEmail -> {
+                            existingEmail.updateCode(authCode);
+                            emailRepository.save(existingEmail);
+                        },
+                        () -> {
+                            Email newEmail = Email.builder()
+                                    .email(inputEmail)
+                                    .code(authCode)
+                                    .build();
+                            emailRepository.save(newEmail);
+                        }
+                );
 
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setTo(email);
+            helper.setTo(inputEmail);
             helper.setSubject("회원가입 인증 코드");
             helper.setText("인증 코드: " + authCode, true);
             mailSender.send(message);
-            return true;
         } catch (MessagingException e) {
-            return false;
+            throw new BaseException(EmailExceptionCode.FAILED_TO_SEND_CODE);
         }
     }
 
@@ -40,8 +57,8 @@ public class MailService {
         return String.valueOf(new Random().nextInt(900000) + 100000);
     }
 
-    public boolean verifyCode(String email, String inputCode) {
-        String storedCode = redisTemplate.opsForValue().get("EMAIL_VERIFICATION:" + email);
-        return storedCode != null && storedCode.equals(inputCode);
+    public Boolean verifyCode(String email, String inputCode) {
+        Optional<Email> find = emailRepository.findByEmail(email);
+        return find.get().getCode().equals(inputCode);
     }
 }

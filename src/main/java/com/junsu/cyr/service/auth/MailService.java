@@ -3,43 +3,45 @@ package com.junsu.cyr.service.auth;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 public class MailService {
-    private final JavaMailSender javaMailSender;
-    private static final String senderEmail= "junsu120202@gmail.com";
-    private static int number;
 
-    public static void createNumber(){
-        number = (int) (Math.random() * (90000)) + 100000;
-    }
+    private final JavaMailSender mailSender;
+    private final StringRedisTemplate redisTemplate;
 
-    public MimeMessage CreateMail(String mail) {
-        createNumber();
-        MimeMessage message = javaMailSender.createMimeMessage();
+    public boolean sendMail(String email) {
+        String authCode = generateVerificationCode();
+
+        redisTemplate.opsForValue().set("EMAIL_VERIFICATION:" + email, authCode, 10, TimeUnit.MINUTES);
 
         try {
-            message.setFrom(senderEmail);
-            message.setRecipients(MimeMessage.RecipientType.TO, mail);
-            message.setSubject("이메일 인증");
-            String body = "";
-            body += "<h3>" + "요청하신 인증 번호입니다." + "</h3>";
-            body += "<h1>" + number + "</h1>";
-            message.setText(body,"UTF-8", "html");
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(email);
+            helper.setSubject("회원가입 인증 코드");
+            helper.setText("인증 코드: " + authCode, true);
+            mailSender.send(message);
+            return true;
         } catch (MessagingException e) {
-            e.printStackTrace();
+            return false;
         }
-
-        return message;
     }
 
-    public int sendMail(String mail){
-        MimeMessage message = CreateMail(mail);
-        javaMailSender.send(message);
+    private String generateVerificationCode() {
+        return String.valueOf(new Random().nextInt(900000) + 100000);
+    }
 
-        return number;
+    public boolean verifyCode(String email, String inputCode) {
+        String storedCode = redisTemplate.opsForValue().get("EMAIL_VERIFICATION:" + email);
+        return storedCode != null && storedCode.equals(inputCode);
     }
 }

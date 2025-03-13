@@ -2,7 +2,6 @@ package com.junsu.cyr.response.success;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.junsu.cyr.response.ApiResponse;
-import com.sun.net.httpserver.Authenticator;
 
 public class SuccessResponse<T> extends ApiResponse {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)

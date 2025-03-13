@@ -15,6 +15,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ExceptionResponse> handleBaseException(BaseException e) {
-        return ResponseEntity.status(e.getHttpStatus()).body(ExceptionResponse.of(e));
+        return new ResponseEntity<>(new ExceptionResponse(e.getCode(), e.getMessage()), e.getHttpStatus());
     }
 }

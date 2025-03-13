@@ -11,9 +11,9 @@ public class BaseException extends RuntimeException {
     private final String message;
     private final HttpStatus httpStatus;
 
-    public BaseException(String code, String message, HttpStatus httpStatus) {
-        this.code = code;
-        this.message = message;
-        this.httpStatus = httpStatus;
+    public BaseException(ExceptionCode exceptionCode) {
+        this.code = exceptionCode.getCode();
+        this.message = exceptionCode.getMessage();
+        this.httpStatus = exceptionCode.getStatus();
     }
 }

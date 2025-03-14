@@ -12,7 +12,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Random;
 
 @Service
@@ -30,12 +31,14 @@ public class MailService {
                 .ifPresentOrElse(
                         existingEmail -> {
                             existingEmail.updateCode(authCode);
+                            existingEmail.updateCreatedAt();
                             emailRepository.save(existingEmail);
                         },
                         () -> {
                             Email newEmail = Email.builder()
                                     .email(inputEmail)
                                     .code(authCode)
+                                    .createdAt(LocalDateTime.now())
                                     .build();
                             emailRepository.save(newEmail);
                         }
@@ -57,8 +60,16 @@ public class MailService {
         return String.valueOf(new Random().nextInt(900000) + 100000);
     }
 
-    public Boolean verifyCode(String email, String inputCode) {
-        Optional<Email> find = emailRepository.findByEmail(email);
-        return find.get().getCode().equals(inputCode);
+    public void verifyCode(String email, String inputCode) {
+        Email emailEntity = emailRepository.findByEmail(email)
+                .orElseThrow(() -> new BaseException(EmailExceptionCode.NO_CORRESPONDING_EMAIL_FOUND));
+
+        if(ChronoUnit.SECONDS.between(emailEntity.getCreatedAt(), LocalDateTime.now()) >= 600) {
+            throw new BaseException(EmailExceptionCode.EMAIL_AUTHENTICATION_TIMEOUT);
+        }
+
+        if(!emailEntity.getCode().equals(inputCode)) {
+            throw new BaseException(EmailExceptionCode.UNMATCHED_AUTHENTICATION_CODE);
+        }
     }
 }

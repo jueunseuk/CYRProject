@@ -2,6 +2,7 @@ package com.junsu.cyr.service.auth;
 
 import com.junsu.cyr.domain.users.Email;
 import com.junsu.cyr.repository.EmailRepository;
+import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.EmailExceptionCode;
 import jakarta.mail.MessagingException;
@@ -20,6 +21,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class MailService {
 
+    private final UserRepository userRepository;
     private final EmailRepository emailRepository;
     private final JavaMailSender mailSender;
 
@@ -63,6 +65,10 @@ public class MailService {
     public void verifyCode(String email, String inputCode) {
         Email emailEntity = emailRepository.findByEmail(email)
                 .orElseThrow(() -> new BaseException(EmailExceptionCode.NO_CORRESPONDING_EMAIL_FOUND));
+
+        if(userRepository.findByEmail(email).isPresent()){
+           throw new BaseException(EmailExceptionCode.ALREADY_EXIST_EMAIL);
+        }
 
         if(ChronoUnit.SECONDS.between(emailEntity.getCreatedAt(), LocalDateTime.now()) >= 600) {
             throw new BaseException(EmailExceptionCode.EMAIL_AUTHENTICATION_TIMEOUT);

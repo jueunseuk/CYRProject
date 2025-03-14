@@ -7,13 +7,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "email")
-public class Email extends BaseTime {
+public class Email {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "email_id")
@@ -25,7 +27,14 @@ public class Email extends BaseTime {
     @Column(name = "code", nullable = false)
     private String code;
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
     public void updateCode(String newCode) {
         this.code = newCode;
+    }
+
+    public void updateCreatedAt() {
+        this.createdAt = LocalDateTime.now();
     }
 }

@@ -2,8 +2,6 @@ package com.junsu.cyr.controller.auth;
 
 import com.junsu.cyr.model.email.EmailCodeRequest;
 import com.junsu.cyr.model.email.EmailMatchRequest;
-import com.junsu.cyr.response.exception.BaseException;
-import com.junsu.cyr.response.exception.code.EmailExceptionCode;
 import com.junsu.cyr.response.success.SuccessResponse;
 import com.junsu.cyr.service.auth.MailService;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +23,7 @@ public class AuthController {
 
     @PostMapping("/email/check")
     public ResponseEntity<?> codeCheck(@RequestBody EmailMatchRequest request) {
-        if(mailService.verifyCode(request.getEmail(), request.getCode())){
-            return ResponseEntity.ok(SuccessResponse.success("Matches with authentication code"));
-        } else{
-            throw new BaseException(EmailExceptionCode.UNMATCHED_AUTHENTICATION_CODE);
-        }
+        mailService.verifyCode(request.getEmail(), request.getCode());
+        return ResponseEntity.ok(SuccessResponse.success("Matches with authentication code"));
     }
 }

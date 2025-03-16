@@ -83,4 +83,8 @@ public class User extends BaseTime {
         this.password = password;
         this.passwordUpdatedAt = LocalDateTime.now();
     }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }

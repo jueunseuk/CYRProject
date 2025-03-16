@@ -12,7 +12,7 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    @Value("${jwt.jwt-key}")
+    @Value("jwt.jwt-key")
     private String jwtSecretKey;
 
     @Value("${jwt.access-token-expiration}")
@@ -48,12 +48,11 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            parseClaims(token);
+            Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
             return true;
-        } catch (ExpiredJwtException e) {
-        } catch (JwtException e) {
+        } catch (Exception e) {
+            return false;
         }
-        return false;
     }
 
     public Claims parseClaims(String token) {

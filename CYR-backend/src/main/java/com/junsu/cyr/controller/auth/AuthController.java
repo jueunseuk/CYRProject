@@ -1,5 +1,6 @@
 package com.junsu.cyr.controller.auth;
 
+import com.junsu.cyr.model.auth.EmailLoginRequest;
 import com.junsu.cyr.model.auth.PasswordResetRequest;
 import com.junsu.cyr.model.auth.SignupRequest;
 import com.junsu.cyr.model.email.EmailCodeRequest;
@@ -39,6 +40,12 @@ public class AuthController {
         return ResponseEntity.ok(SuccessResponse.success("Signup successful"));
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody EmailLoginRequest request, HttpServletResponse response) {
+        authService.login(request, response);
+        return ResponseEntity.ok(SuccessResponse.success("login successful"));
+    }
+
     @PostMapping("/password/reset")
     public ResponseEntity<?> passwordReset(@RequestBody PasswordResetRequest request) {
         authService.passwordReset(request.getEmail(), request.getNewPassword());
@@ -52,14 +59,14 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
-
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        authService.logout(response);
         return ResponseEntity.ok(SuccessResponse.success("Logout successfully"));
     }
 
     @PostMapping("/secession")
     public ResponseEntity<?> secession(HttpServletRequest request, HttpServletResponse response) {
-
+        authService.secede(response, request);
         return ResponseEntity.ok(SuccessResponse.success("Secession successfully"));
     }
 }

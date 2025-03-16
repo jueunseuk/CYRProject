@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum UserExceptionCode implements ExceptionCode {
-    NOT_EXIST_USER_ID("USER_001", "존재하지 않는 사용자 ID 입니다.", HttpStatus.BAD_REQUEST),
+    NOT_EXIST_USER("USER_001", "존재하지 않는 사용자입니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String code;

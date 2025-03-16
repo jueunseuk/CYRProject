@@ -30,10 +30,10 @@ public class User extends BaseTime {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
 
-    @Column(name = "password_updated_at", nullable = false)
+    @Column(name = "password_updated_at")
     private LocalDateTime passwordUpdatedAt;
 
     @Column(name = "profile_url")
@@ -64,9 +64,6 @@ public class User extends BaseTime {
     @Column(name = "role", nullable = false)
     private Role role;
 
-    @Column(name = "refresh_token")
-    private String refreshToken;
-
     @Column(name = "warn")
     private Integer warn;
 
@@ -84,7 +81,8 @@ public class User extends BaseTime {
         this.passwordUpdatedAt = LocalDateTime.now();
     }
 
-    public void updateRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
+    public void updateToSecession() {
+        this.status = Status.SECESSION;
+        this.userDeletedAt = LocalDateTime.now();
     }
 }

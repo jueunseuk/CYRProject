@@ -1,8 +1,10 @@
 package com.junsu.cyr.controller.auth;
 
+import com.junsu.cyr.model.auth.PasswordResetRequest;
 import com.junsu.cyr.model.email.EmailCodeRequest;
 import com.junsu.cyr.model.email.EmailMatchRequest;
 import com.junsu.cyr.response.success.SuccessResponse;
+import com.junsu.cyr.service.auth.AuthService;
 import com.junsu.cyr.service.auth.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
 
+    private final AuthService authService;
     private final MailService mailService;
 
     @PostMapping("/email/request")
@@ -25,5 +28,11 @@ public class AuthController {
     public ResponseEntity<?> codeCheck(@RequestBody EmailMatchRequest request) {
         mailService.verifyCode(request.getEmail(), request.getCode());
         return ResponseEntity.ok(SuccessResponse.success("Matches with authentication code"));
+    }
+
+    @PostMapping("/password/reset")
+    public ResponseEntity<?> passwordReissue(@RequestBody PasswordResetRequest request) {
+        authService.passwordReset(request.getEmail(), request.getNewPassword());
+        return ResponseEntity.ok(SuccessResponse.success("Password reset successfully"));
     }
 }

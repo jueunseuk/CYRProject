@@ -33,6 +33,9 @@ public class User extends BaseTime {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "password_updated_at", nullable = false)
+    private LocalDateTime passwordUpdatedAt;
+
     @Column(name = "profile_url")
     private String profileUrl;
 
@@ -75,4 +78,9 @@ public class User extends BaseTime {
 
     @Column(name = "user_deleted_at")
     private LocalDateTime userDeletedAt;
+
+    public void updatePassword(String password) {
+        this.password = password;
+        this.passwordUpdatedAt = LocalDateTime.now();
+    }
 }

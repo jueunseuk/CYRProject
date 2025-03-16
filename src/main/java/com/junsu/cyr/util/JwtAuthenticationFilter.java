@@ -1,7 +1,11 @@
 package com.junsu.cyr.util;
 
+import com.junsu.cyr.domain.users.Status;
+import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.AuthExceptionCode;
+import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -9,7 +13,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,6 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
@@ -38,8 +42,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         Claims claims = jwtTokenProvider.parseClaims(token);
+        Integer userId = Integer.parseInt(claims.getSubject());
 
-        request.setAttribute("userId", claims.getSubject());
+        request.setAttribute("userId", userId);
+
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
+
+        if (user.getStatus() != Status.ACTIVE) {
+            throw new BaseException(AuthExceptionCode.ACCOUNT_NOT_ACTIVE);
+        }
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 claims.getSubject(),

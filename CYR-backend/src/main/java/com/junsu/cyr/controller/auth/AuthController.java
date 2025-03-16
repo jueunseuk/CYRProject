@@ -1,19 +1,20 @@
 package com.junsu.cyr.controller.auth;
 
-import com.junsu.cyr.response.exception.BaseException;
-import com.junsu.cyr.response.exception.code.MailExceptionCode;
+import com.junsu.cyr.model.auth.EmailLoginRequest;
+import com.junsu.cyr.model.auth.PasswordResetRequest;
+import com.junsu.cyr.model.auth.SignupRequest;
+import com.junsu.cyr.model.email.EmailCodeRequest;
+import com.junsu.cyr.model.email.EmailMatchRequest;
 import com.junsu.cyr.response.success.SuccessResponse;
 import com.junsu.cyr.service.auth.AuthService;
 import com.junsu.cyr.service.auth.MailService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
@@ -21,20 +22,51 @@ public class AuthController {
     private final AuthService authService;
     private final MailService mailService;
 
-    @ResponseBody
     @PostMapping("/email/request")
-    public ResponseEntity<?> mailSend(@RequestParam String email){
-        String.valueOf(mailService.sendMail(email));
+    public ResponseEntity<?> mailSend(@RequestBody EmailCodeRequest request){
+        mailService.sendMail(request.getEmail());
         return ResponseEntity.ok(SuccessResponse.success("Success to request authentication code"));
     }
 
-    @ResponseBody
     @PostMapping("/email/check")
-    public ResponseEntity<?> codeCheck(@RequestParam String email, @RequestParam String code) {
-        if(mailService.verifyCode(email, code)){
-            return ResponseEntity.ok(SuccessResponse.success("Matches with authentication code"));
-        } else{
-            throw new BaseException(MailExceptionCode.UNMATCHED_AUTHENTICATION_CODE);
-        }
+    public ResponseEntity<?> codeCheck(@RequestBody EmailMatchRequest request) {
+        mailService.verifyCode(request.getEmail(), request.getCode());
+        return ResponseEntity.ok(SuccessResponse.success("Matches with authentication code"));
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody SignupRequest request, HttpServletResponse response) {
+        authService.signup(request, response);
+        return ResponseEntity.ok(SuccessResponse.success("Signup successful"));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody EmailLoginRequest request, HttpServletResponse response) {
+        authService.login(request, response);
+        return ResponseEntity.ok(SuccessResponse.success("login successful"));
+    }
+
+    @PostMapping("/password/reset")
+    public ResponseEntity<?> passwordReset(@RequestBody PasswordResetRequest request) {
+        authService.passwordReset(request.getEmail(), request.getNewPassword());
+        return ResponseEntity.ok(SuccessResponse.success("Password reset successfully"));
+    }
+
+    @PostMapping("/token/access/reset")
+    public ResponseEntity<?> resetAccessToken(HttpServletRequest request, HttpServletResponse response) {
+        authService.resetAccessToken(request, response);
+        return ResponseEntity.ok(SuccessResponse.success("Regenerate access token successfully"));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        authService.logout(response);
+        return ResponseEntity.ok(SuccessResponse.success("Logout successfully"));
+    }
+
+    @PostMapping("/secession")
+    public ResponseEntity<?> secession(HttpServletRequest request, HttpServletResponse response) {
+        authService.secede(response, request);
+        return ResponseEntity.ok(SuccessResponse.success("Secession successfully"));
     }
 }

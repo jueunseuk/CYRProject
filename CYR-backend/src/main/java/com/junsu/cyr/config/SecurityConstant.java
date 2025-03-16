@@ -19,8 +19,9 @@ public class SecurityConstant {
             "/auth/naver",
             "/auth/signup",
             "/auth/login",
-            "/auth/token/access",
+            "/auth/token/access/reset",
             "/auth/email/request",
-            "/auth/email/check"
+            "/auth/email/check",
+            "/auth/password/reset"
     );
 }

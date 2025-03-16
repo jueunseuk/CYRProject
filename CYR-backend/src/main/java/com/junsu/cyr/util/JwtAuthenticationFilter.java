@@ -1,5 +1,11 @@
 package com.junsu.cyr.util;
 
+import com.junsu.cyr.domain.users.Status;
+import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.repository.UserRepository;
+import com.junsu.cyr.response.exception.BaseException;
+import com.junsu.cyr.response.exception.code.AuthExceptionCode;
+import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,6 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
@@ -30,17 +37,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = getTokenFromRequest(request);
 
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            Claims claims = jwtTokenProvider.parseClaims(token);
-
-            request.setAttribute("userId", claims.getSubject());
-
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    claims.getSubject(),
-                    null, List.of(new SimpleGrantedAuthority(claims.get("role", String.class)))
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        if(token == null || !jwtTokenProvider.validateToken(token)) {
+            throw new BaseException(AuthExceptionCode.INVALID_ACCESS_TOKEN);
         }
+
+        Claims claims = jwtTokenProvider.parseClaims(token);
+        Integer userId = Integer.parseInt(claims.getSubject());
+
+        request.setAttribute("userId", userId);
+
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
+
+        if (user.getStatus() != Status.ACTIVE) {
+            throw new BaseException(AuthExceptionCode.ACCOUNT_NOT_ACTIVE);
+        }
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                claims.getSubject(),
+                null, List.of(new SimpleGrantedAuthority(claims.get("role", String.class)))
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         filterChain.doFilter(request, response);
     }

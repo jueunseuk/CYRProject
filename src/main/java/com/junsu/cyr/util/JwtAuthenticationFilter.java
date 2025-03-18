@@ -36,16 +36,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String requestUri = request.getRequestURI();
-        if (SecurityConstant.PERMIT_ENDPOINTS.contains(requestUri)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         String token = getTokenFromRequest(request);
 
         if(token == null || !jwtTokenProvider.validateToken(token)) {
-            throw new BaseException(AuthExceptionCode.INVALID_ACCESS_TOKEN);
+            filterChain.doFilter(request, response);
+            return;
         }
 
         Claims claims = jwtTokenProvider.parseClaims(token);
@@ -76,5 +71,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return bearerToken.substring(7);
         }
         return null;
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+
+        return SecurityConstant.PERMIT_ENDPOINTS.contains(path);
     }
 }

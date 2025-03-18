@@ -34,13 +34,7 @@ public class SecurityConfig {
                     return config;
                 }))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers(
-                                "/auth/naver",
-                                "/auth/signup",
-                                "/auth/login",
-                                "/auth/token/access",
-                                "/auth/email/request",
-                                "/auth/email/check")
+                        .requestMatchers(SecurityConstant.PERMIT_ENDPOINTS.toArray(new String[0]))
                         .permitAll()
                         .anyRequest()
                         .authenticated()

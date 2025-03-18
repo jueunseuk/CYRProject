@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY . .
 
+RUN chmod +x ./gradlew
+
 RUN ./gradlew clean build --no-daemon
 
 RUN cp build/libs/*.jar app.jar

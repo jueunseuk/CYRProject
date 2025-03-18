@@ -1,4 +1,3 @@
-
 package com.junsu.cyr.config;
 
 import com.junsu.cyr.util.JwtAuthenticationFilter;

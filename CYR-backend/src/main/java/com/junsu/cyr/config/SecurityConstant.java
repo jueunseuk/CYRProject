@@ -4,7 +4,9 @@ import java.util.List;
 
 public class SecurityConstant {
     public static final List<String> ALLOWED_ORIGINS = List.of(
-            "http://localhost:5173"
+            "http://localhost:5173",
+            "http://192.168.0.3:5173",
+            "https://cyr-project-fe.vercel.app"
     );
 
     public static final List<String> ALLOWED_METHODS = List.of(

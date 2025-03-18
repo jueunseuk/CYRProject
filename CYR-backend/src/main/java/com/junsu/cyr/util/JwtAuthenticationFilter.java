@@ -1,5 +1,6 @@
 package com.junsu.cyr.util;
 
+import com.junsu.cyr.config.SecurityConstant;
 import com.junsu.cyr.domain.users.Status;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.repository.UserRepository;
@@ -34,6 +35,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+
+        String requestUri = request.getRequestURI();
+        if (SecurityConstant.PERMIT_ENDPOINTS.contains(requestUri)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String token = getTokenFromRequest(request);
 

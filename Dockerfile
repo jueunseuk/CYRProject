@@ -8,7 +8,7 @@ RUN chmod +x ./gradlew
 
 RUN ./gradlew clean build --no-daemon
 
-RUN cp build/libs/*.jar app.jar
+RUN cp $(ls build/libs/*.jar | grep -v plain) /app/app.jar
 
 FROM eclipse-temurin:21-jdk-jammy
 

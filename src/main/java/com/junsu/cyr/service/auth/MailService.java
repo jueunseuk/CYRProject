@@ -74,7 +74,7 @@ public class MailService {
             throw new BaseException(EmailExceptionCode.EMAIL_AUTHENTICATION_TIMEOUT);
         }
 
-        if(!emailEntity.getCode().equals(inputCode)) {
+        if(!emailEntity.getCode().equals(inputCode.trim())) {
             throw new BaseException(EmailExceptionCode.UNMATCHED_AUTHENTICATION_CODE);
         }
     }

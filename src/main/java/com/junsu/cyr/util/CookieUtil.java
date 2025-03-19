@@ -18,14 +18,12 @@ public class CookieUtil {
     private static Integer cookieMaxAge = 1814400;
 
     public static void addCookie(HttpServletResponse response, String name, String value) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(cookieMaxAge);
-        cookie.setSecure(true);
-        cookie.setAttribute("SameSite", "None");
+        String cookieHeader = String.format(
+                "%s=%s; Max-Age=%d; Path=/; HttpOnly; Secure; SameSite=None",
+                name, value, cookieMaxAge
+        );
 
-        response.addCookie(cookie);
+        response.setHeader("Set-Cookie", cookieHeader);
     }
 
     public static Optional<Cookie> getCookie(HttpServletRequest request, String name) {

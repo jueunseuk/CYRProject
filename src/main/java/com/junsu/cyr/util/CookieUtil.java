@@ -22,7 +22,7 @@ public class CookieUtil {
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setMaxAge(cookieMaxAge);
-        cookie.setSecure(false);
+        cookie.setSecure(true);
         cookie.setAttribute("SameSite", "None");
 
         response.addCookie(cookie);

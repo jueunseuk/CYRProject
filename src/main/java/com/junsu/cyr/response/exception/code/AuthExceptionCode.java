@@ -16,6 +16,7 @@ public enum AuthExceptionCode implements ExceptionCode {
     ACCOUNT_NOT_ACTIVE("AUTH_006", "활동 상태인 사용자가 아닙니다.", HttpStatus.BAD_REQUEST),
     ACCOUNT_ALREADY_DEACTIVATED("AUTH__007", "이미 탈퇴한 계정입니다.", HttpStatus.BAD_REQUEST),
     NO_CORRESPONDING_PASSWORD_VALUE("AUTH_008", "패스워드가 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
+    NOT_AUTHENTICATED_USER("AUTH_009", "인증을 받지 않은 사용자입니다.", HttpStatus.UNAUTHORIZED),
     ;
 
     private final String code;

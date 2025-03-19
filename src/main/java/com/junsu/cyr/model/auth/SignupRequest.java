@@ -1,6 +1,5 @@
 package com.junsu.cyr.model.auth;
 
-import com.junsu.cyr.domain.users.Gender;
 import com.junsu.cyr.domain.users.Method;
 import lombok.Data;
 

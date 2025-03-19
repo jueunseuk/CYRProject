@@ -3,6 +3,7 @@ package com.junsu.cyr.util;
 import com.junsu.cyr.domain.users.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -10,9 +11,10 @@ import java.security.Key;
 import java.util.Date;
 
 @Component
+@RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    @Value("jwt.jwt-key")
+    @Value("${jwt.jwt-key}")
     private String jwtSecretKey;
 
     @Value("${jwt.access-token-expiration}")

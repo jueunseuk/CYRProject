@@ -5,6 +5,7 @@ import com.junsu.cyr.domain.users.Status;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.auth.EmailLoginRequest;
 import com.junsu.cyr.model.auth.SignupRequest;
+import com.junsu.cyr.model.auth.SignupResponse;
 import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.AuthExceptionCode;
@@ -17,6 +18,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +35,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public void signup(SignupRequest signupRequest, HttpServletResponse response) {
+    public ResponseEntity<SignupResponse> signup(SignupRequest signupRequest, HttpServletResponse response) {
         Optional<User> check = userRepository.findByEmail(signupRequest.getEmail());
 
         if(check.isPresent()) {
@@ -58,6 +60,15 @@ public class AuthService {
         CookieUtil.addCookie(response, "refreshToken", refreshToken);
 
         response.setHeader("Authorization", "Bearer "+accessToken);
+
+        SignupResponse signupResponse = new SignupResponse(
+                user.getUserId(),
+                user.getName(),
+                user.getNickname(),
+                user.getRole()
+        );
+
+        return ResponseEntity.ok(signupResponse);
     }
 
     public User createdUserWithEmail(SignupRequest signupRequest) {

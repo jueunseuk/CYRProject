@@ -54,21 +54,7 @@ public class AuthService {
         }
         userRepository.save(user);
 
-        String refreshToken = jwtTokenProvider.generateRefreshToken(user);
-        String accessToken = jwtTokenProvider.generateAccessToken(user);
-
-        CookieUtil.addCookie(response, "refreshToken", refreshToken);
-
-        response.setHeader("Authorization", "Bearer "+accessToken);
-
-        SignupResponse signupResponse = new SignupResponse(
-                user.getUserId(),
-                user.getName(),
-                user.getNickname(),
-                user.getRole()
-        );
-
-        return ResponseEntity.ok(signupResponse);
+        return generateTokensAndCreateResponse(user, response);
     }
 
     public User createdUserWithEmail(SignupRequest signupRequest) {
@@ -107,7 +93,7 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    public void login(EmailLoginRequest request, HttpServletResponse response) {
+    public ResponseEntity<SignupResponse> login(EmailLoginRequest request, HttpServletResponse response) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
@@ -119,12 +105,24 @@ public class AuthService {
             throw new BaseException(AuthExceptionCode.NO_CORRESPONDING_PASSWORD_VALUE);
         }
 
+        return generateTokensAndCreateResponse(user, response);
+    }
+
+    private ResponseEntity<SignupResponse> generateTokensAndCreateResponse(User user, HttpServletResponse response) {
         String refreshToken = jwtTokenProvider.generateRefreshToken(user);
         String accessToken = jwtTokenProvider.generateAccessToken(user);
 
         CookieUtil.addCookie(response, "refreshToken", refreshToken);
+        response.setHeader("Authorization", "Bearer " + accessToken);
 
-        response.setHeader("Authorization", "Bearer "+accessToken);
+        SignupResponse signupResponse = new SignupResponse(
+                user.getUserId(),
+                user.getName(),
+                user.getNickname(),
+                user.getRole()
+        );
+
+        return ResponseEntity.ok(signupResponse);
     }
 
     @Transactional

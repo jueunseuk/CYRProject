@@ -1,17 +1,21 @@
 package com.junsu.cyr.util;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Optional;
 
+@Component
+@RequiredArgsConstructor
 public class CookieUtil {
 
-    @Value("${cookie.cookie-max-age}")
-    private static Integer cookieMaxAge;
+    private static Integer cookieMaxAge = 1814400;
 
     public static void addCookie(HttpServletResponse response, String name, String value) {
         Cookie cookie = new Cookie(name, value);

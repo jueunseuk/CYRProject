@@ -65,7 +65,6 @@ public class AuthService {
                 user.getUserId(),
                 user.getName(),
                 user.getNickname(),
-                accessToken,
                 user.getRole()
         );
 

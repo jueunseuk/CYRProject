@@ -20,9 +20,9 @@ public class Image extends BaseTime {
     @Column(name = "image_id", nullable = false)
     private Long imageId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private Type type;
 
     @Column(name = "sequence", nullable = false)
     private Integer sequence;

@@ -10,7 +10,9 @@ import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.AuthExceptionCode;
 import com.junsu.cyr.response.exception.code.EmailExceptionCode;
+import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
+import com.junsu.cyr.service.image.S3Service;
 import com.junsu.cyr.util.CookieUtil;
 import com.junsu.cyr.util.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
@@ -23,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -31,8 +34,9 @@ import java.util.Optional;
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final S3Service s3Service;
 
     @Transactional
     public ResponseEntity<SignupResponse> signup(SignupRequest signupRequest, HttpServletResponse response) {
@@ -52,7 +56,17 @@ public class AuthService {
             case NAVER, GOOGLE, KAKAO -> user = createUserWithOAuth(signupRequest);
             default -> throw new BaseException(AuthExceptionCode.INVALID_LOGIN_METHOD);
         }
-        userRepository.save(user);
+
+        try {
+            if(signupRequest.getProfileImage() != null) {
+                String profileUrl = s3Service.uploadFile(signupRequest.getProfileImage());
+                user.updateProfileUrl(profileUrl);
+                userRepository.save(user);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BaseException(ImageExceptionCode.FAILED_TO_UPLOAD_IMAGE);
+        }
 
         return generateTokensAndCreateResponse(user, response);
     }
@@ -63,7 +77,6 @@ public class AuthService {
                 .name(signupRequest.getName())
                 .password(passwordEncoder.encode(signupRequest.getPassword()))
                 .passwordUpdatedAt(LocalDateTime.now())
-                .profileUrl(signupRequest.getProfileUrl())
                 .nickname(signupRequest.getNickname())
                 .role(Role.MEMBER)
                 .status(Status.ACTIVE)
@@ -80,7 +93,6 @@ public class AuthService {
         User user = User.builder()
                 .email(signupRequest.getEmail())
                 .name(signupRequest.getName())
-                .profileUrl(signupRequest.getProfileUrl())
                 .nickname(signupRequest.getNickname())
                 .role(Role.MEMBER)
                 .status(Status.ACTIVE)
@@ -117,6 +129,7 @@ public class AuthService {
 
         SignupResponse signupResponse = new SignupResponse(
                 user.getUserId(),
+                user.getProfileUrl(),
                 user.getName(),
                 user.getNickname(),
                 user.getRole()

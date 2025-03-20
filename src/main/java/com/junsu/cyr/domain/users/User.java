@@ -81,6 +81,10 @@ public class User extends BaseTime {
         this.passwordUpdatedAt = LocalDateTime.now();
     }
 
+    public void updateProfileUrl(String profileUrl) {
+        this.profileUrl = profileUrl;
+    }
+
     public void updateToSecession() {
         this.status = Status.SECESSION;
         this.userDeletedAt = LocalDateTime.now();

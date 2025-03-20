@@ -1,5 +1,5 @@
 package com.junsu.cyr.domain.users;
 
 public enum Role {
-    MEMBER, MANAGER;
+    GUEST, MEMBER, MANAGER;
 }

@@ -1,5 +1,6 @@
 package com.junsu.cyr.service.auth;
 
+import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.users.Role;
 import com.junsu.cyr.domain.users.Status;
 import com.junsu.cyr.domain.users.User;
@@ -25,7 +26,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -59,12 +59,11 @@ public class AuthService {
 
         try {
             if(signupRequest.getProfileImage() != null) {
-                String profileUrl = s3Service.uploadFile(signupRequest.getProfileImage());
+                String profileUrl = s3Service.uploadFile(signupRequest.getProfileImage(), Type.PROFILE);
                 user.updateProfileUrl(profileUrl);
                 userRepository.save(user);
             }
         } catch (Exception e) {
-            e.printStackTrace();
             throw new BaseException(ImageExceptionCode.FAILED_TO_UPLOAD_IMAGE);
         }
 
@@ -78,7 +77,7 @@ public class AuthService {
                 .password(passwordEncoder.encode(signupRequest.getPassword()))
                 .passwordUpdatedAt(LocalDateTime.now())
                 .nickname(signupRequest.getNickname())
-                .role(Role.MEMBER)
+                .role(Role.GUEST)
                 .status(Status.ACTIVE)
                 .method(signupRequest.getMethod())
                 .epxCnt(0L)
@@ -94,7 +93,7 @@ public class AuthService {
                 .email(signupRequest.getEmail())
                 .name(signupRequest.getName())
                 .nickname(signupRequest.getNickname())
-                .role(Role.MEMBER)
+                .role(Role.GUEST)
                 .status(Status.ACTIVE)
                 .method(signupRequest.getMethod())
                 .epxCnt(0L)

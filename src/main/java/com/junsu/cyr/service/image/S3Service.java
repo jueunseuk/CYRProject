@@ -1,5 +1,6 @@
 package com.junsu.cyr.service.image;
 
+import com.junsu.cyr.domain.images.Type;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,17 @@ public class S3Service {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String uploadFile(MultipartFile file) throws IOException {
+    public String uploadFile(MultipartFile file, Type type) throws IOException {
         String fileName = System.currentTimeMillis() + "." + file.getOriginalFilename();
+        String filePurpose;
+
+        switch (type) {
+            case PROFILE -> filePurpose = "profile";
+            case POST -> filePurpose = "post";
+            case COMMENT -> filePurpose = "comment";
+            case COMPLAINT -> filePurpose = "complaint";
+            default -> filePurpose = "unknown";
+        }
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucket)
@@ -32,6 +42,6 @@ public class S3Service {
                 RequestBody.fromInputStream(file.getInputStream(), file.getSize())
         );
 
-        return "https://" + bucket + ".s3.amazonaws.com/" + fileName;
+        return "https://" + bucket + ".s3.amazonaws.com/" + filePurpose + "/" + fileName;
     }
 }

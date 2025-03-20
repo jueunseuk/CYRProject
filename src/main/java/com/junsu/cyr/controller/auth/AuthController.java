@@ -45,8 +45,8 @@ public class AuthController {
                                     @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
                                     HttpServletResponse response) {
         SignupRequest request = new SignupRequest(method, name, email, password, nickname, profileImage);
-        authService.signup(request, response);
-        return ResponseEntity.ok(SuccessResponse.success("Signup successful"));
+
+        return authService.signup(request, response);
     }
 
     @PostMapping("/login")

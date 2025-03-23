@@ -36,6 +36,12 @@ public class AuthController {
         return ResponseEntity.ok(SuccessResponse.success("Matches with authentication code"));
     }
 
+    @PostMapping("/email/check/password")
+    public ResponseEntity<?> codeCheckPassword(@RequestBody EmailMatchRequest request) {
+        mailService.verifyCodeWithPassword(request.getEmail(), request.getCode());
+        return ResponseEntity.ok(SuccessResponse.success("Matches with authentication code"));
+    }
+
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestParam("email") String email,
                                     @RequestParam("name") String name,

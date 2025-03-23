@@ -112,7 +112,7 @@ public class AuthService {
             throw new BaseException(AuthExceptionCode.ACCOUNT_NOT_ACTIVE);
         }
 
-        if(passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BaseException(AuthExceptionCode.NO_CORRESPONDING_PASSWORD_VALUE);
         }
 

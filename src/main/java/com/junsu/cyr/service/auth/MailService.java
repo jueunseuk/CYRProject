@@ -78,4 +78,17 @@ public class MailService {
             throw new BaseException(EmailExceptionCode.UNMATCHED_AUTHENTICATION_CODE);
         }
     }
+
+    public void verifyCodeWithPassword(String email, String inputCode) {
+        Email emailEntity = emailRepository.findByEmail(email)
+                .orElseThrow(() -> new BaseException(EmailExceptionCode.NO_CORRESPONDING_EMAIL_FOUND));
+
+        if(ChronoUnit.SECONDS.between(emailEntity.getCreatedAt(), LocalDateTime.now()) >= 600) {
+            throw new BaseException(EmailExceptionCode.EMAIL_AUTHENTICATION_TIMEOUT);
+        }
+
+        if(!emailEntity.getCode().equals(inputCode.trim())) {
+            throw new BaseException(EmailExceptionCode.UNMATCHED_AUTHENTICATION_CODE);
+        }
+    }
 }

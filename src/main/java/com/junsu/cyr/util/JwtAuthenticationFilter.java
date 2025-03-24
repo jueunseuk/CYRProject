@@ -39,8 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = getTokenFromRequest(request);
 
         if(token == null || !jwtTokenProvider.validateToken(token)) {
-            filterChain.doFilter(request, response);
-            return;
+            throw new BaseException(AuthExceptionCode.INVALID_ACCESS_TOKEN);
         }
 
         Claims claims = jwtTokenProvider.parseClaims(token);

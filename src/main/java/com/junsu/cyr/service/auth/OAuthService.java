@@ -29,7 +29,7 @@ public class OAuthService {
         String NAVER_ACCESSTOKEN_URL = "https://nid.naver.com/oauth2.0/token";
         String naverState = "cyr-project";
 
-        if(!naverState.equals(state)) {
+        if (!naverState.equals(state)) {
             throw new BaseException(AuthExceptionCode.NO_CORRESPONDING_NAVER_STATE);
         }
 
@@ -42,17 +42,25 @@ public class OAuthService {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<Map> response = restTemplate.postForEntity(NAVER_ACCESSTOKEN_URL, request, Map.class);
 
-        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-            return (String) response.getBody().get("access_token");
-        } else {
-            throw new BaseException(AuthExceptionCode.INVALID_NAVER_AUTH_CODE);
+        for (int i = 0; i < 2; i++) {
+            try {
+                ResponseEntity<Map> response = restTemplate.postForEntity(NAVER_ACCESSTOKEN_URL, request, Map.class);
+
+                if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                    return (String) response.getBody().get("access_token");
+                }
+            } catch (Exception e) {
+                if (i == 1) {
+                    throw new BaseException(AuthExceptionCode.INVALID_NAVER_AUTH_CODE);
+                }
+            }
         }
+
+        throw new BaseException(AuthExceptionCode.INVALID_NAVER_AUTH_CODE);
     }
 
     public OAuthUserInfoRequest getUserInfoFromNaver(String accessToken) {

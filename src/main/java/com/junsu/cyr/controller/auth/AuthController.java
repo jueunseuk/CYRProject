@@ -2,6 +2,7 @@ package com.junsu.cyr.controller.auth;
 
 import com.junsu.cyr.domain.users.Method;
 import com.junsu.cyr.model.auth.EmailLoginRequest;
+import com.junsu.cyr.model.auth.NaverUserRequest;
 import com.junsu.cyr.model.auth.PasswordResetRequest;
 import com.junsu.cyr.model.auth.SignupRequest;
 import com.junsu.cyr.model.email.EmailCodeRequest;
@@ -23,6 +24,12 @@ public class AuthController {
 
     private final AuthService authService;
     private final MailService mailService;
+
+    @PostMapping("/naver/callback")
+    public ResponseEntity<?> naverLoginOrSignup(@RequestBody NaverUserRequest request, HttpServletResponse response) {
+        authService.naverLoginOrSignUp(request, response);
+        return ResponseEntity.ok(SuccessResponse.success("Success to request naver login or signup"));
+    }
 
     @PostMapping("/email/request")
     public ResponseEntity<?> mailSend(@RequestBody EmailCodeRequest request){

@@ -52,7 +52,7 @@ public class AuthService {
                 throw new BaseException(AuthExceptionCode.ACCOUNT_NOT_ACTIVE);
             }
         } else {
-            user =createUserWithOAuth(userInfo);
+            user = createUserWithOAuth(userInfo);
         }
 
         SignupResponse signupResponse = new SignupResponse(

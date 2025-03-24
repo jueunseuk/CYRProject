@@ -81,7 +81,7 @@ public class OAuthService {
                 String profileImage = (String) responseMap.get("profile_image");
 
                 if (email != null && name != null) {
-                    return new OAuthUserInfoRequest(email, name, profileImage, Method.NAVER);
+                    return new OAuthUserInfoRequest(name, email, profileImage, Method.NAVER);
                 }
             }
         }

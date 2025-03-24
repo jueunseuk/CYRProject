@@ -27,6 +27,11 @@ public class OAuthService {
 
     public String getNaverAccessToken(String code, String state) {
         String NAVER_ACCESSTOKEN_URL = "https://nid.naver.com/oauth2.0/token";
+        String naverState = "cyr-project";
+
+        if(!naverState.equals(state)) {
+            throw new BaseException(AuthExceptionCode.NO_CORRESPONDING_NAVER_STATE);
+        }
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");

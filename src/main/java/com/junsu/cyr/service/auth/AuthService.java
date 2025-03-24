@@ -4,9 +4,7 @@ import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.users.Role;
 import com.junsu.cyr.domain.users.Status;
 import com.junsu.cyr.domain.users.User;
-import com.junsu.cyr.model.auth.EmailLoginRequest;
-import com.junsu.cyr.model.auth.SignupRequest;
-import com.junsu.cyr.model.auth.SignupResponse;
+import com.junsu.cyr.model.auth.*;
 import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.AuthExceptionCode;
@@ -35,8 +33,44 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final OAuthService oAuthService;
     private final JwtTokenProvider jwtTokenProvider;
     private final S3Service s3Service;
+
+    @Transactional
+    public ResponseEntity<?> naverLoginOrSignUp(NaverUserRequest request, HttpServletResponse response) {
+        String accessToken = oAuthService.getNaverAccessToken(request.getCode(), request.getState());
+        OAuthUserInfoRequest userInfo = oAuthService.getUserInfoFromNaver(accessToken);
+
+        Optional<User> userCheck = userRepository.findByEmail(userInfo.getEmail());
+
+        User user;
+        if (userCheck.isPresent()) {
+            user = userCheck.get();
+
+            if (user.getStatus() != Status.ACTIVE) {
+                throw new BaseException(AuthExceptionCode.ACCOUNT_NOT_ACTIVE);
+            }
+        } else {
+            user =createUserWithOAuth(userInfo);
+        }
+
+        SignupResponse signupResponse = new SignupResponse(
+                user.getUserId(),
+                user.getProfileUrl(),
+                user.getName(),
+                user.getNickname(),
+                user.getRole()
+        );
+
+        String newAccessToken = jwtTokenProvider.generateAccessToken(user);
+        String newRefreshToken = jwtTokenProvider.generateRefreshToken(user);
+
+        CookieUtil.addCookie(response, "refreshToken", newRefreshToken);
+        response.setHeader("Authorization", "Bearer " + newAccessToken);
+
+        return ResponseEntity.ok(signupResponse);
+    }
 
     @Transactional
     public ResponseEntity<SignupResponse> signup(SignupRequest signupRequest, HttpServletResponse response) {
@@ -50,12 +84,7 @@ public class AuthService {
             throw new BaseException(AuthExceptionCode.INVALID_PASSWORD_VALUE);
         }
 
-        User user;
-        switch (signupRequest.getMethod()) {
-            case EMAIL -> user = createdUserWithEmail(signupRequest);
-            case NAVER, GOOGLE, KAKAO -> user = createUserWithOAuth(signupRequest);
-            default -> throw new BaseException(AuthExceptionCode.INVALID_LOGIN_METHOD);
-        }
+        User user = createdUserWithEmail(signupRequest);
 
         try {
             if(signupRequest.getProfileImage() != null) {
@@ -88,14 +117,14 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    public User createUserWithOAuth(SignupRequest signupRequest) {
+    public User createUserWithOAuth(OAuthUserInfoRequest userInfo) {
         User user = User.builder()
-                .email(signupRequest.getEmail())
-                .name(signupRequest.getName())
-                .nickname(signupRequest.getNickname())
+                .email(userInfo.getEmail())
+                .name(userInfo.getName())
                 .role(Role.GUEST)
+                .profileUrl(userInfo.getProfileImageUrl())
                 .status(Status.ACTIVE)
-                .method(signupRequest.getMethod())
+                .method(userInfo.getMethod())
                 .epxCnt(0L)
                 .cheerCnt(0L)
                 .warn(0)

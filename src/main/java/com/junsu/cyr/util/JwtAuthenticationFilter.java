@@ -10,10 +10,10 @@ import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,6 +23,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -30,15 +31,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final CookieUtil cookieUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String token = getTokenFromRequest(request);
+        Optional<Cookie> cookie = cookieUtil.getCookie(request, "accessToken");
 
-        if(token == null || !jwtTokenProvider.validateToken(token)) {
+        if (cookie.isEmpty()) {
+            throw new BaseException(AuthExceptionCode.INVALID_ACCESS_TOKEN);
+        }
+
+        String token = cookie.get().getValue();
+
+        if (token == null || !jwtTokenProvider.validateToken(token)) {
             throw new BaseException(AuthExceptionCode.INVALID_ACCESS_TOKEN);
         }
 
@@ -56,20 +64,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 claims.getSubject(),
-                null, List.of(new SimpleGrantedAuthority(claims.get("role", String.class)))
+                null,
+                List.of(new SimpleGrantedAuthority(claims.get("role", String.class)))
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
         filterChain.doFilter(request, response);
-    }
-
-    private String getTokenFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
     }
 
     @Override

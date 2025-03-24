@@ -67,7 +67,7 @@ public class AuthService {
         String newRefreshToken = jwtTokenProvider.generateRefreshToken(user);
 
         CookieUtil.addCookie(response, "refreshToken", newRefreshToken);
-        response.setHeader("Authorization", "Bearer " + newAccessToken);
+        CookieUtil.addCookie(response, "accessToken", newAccessToken);
 
         return ResponseEntity.ok(signupResponse);
     }
@@ -76,18 +76,18 @@ public class AuthService {
     public ResponseEntity<SignupResponse> signup(SignupRequest signupRequest, HttpServletResponse response) {
         Optional<User> check = userRepository.findByEmail(signupRequest.getEmail());
 
-        if(check.isPresent()) {
+        if (check.isPresent()) {
             throw new BaseException(EmailExceptionCode.ALREADY_EXIST_EMAIL);
         }
 
-        if(!isValidPassword(signupRequest.getPassword())) {
+        if (!isValidPassword(signupRequest.getPassword())) {
             throw new BaseException(AuthExceptionCode.INVALID_PASSWORD_VALUE);
         }
 
         User user = createdUserWithEmail(signupRequest);
 
         try {
-            if(signupRequest.getProfileImage() != null) {
+            if (signupRequest.getProfileImage() != null) {
                 String profileUrl = s3Service.uploadFile(signupRequest.getProfileImage(), Type.PROFILE);
                 user.updateProfileUrl(profileUrl);
                 userRepository.save(user);
@@ -137,11 +137,11 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
-        if(user.getStatus() != Status.ACTIVE) {
+        if (user.getStatus() != Status.ACTIVE) {
             throw new BaseException(AuthExceptionCode.ACCOUNT_NOT_ACTIVE);
         }
 
-        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BaseException(AuthExceptionCode.NO_CORRESPONDING_PASSWORD_VALUE);
         }
 
@@ -153,7 +153,7 @@ public class AuthService {
         String accessToken = jwtTokenProvider.generateAccessToken(user);
 
         CookieUtil.addCookie(response, "refreshToken", refreshToken);
-        response.setHeader("Authorization", "Bearer " + accessToken);
+        CookieUtil.addCookie(response, "accessToken", accessToken);
 
         SignupResponse signupResponse = new SignupResponse(
                 user.getUserId(),
@@ -175,7 +175,7 @@ public class AuthService {
             throw new BaseException(AuthExceptionCode.ACCOUNT_ALREADY_DEACTIVATED);
         }
 
-        if(!isValidPassword(password)) {
+        if (!isValidPassword(password)) {
             throw new BaseException(AuthExceptionCode.INVALID_PASSWORD_VALUE);
         }
 
@@ -187,17 +187,19 @@ public class AuthService {
     public void resetAccessToken(HttpServletRequest request, HttpServletResponse response) {
         User user = getUserFromRefreshToken(request);
         String accessToken = jwtTokenProvider.generateAccessToken(user);
-        response.setHeader("Authorization", "Bearer " + accessToken);
+        CookieUtil.addCookie(response, "accessToken", accessToken);
     }
 
     public void logout(HttpServletResponse response) {
         CookieUtil.deleteCookie(response, "refreshToken");
+        CookieUtil.deleteCookie(response, "accessToken");
     }
 
     @Transactional
     public void secede(HttpServletResponse response, HttpServletRequest request) {
         getUserFromRefreshToken(request);
         CookieUtil.deleteCookie(response, "refreshToken");
+        CookieUtil.deleteCookie(response, "accessToken");
     }
 
     private User getUserFromRefreshToken(HttpServletRequest request) {

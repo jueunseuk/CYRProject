@@ -19,7 +19,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +37,7 @@ public class AuthService {
     private final S3Service s3Service;
 
     @Transactional
-    public ResponseEntity<?> naverLoginOrSignUp(NaverUserRequest request, HttpServletResponse response) {
+    public SignupResponse naverLoginOrSignUp(NaverUserRequest request, HttpServletResponse response) {
         String accessToken = oAuthService.getNaverAccessToken(request.getCode(), request.getState());
         OAuthUserInfoRequest userInfo = oAuthService.getUserInfoFromNaver(accessToken);
 
@@ -69,11 +68,11 @@ public class AuthService {
         CookieUtil.addCookie(response, "refreshToken", newRefreshToken);
         CookieUtil.addCookie(response, "accessToken", newAccessToken);
 
-        return ResponseEntity.ok(signupResponse);
+        return signupResponse;
     }
 
     @Transactional
-    public ResponseEntity<SignupResponse> signup(SignupRequest signupRequest, HttpServletResponse response) {
+    public SignupResponse signup(SignupRequest signupRequest, HttpServletResponse response) {
         Optional<User> check = userRepository.findByEmail(signupRequest.getEmail());
 
         if (check.isPresent()) {
@@ -133,7 +132,7 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    public ResponseEntity<SignupResponse> login(EmailLoginRequest request, HttpServletResponse response) {
+    public SignupResponse login(EmailLoginRequest request, HttpServletResponse response) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
@@ -148,22 +147,20 @@ public class AuthService {
         return generateTokensAndCreateResponse(user, response);
     }
 
-    private ResponseEntity<SignupResponse> generateTokensAndCreateResponse(User user, HttpServletResponse response) {
+    private SignupResponse generateTokensAndCreateResponse(User user, HttpServletResponse response) {
         String refreshToken = jwtTokenProvider.generateRefreshToken(user);
         String accessToken = jwtTokenProvider.generateAccessToken(user);
 
         CookieUtil.addCookie(response, "refreshToken", refreshToken);
         CookieUtil.addCookie(response, "accessToken", accessToken);
 
-        SignupResponse signupResponse = new SignupResponse(
+        return  new SignupResponse(
                 user.getUserId(),
                 user.getProfileUrl(),
                 user.getName(),
                 user.getNickname(),
                 user.getRole()
         );
-
-        return ResponseEntity.ok(signupResponse);
     }
 
     @Transactional

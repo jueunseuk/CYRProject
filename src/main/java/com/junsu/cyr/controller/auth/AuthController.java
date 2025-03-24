@@ -1,10 +1,7 @@
 package com.junsu.cyr.controller.auth;
 
 import com.junsu.cyr.domain.users.Method;
-import com.junsu.cyr.model.auth.EmailLoginRequest;
-import com.junsu.cyr.model.auth.NaverUserRequest;
-import com.junsu.cyr.model.auth.PasswordResetRequest;
-import com.junsu.cyr.model.auth.SignupRequest;
+import com.junsu.cyr.model.auth.*;
 import com.junsu.cyr.model.email.EmailCodeRequest;
 import com.junsu.cyr.model.email.EmailMatchRequest;
 import com.junsu.cyr.response.success.SuccessResponse;
@@ -27,8 +24,8 @@ public class AuthController {
 
     @PostMapping("/naver/callback")
     public ResponseEntity<?> naverLoginOrSignup(@RequestBody NaverUserRequest request, HttpServletResponse response) {
-        authService.naverLoginOrSignUp(request, response);
-        return ResponseEntity.ok(SuccessResponse.success("Success to request naver login or signup"));
+        SignupResponse signupResponse = authService.naverLoginOrSignUp(request, response);
+        return ResponseEntity.ok(signupResponse);
     }
 
     @PostMapping("/email/request")
@@ -58,14 +55,14 @@ public class AuthController {
                                     @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
                                     HttpServletResponse response) {
         SignupRequest request = new SignupRequest(method, name, email, password, nickname, profileImage);
-
-        return authService.signup(request, response);
+        SignupResponse signupResponse = authService.signup(request, response);
+        return ResponseEntity.ok(signupResponse);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody EmailLoginRequest request, HttpServletResponse response) {
-        authService.login(request, response);
-        return ResponseEntity.ok(SuccessResponse.success("login successful"));
+        SignupResponse signupResponse = authService.login(request, response);
+        return ResponseEntity.ok(signupResponse);
     }
 
     @PostMapping("/password/reset")

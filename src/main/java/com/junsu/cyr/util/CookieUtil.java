@@ -40,7 +40,7 @@ public class CookieUtil {
         Cookie cookie = new Cookie(name, null);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
-        cookie.setSecure(false);
+        cookie.setSecure(true);
         cookie.setMaxAge(0);
 
         response.addCookie(cookie);

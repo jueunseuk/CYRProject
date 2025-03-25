@@ -196,7 +196,6 @@ public class AuthService {
 
     @Transactional
     public void secede(HttpServletResponse response, HttpServletRequest request) {
-        getUserFromRefreshToken(request);
         CookieUtil.deleteCookie(response, "refreshToken");
         CookieUtil.deleteCookie(response, "accessToken");
     }

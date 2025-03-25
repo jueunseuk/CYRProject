@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 public class ExperienceLogId extends BaseTime implements Serializable {
     @Column(name = "user_id", nullable = false)
     private Integer userId;

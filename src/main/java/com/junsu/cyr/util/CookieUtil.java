@@ -42,7 +42,7 @@ public class CookieUtil {
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setMaxAge(0);
-
+        cookie.setAttribute("SameSite", "None");
         response.addCookie(cookie);
     }
 }

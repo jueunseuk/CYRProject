@@ -59,6 +59,7 @@ public class AuthService {
                 user.getProfileUrl(),
                 user.getName(),
                 user.getNickname(),
+                user.getCreatedAt(),
                 user.getRole()
         );
 
@@ -159,6 +160,7 @@ public class AuthService {
                 user.getProfileUrl(),
                 user.getName(),
                 user.getNickname(),
+                user.getCreatedAt(),
                 user.getRole()
         );
     }

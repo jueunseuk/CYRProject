@@ -1,5 +1,5 @@
 package com.junsu.cyr.domain.boards;
 
 public enum Permission {
-    MANAGER, ADMIN;
+    GUEST, MEMBER, MANAGER, ADMIN;
 }

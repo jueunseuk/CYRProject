@@ -1,4 +1,4 @@
-package com.junsu.cyr.service.post;
+package com.junsu.cyr.service.board;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

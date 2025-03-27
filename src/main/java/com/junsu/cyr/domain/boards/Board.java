@@ -21,9 +21,17 @@ public class Board {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "korean", nullable = false)
+    private String korean;
+
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "permission", nullable = false)
-    private Permission permission;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "read_permission", nullable = false)
+    private Permission readPermission;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "write_permission", nullable = false)
+    private Permission writePermission;
 }

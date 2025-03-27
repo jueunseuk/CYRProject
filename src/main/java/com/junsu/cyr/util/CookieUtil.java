@@ -23,7 +23,7 @@ public class CookieUtil {
                 name, value, cookieMaxAge
         );
 
-        response.setHeader("Set-Cookie", cookieHeader);
+        response.addHeader("Set-Cookie", cookieHeader);
     }
 
     public static Optional<Cookie> getCookie(HttpServletRequest request, String name) {

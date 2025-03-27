@@ -22,26 +22,37 @@ public class PostService {
     private final PostRepository postRepository;
     private final EntityManager entityManager;
 
-    public PostResponse getPost(Integer boardId, Long postId) {
+    public PostResponse getPost(Long postId) {
         Post post = postRepository.findByPostId(postId)
                 .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
         return new PostResponse(post);
     }
 
-    public Page<PostListResponse> getPosts(Integer boardId, PostSearchConditionRequest condition) {
+    public Page<PostListResponse> getAllPosts(PostSearchConditionRequest request) {
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), Sort.by(request.getSort()).descending());
+
+        Page<Post> posts = postRepository.findAllNew(9, 17, pageable);
+
+        return posts.map(PostListResponse::new);
+    }
+
+    public Page<PostListResponse> getPosts(PostSearchConditionRequest condition) {
         String jpql = getCondition(condition);
 
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), Sort.by(condition.getSort()).descending());
 
         TypedQuery<Post> query = entityManager.createQuery(jpql, Post.class);
-        query.setParameter("boardId", boardId);
+
+        if(condition.getBoardId() != null) {
+            query.setParameter("boardId", condition.getBoardId());
+        }
 
         if(condition.getTitle() != null && !condition.getTitle().isEmpty()) {
             query.setParameter("title", "%"+condition.getTitle()+"%");
         }
 
-        if(condition.getUserId() != null && !condition.getUserId().isEmpty()) {
-            query.setParameter("userId", "%"+condition.getUserId()+"%");
+        if(condition.getUserNickname() != null && !condition.getUserNickname().isEmpty()) {
+            query.setParameter("nickname", condition.getUserNickname()+"%");
         }
 
         if(condition.getStart() != null && condition.getEnd() != null) {
@@ -56,14 +67,17 @@ public class PostService {
 
         String countJpql = jpql.replaceFirst("SELECT p", "SELECT COUNT(p)");
         TypedQuery<Long> countQuery = entityManager.createQuery(countJpql, Long.class);
-        countQuery.setParameter("boardId", boardId);
+
+        if(condition.getBoardId() != null) {
+            query.setParameter("boardId", condition.getBoardId());
+        }
 
         if(condition.getTitle() != null && !condition.getTitle().isEmpty()) {
             countQuery.setParameter("title", "%"+condition.getTitle()+"%");
         }
 
-        if(condition.getUserId() != null && !condition.getUserId().isEmpty()) {
-            countQuery.setParameter("userId", "%"+condition.getUserId()+"%");
+        if(condition.getUserNickname() != null && !condition.getUserNickname().isEmpty()) {
+            countQuery.setParameter("nickname", condition.getUserNickname()+"%");
         }
 
         if(condition.getStart() != null && condition.getEnd() != null) {
@@ -81,14 +95,18 @@ public class PostService {
     }
 
     private static String getCondition(PostSearchConditionRequest condition) {
-        StringBuilder jpql = new StringBuilder("SELECT p FROM Post p WHERE p.board.id = :boardId");
+        StringBuilder jpql = new StringBuilder("SELECT p FROM Post p WHERE 1=1");
+
+        if (condition.getBoardId() != null) {
+            jpql.append(" AND p.board.boardId = :boardId");
+        }
 
         if(condition.getTitle() != null && !condition.getTitle().isEmpty()) {
             jpql.append(" AND p.title LIKE :title");
         }
 
-        if(condition.getUserId() != null && !condition.getUserId().isEmpty()) {
-            jpql.append(" AND p.userId LIKE :userId");
+        if(condition.getUserNickname() != null && !condition.getUserNickname().isEmpty()) {
+            jpql.append(" AND p.userId.nickname LIKE :nickname");
         }
 
         if(condition.getStart() != null && condition.getEnd() != null) {

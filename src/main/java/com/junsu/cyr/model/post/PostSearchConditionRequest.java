@@ -6,8 +6,9 @@ import java.time.LocalDateTime;
 
 @Data
 public class PostSearchConditionRequest {
+    private Integer boardId;
     private String title;
-    private String userId;
+    private String userNickname;
     private LocalDateTime start;
     private LocalDateTime end;
 

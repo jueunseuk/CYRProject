@@ -54,22 +54,7 @@ public class AuthService {
             user = createUserWithOAuth(userInfo);
         }
 
-        SignupResponse signupResponse = new SignupResponse(
-                user.getUserId(),
-                user.getProfileUrl(),
-                user.getName(),
-                user.getNickname(),
-                user.getCreatedAt(),
-                user.getRole()
-        );
-
-        String newAccessToken = jwtTokenProvider.generateAccessToken(user);
-        String newRefreshToken = jwtTokenProvider.generateRefreshToken(user);
-
-        CookieUtil.addCookie(response, "refreshToken", newRefreshToken);
-        CookieUtil.addCookie(response, "accessToken", newAccessToken);
-
-        return signupResponse;
+        return generateTokensAndCreateResponse(user, response);
     }
 
     @Transactional
@@ -103,6 +88,7 @@ public class AuthService {
         User user = User.builder()
                 .email(signupRequest.getEmail())
                 .name(signupRequest.getName())
+                .nickname(signupRequest.getNickname() == null ? signupRequest.getName() : signupRequest.getNickname())
                 .password(passwordEncoder.encode(signupRequest.getPassword()))
                 .passwordUpdatedAt(LocalDateTime.now())
                 .nickname(signupRequest.getNickname())
@@ -121,6 +107,7 @@ public class AuthService {
         User user = User.builder()
                 .email(userInfo.getEmail())
                 .name(userInfo.getName())
+                .nickname(userInfo.getName())
                 .role(Role.GUEST)
                 .profileUrl(userInfo.getProfileImageUrl())
                 .status(Status.ACTIVE)

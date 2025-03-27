@@ -14,6 +14,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -41,13 +42,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Optional<Cookie> cookie = cookieUtil.getCookie(request, "accessToken");
 
         if (cookie.isEmpty()) {
-            throw new BaseException(AuthExceptionCode.NOT_EXISTS_ACCESS_TOKEN);
+            throw new AuthenticationCredentialsNotFoundException("not exist access token");
         }
 
         String token = cookie.get().getValue();
 
         if (token == null || !jwtTokenProvider.validateToken(token)) {
-            throw new BaseException(AuthExceptionCode.INVALID_ACCESS_TOKEN);
+            throw new AuthenticationCredentialsNotFoundException("not valid access token");
         }
 
         Claims claims = jwtTokenProvider.parseClaims(token);

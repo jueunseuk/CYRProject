@@ -19,7 +19,8 @@ public enum AuthExceptionCode implements ExceptionCode {
     NOT_AUTHENTICATED_USER("AUTH_009", "인증을 받지 않은 사용자입니다.", HttpStatus.UNAUTHORIZED),
     INVALID_NAVER_AUTH_CODE("AUTH_010", "유효하지 않은 네이버 인증 코드입니다.", HttpStatus.UNAUTHORIZED),
     FAILED_TO_FETCH_USER_INFO("AUTH_011", "네이버에서 사용자 정보를 불러오는 데 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
-    NO_CORRESPONDING_NAVER_STATE("AUTH_-12", "네이버 State 값이 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
+    NO_CORRESPONDING_NAVER_STATE("AUTH_012", "네이버 State 값이 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
+    NOT_EXISTS_ACCESS_TOKEN("AUTH_013", "액세스 토큰이 존재하지 않습니다.", HttpStatus.UNAUTHORIZED),
     ;
 
     private final String code;

@@ -11,9 +11,9 @@ public class PostListResponse {
     private Long postId;
     private String title;
     private Integer boardId;
-    private String boardName;
+    private String boardKorean;
     private Integer userId;
-    private String userName;
+    private String userNickname;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Long viewCnt;
@@ -25,9 +25,9 @@ public class PostListResponse {
         this.postId = post.getPostId();
         this.title = post.getTitle();
         this.boardId = post.getBoard().getBoardId();
-        this.boardName = post.getBoard().getName();
+        this.boardKorean = post.getBoard().getKorean();
         this.userId = post.getUser().getUserId();
-        this.userName = post.getUser().getName();
+        this.userNickname = post.getUser().getNickname();
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
         this.viewCnt = post.getViewCnt();

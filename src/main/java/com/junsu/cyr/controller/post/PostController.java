@@ -11,22 +11,32 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/board/{boardId}")
+@RequestMapping("/posts")
 public class PostController {
 
     private final PostService postService;
 
-    @GetMapping("/post/{postId}")
-    public ResponseEntity<PostResponse> getPost(@PathVariable Integer boardId,
-                                                @PathVariable Long postId) {
-        PostResponse postResponse = postService.getPost(boardId, postId);
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostResponse> getPost(@PathVariable Long postId) {
+        PostResponse postResponse = postService.getPost(postId);
         return ResponseEntity.ok(postResponse);
     }
 
-    @GetMapping("/posts")
-    public ResponseEntity<Page<PostListResponse>> getPosts(@PathVariable Integer boardId,
-                                                           @ModelAttribute PostSearchConditionRequest searchConditionRequest) {
-        Page<PostListResponse> postListResponses = postService.getPosts(boardId, searchConditionRequest);
+    @GetMapping("/new")
+    public ResponseEntity<Page<PostListResponse>> getAllPosts(@ModelAttribute PostSearchConditionRequest searchConditionRequest) {
+        Page<PostListResponse> postListResponses = postService.getAllPosts(searchConditionRequest);
+        return ResponseEntity.ok(postListResponses);
+    }
+
+    @GetMapping("/popular")
+    public ResponseEntity<Page<PostListResponse>> getPopularPosts(@ModelAttribute PostSearchConditionRequest searchConditionRequest) {
+        Page<PostListResponse> postListResponses = postService.getAllPosts(searchConditionRequest);
+        return ResponseEntity.ok(postListResponses);
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<Page<PostListResponse>> getPosts(@ModelAttribute PostSearchConditionRequest searchConditionRequest) {
+        Page<PostListResponse> postListResponses = postService.getPosts(searchConditionRequest);
         return ResponseEntity.ok(postListResponses);
     }
 

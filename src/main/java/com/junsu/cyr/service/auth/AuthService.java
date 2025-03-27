@@ -54,22 +54,7 @@ public class AuthService {
             user = createUserWithOAuth(userInfo);
         }
 
-        SignupResponse signupResponse = new SignupResponse(
-                user.getUserId(),
-                user.getProfileUrl(),
-                user.getName(),
-                user.getNickname(),
-                user.getCreatedAt(),
-                user.getRole()
-        );
-
-        String newAccessToken = jwtTokenProvider.generateAccessToken(user);
-        String newRefreshToken = jwtTokenProvider.generateRefreshToken(user);
-
-        CookieUtil.addCookie(response, "refreshToken", newRefreshToken);
-        CookieUtil.addCookie(response, "accessToken", newAccessToken);
-
-        return signupResponse;
+        return generateTokensAndCreateResponse(user, response);
     }
 
     @Transactional

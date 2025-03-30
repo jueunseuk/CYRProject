@@ -74,7 +74,7 @@ public class User extends BaseTime {
     private Long cheerCnt;
 
     @Column(name = "user_deleted_at")
-    private LocalDateTime userDeletedAt;
+    private LocalDateTime deletedAt;
 
     public void updatePassword(String password) {
         this.password = password;
@@ -87,6 +87,6 @@ public class User extends BaseTime {
 
     public void updateToSecession() {
         this.status = Status.SECESSION;
-        this.userDeletedAt = LocalDateTime.now();
+        this.deletedAt = LocalDateTime.now();
     }
 }

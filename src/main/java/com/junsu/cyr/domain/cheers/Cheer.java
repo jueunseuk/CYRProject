@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Builder
 @Getter
@@ -26,4 +28,12 @@ public class Cheer extends BaseTime {
 
     @Column(name = "sum")
     private Long sum;
+
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
+
+    public void updateCheer() {
+        this.updatedAt = LocalDateTime.now();
+        this.sum += 1;
+    }
 }

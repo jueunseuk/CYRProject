@@ -9,8 +9,8 @@ public class PostSearchConditionRequest {
     private Integer boardId;
     private String title;
     private String userNickname;
-    private LocalDateTime start;
-    private LocalDateTime end;
+    private String start;
+    private String end;
 
     private Integer page = 0;
     private Integer size = 20;

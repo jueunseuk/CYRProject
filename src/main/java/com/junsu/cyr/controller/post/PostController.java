@@ -30,7 +30,7 @@ public class PostController {
 
     @GetMapping("/popular")
     public ResponseEntity<Page<PostListResponse>> getPopularPosts(@ModelAttribute PostSearchConditionRequest searchConditionRequest) {
-        Page<PostListResponse> postListResponses = postService.getAllPosts(searchConditionRequest);
+        Page<PostListResponse> postListResponses = postService.getPopularPosts(searchConditionRequest);
         return ResponseEntity.ok(postListResponses);
     }
 

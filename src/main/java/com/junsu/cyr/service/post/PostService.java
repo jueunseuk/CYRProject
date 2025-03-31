@@ -84,7 +84,7 @@ public class PostService {
         TypedQuery<Long> countQuery = entityManager.createQuery(countJpql, Long.class);
 
         if(condition.getBoardId() != null) {
-            query.setParameter("boardId", condition.getBoardId());
+            countQuery.setParameter("boardId", condition.getBoardId());
         }
 
         if(condition.getTitle() != null && !condition.getTitle().isEmpty()) {

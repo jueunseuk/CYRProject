@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -28,10 +29,24 @@ public class PostService {
         return new PostResponse(post);
     }
 
-    public Page<PostListResponse> getAllPosts(PostSearchConditionRequest request) {
-        Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), Sort.by(request.getSort()).descending());
+    public Page<PostListResponse> getAllPosts(PostSearchConditionRequest condition) {
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), Sort.by(condition.getSort()).descending());
 
         Page<Post> posts = postRepository.findAllNew(9, 17, pageable);
+
+        return posts.map(PostListResponse::new);
+    }
+
+    public Page<PostListResponse> getPopularPosts(PostSearchConditionRequest condition) {
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), Sort.by(condition.getSort()).descending());
+
+        Page<Post> posts = postRepository.findPopularPostsWithinDates(
+                9,
+                17,
+                LocalDateTime.parse(condition.getStart()),
+                LocalDateTime.parse(condition.getEnd()),
+                pageable
+        );
 
         return posts.map(PostListResponse::new);
     }

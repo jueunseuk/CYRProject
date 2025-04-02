@@ -3,10 +3,7 @@ package com.junsu.cyr.controller.cheer;
 import com.junsu.cyr.service.service.CheerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -14,6 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class CheerController {
 
     private final CheerService cheerService;
+
+    @GetMapping("")
+    public ResponseEntity<?> getTotalCheer() {
+        Long totalCheer = cheerService.getTotalCheer();
+        return ResponseEntity.ok(totalCheer);
+    }
 
     @PatchMapping("/update")
     public ResponseEntity<?> updateCheer(@RequestAttribute Integer userId) {

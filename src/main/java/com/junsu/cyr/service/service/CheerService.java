@@ -20,6 +20,11 @@ public class CheerService {
     private final CheerRepository cheerRepository;
     private final UserService userService;
 
+    public Long getTotalCheer() {
+        Long totalCheer = cheerRepository.sumCheer();
+        return totalCheer;
+    }
+
     @Transactional
     public void updateCheer(Integer userId) {
         User user = userService.getUserById(userId);

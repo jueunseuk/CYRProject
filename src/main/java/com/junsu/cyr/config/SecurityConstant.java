@@ -28,6 +28,7 @@ public class SecurityConstant {
             "/auth/naver/callback",
             "/posts/new",
             "/posts/popular",
-            "/posts/list"
+            "/posts/list",
+            "/cheer"
     );
 }

@@ -23,7 +23,7 @@ public class Cheer extends BaseTime {
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user")
     private User user;
 
     @Column(name = "sum")

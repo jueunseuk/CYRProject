@@ -19,7 +19,7 @@ public class PollOption {
     private Integer PollOptionId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "poll_id")
+    @JoinColumn(name = "poll")
     private Poll poll;
 
     @Column(name = "content", nullable = false, length = 1000)

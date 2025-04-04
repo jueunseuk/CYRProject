@@ -21,8 +21,8 @@ public class Achievement {
     private Integer achievementId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "achievement_next_id")
-    private Achievement achievementNextId;
+    @JoinColumn(name = "achievement_next")
+    private Achievement achievementNext;
 
     @Column(name = "name", nullable = false, length = 1000)
     private String name;

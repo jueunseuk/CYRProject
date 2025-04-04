@@ -23,11 +23,11 @@ public class Schedule_log extends BaseTime {
     private Long scheduleLogId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "schedule_id")
+    @JoinColumn(name = "schedule")
     private Schedule schedule;
 
     @Column(name = "title", nullable = false, length = 1000)

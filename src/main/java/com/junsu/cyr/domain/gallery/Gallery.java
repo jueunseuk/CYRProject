@@ -1,6 +1,7 @@
-package com.junsu.cyr.domain.polls;
+package com.junsu.cyr.domain.gallery;
 
 import com.junsu.cyr.domain.globals.BaseTime;
+import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.users.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,30 +16,27 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "poll")
-public class Poll extends BaseTime {
+@Table(name = "gallery")
+public class Gallery extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "poll_id", nullable = false)
-    private Integer pollId;
+    @Column(name = "gallery_id", nullable = false)
+    private Long galleryId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user")
     private User user;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private Type type;
+
+    @Column(name = "pictured_at", nullable = false)
+    private LocalDateTime picturedAt;
 
     @Column(name = "title", nullable = false)
     private String title;
 
     @Column(name = "description", nullable = false)
     private String description;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private Status status;
-
-    @Column(name = "closed_at", nullable = false)
-    private LocalDateTime closedAt;
-
-    @Column(name = "result")
-    private Integer result;
 }

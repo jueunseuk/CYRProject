@@ -23,19 +23,19 @@ public class Complaint extends BaseTime {
     private Long complaint_id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "complaint_category_id")
+    @JoinColumn(name = "complaint_category")
     private ComplaintCategory complaintCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reporter_user_id")
+    @JoinColumn(name = "reporter_user")
     private User reporterUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "target_user_id")
+    @JoinColumn(name = "target_user")
     private User targetUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "processor_user_id")
+    @JoinColumn(name = "processor_user")
     private User processorUser;
 
     @Column(name = "reason", nullable = false, length = 1000)

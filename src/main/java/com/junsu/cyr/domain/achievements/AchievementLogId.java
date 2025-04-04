@@ -18,6 +18,6 @@ public class AchievementLogId implements Serializable {
     @Column(name = "user_id")
     private Integer user_id;
 
-    @Column(name = "achievement_id")
-    private Integer achievement_id;
+    @Column(name = "achievement")
+    private Integer achievement;
 }

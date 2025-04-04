@@ -19,6 +19,6 @@ public class PollLog extends BaseTime {
     private PollLogId pollLogId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "poll_option_id")
+    @JoinColumn(name = "poll_option")
     private PollOption pollOption;
 }

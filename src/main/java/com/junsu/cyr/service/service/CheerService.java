@@ -46,7 +46,7 @@ public class CheerService {
             Cheer createCheer = Cheer.builder()
                     .user(user)
                     .sum(0L)
-                    .updatedAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now().minusMinutes(3))
                     .build();
             return cheerRepository.save(createCheer);
         }

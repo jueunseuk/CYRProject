@@ -29,6 +29,7 @@ public class SecurityConstant {
             "/posts/new",
             "/posts/popular",
             "/posts/list",
-            "/cheer"
+            "/cheer",
+            "/gallery"
     );
 }

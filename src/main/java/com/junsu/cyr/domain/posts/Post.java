@@ -24,11 +24,11 @@ public class Post extends BaseTime {
     private Long postId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
+    @JoinColumn(name = "board")
     private Board board;
 
     @Column(name = "title", nullable = false, length = 1000)

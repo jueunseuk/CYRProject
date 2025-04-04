@@ -17,6 +17,6 @@ public class ExperienceLog {
     private ExperienceLogId experienceLogId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "experience_id")
-    private Experience experienceId;
+    @JoinColumn(name = "experience")
+    private Experience experience;
 }

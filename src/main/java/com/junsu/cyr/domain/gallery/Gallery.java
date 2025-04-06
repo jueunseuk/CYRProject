@@ -39,4 +39,10 @@ public class Gallery extends BaseTime {
 
     @Column(name = "description", nullable = false)
     private String description;
+
+    public void updateGallery(String title, String description, LocalDateTime picturedAt) {
+        this.title = title;
+        this.description = description;
+        this.picturedAt = picturedAt;
+    }
 }

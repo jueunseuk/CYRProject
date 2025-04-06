@@ -12,4 +12,7 @@ import java.util.List;
 public interface GalleryImageRepository extends JpaRepository<GalleryImage, Integer> {
     @Query("select gi.url from GalleryImage as gi where gi.gallery.galleryId = :galleryId")
     List<String> findGalleryImageList(Long galleryId);
+
+    @Query("select gi from GalleryImage as gi where gi.gallery.galleryId = :galleryId")
+    List<GalleryImage> findGalleryImage(Long galleryId);
 }

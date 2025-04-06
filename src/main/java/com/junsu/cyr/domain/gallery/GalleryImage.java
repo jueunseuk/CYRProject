@@ -1,13 +1,10 @@
 package com.junsu.cyr.domain.gallery;
 
-import com.junsu.cyr.domain.globals.BaseTime;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Builder
@@ -15,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "gallery_image")
-public class GalleryImage extends BaseTime {
+public class GalleryImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "gallery_image_id", nullable = false)
@@ -30,7 +27,4 @@ public class GalleryImage extends BaseTime {
 
     @Column(name = "sequence", nullable = false)
     private Integer sequence;
-
-    @Column(name = "pictured_at", nullable = false)
-    private LocalDateTime picturedAt;
 }

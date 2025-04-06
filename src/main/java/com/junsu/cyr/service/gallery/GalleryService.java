@@ -23,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class GalleryService {
                 .user(user)
                 .title(request.getTitle())
                 .description(request.getDescription())
-                .picturedAt(request.getPicturedAt())
+                .picturedAt(LocalDateTime.parse(request.getPicturedAt()))
                 .type(request.getType())
                 .build();
 

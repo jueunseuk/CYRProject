@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class GalleryImageRequest {
-    private Integer galleryImageId;
+    private Integer galleryId;
 
     private Integer page = 0;
     private Integer size = 16;

@@ -51,30 +51,7 @@ public class GalleryService {
 
         galleryRepository.save(gallery);
 
-        List<String> imageUrls;
-        try {
-            imageUrls = s3Service.uploadFiles(request.getImages(), Type.CYR);
-        } catch(Exception e) {
-            throw new BaseException(GalleryExceptionCode.NO_EXIST_IMAGE);
-        }
-
-        if(imageUrls.isEmpty()) {
-            throw new BaseException(GalleryExceptionCode.NO_EXIST_IMAGE);
-        }
-
-        List<GalleryImage> galleryImages = new ArrayList<>();
-        for (int i = 0; i < imageUrls.size(); i++) {
-            GalleryImage galleryImage = GalleryImage.builder()
-                    .gallery(gallery)
-                    .url(imageUrls.get(i))
-                    .sequence(i + 1)
-                    .picturedAt(gallery.getPicturedAt())
-                    .build();
-
-            galleryImages.add(galleryImage);
-        }
-
-        galleryImageRepository.saveAll(galleryImages);
+        uploadFileAndCreateGalleryImage(request, gallery);
     }
 
     public Page<GalleryImageResponse> getAllGalleryImages(GalleryImageRequest condition) {
@@ -97,4 +74,68 @@ public class GalleryService {
 
         return new GalleryResponse(gallery, galleryImages);
     }
+
+    @Transactional
+    public void deleteGallery(Long galleryId, Integer userId) {
+        Gallery gallery = galleryRepository.findByGalleryId(galleryId)
+                .orElseThrow(() -> new BaseException(GalleryExceptionCode.NO_EXIST_GALLERY));
+
+        if(gallery.getUser().getUserId().equals(userId)) {
+            throw new BaseException(GalleryExceptionCode.REQUESTED_PERSON_IS_NOT_AUTHOR);
+        }
+
+        List<GalleryImage> galleryImages = galleryImageRepository.findGalleryImage(galleryId);
+
+        galleryImageRepository.deleteAll(galleryImages);
+        galleryRepository.delete(gallery);
+    }
+
+    @Transactional
+    public void updateGallery(Long galleryId, GalleryUploadRequest request, Integer userId) {
+        Gallery gallery = galleryRepository.findByGalleryId(galleryId)
+                .orElseThrow(() -> new BaseException(GalleryExceptionCode.NO_EXIST_GALLERY));
+
+        if (!gallery.getUser().getUserId().equals(userId)) {
+            throw new BaseException(GalleryExceptionCode.REQUESTED_PERSON_IS_NOT_AUTHOR);
+        }
+
+        gallery.updateGallery(
+            request.getTitle(),
+            request.getDescription(),
+            LocalDateTime.parse(request.getPicturedAt())
+        );
+
+        List<GalleryImage> oldImages = galleryImageRepository.findGalleryImage(galleryId);
+        galleryImageRepository.deleteAll(oldImages);
+
+        uploadFileAndCreateGalleryImage(request, gallery);
+    }
+
+    private void uploadFileAndCreateGalleryImage(GalleryUploadRequest request, Gallery gallery) {
+        List<String> imageUrls;
+        try {
+            imageUrls = s3Service.uploadFiles(request.getImages(), Type.CYR);
+        } catch (Exception e) {
+            throw new BaseException(GalleryExceptionCode.NO_EXIST_IMAGE);
+        }
+
+        if (imageUrls.isEmpty()) {
+            throw new BaseException(GalleryExceptionCode.NO_EXIST_IMAGE);
+        }
+
+        List<GalleryImage> newImages = new ArrayList<>();
+        for (int i = 0; i < imageUrls.size(); i++) {
+            GalleryImage galleryImage = GalleryImage.builder()
+                    .gallery(gallery)
+                    .url(imageUrls.get(i))
+                    .sequence(i + 1)
+                    .picturedAt(gallery.getPicturedAt())
+                    .build();
+
+            newImages.add(galleryImage);
+        }
+
+        galleryImageRepository.saveAll(newImages);
+    }
+
 }

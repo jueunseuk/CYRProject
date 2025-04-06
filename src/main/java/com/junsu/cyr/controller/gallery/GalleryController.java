@@ -35,4 +35,16 @@ public class GalleryController {
         return ResponseEntity.ok(galleryResponse);
     }
 
+    @DeleteMapping("/{galleryId}")
+    public ResponseEntity<?> deleteGallery(@PathVariable Long galleryId, @RequestAttribute Integer userId) {
+        galleryService.deleteGallery(galleryId, userId);
+        return ResponseEntity.ok("success to delete gallery");
+    }
+
+    @PatchMapping("/{galleryId}")
+    public ResponseEntity<?> updateGallery(@ModelAttribute GalleryUploadRequest galleryUploadRequest, @PathVariable Long galleryId, @RequestAttribute Integer userId) {
+        galleryService.updateGallery(galleryId, galleryUploadRequest, userId);
+        return ResponseEntity.ok("success to update gallery");
+    }
+
 }

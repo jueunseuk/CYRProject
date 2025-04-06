@@ -68,6 +68,7 @@ public class GalleryService {
                     .gallery(gallery)
                     .url(imageUrls.get(i))
                     .sequence(i + 1)
+                    .picturedAt(gallery.getPicturedAt())
                     .build();
 
             galleryImages.add(galleryImage);

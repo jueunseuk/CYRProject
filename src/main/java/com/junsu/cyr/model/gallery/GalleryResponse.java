@@ -4,13 +4,13 @@ import com.junsu.cyr.domain.gallery.Gallery;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
 public class GalleryResponse {
     private Long galleryId;
     private String author;
+    private Integer authorId;
     private String profileImageUrl;
     private String title;
     private String description;
@@ -20,7 +20,8 @@ public class GalleryResponse {
 
     public GalleryResponse(Gallery gallery, List<String> imageUrls) {
         this.galleryId = gallery.getGalleryId();
-        this.author = gallery.getUser().getName();
+        this.author = gallery.getUser().getNickname();
+        this.authorId = gallery.getUser().getUserId();
         this.profileImageUrl = gallery.getUser().getProfileUrl();
         this.title = gallery.getTitle();
         this.description = gallery.getDescription();

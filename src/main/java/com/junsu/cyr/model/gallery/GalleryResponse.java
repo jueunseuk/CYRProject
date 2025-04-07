@@ -20,7 +20,7 @@ public class GalleryResponse {
 
     public GalleryResponse(Gallery gallery, List<String> imageUrls) {
         this.galleryId = gallery.getGalleryId();
-        this.author = gallery.getUser().getName();
+        this.author = gallery.getUser().getNickname();
         this.authorId = gallery.getUser().getUserId();
         this.profileImageUrl = gallery.getUser().getProfileUrl();
         this.title = gallery.getTitle();

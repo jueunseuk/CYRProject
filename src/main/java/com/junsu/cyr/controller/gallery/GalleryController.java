@@ -41,7 +41,7 @@ public class GalleryController {
         return ResponseEntity.ok("success to delete gallery");
     }
 
-    @PatchMapping("/{galleryId}")
+    @PutMapping("/{galleryId}")
     public ResponseEntity<?> updateGallery(@ModelAttribute GalleryUploadRequest galleryUploadRequest, @PathVariable Long galleryId, @RequestAttribute Integer userId) {
         galleryService.updateGallery(galleryId, galleryUploadRequest, userId);
         return ResponseEntity.ok("success to update gallery");

@@ -1,9 +1,6 @@
 package com.junsu.cyr.controller.gallery;
 
-import com.junsu.cyr.model.gallery.GalleryImageRequest;
-import com.junsu.cyr.model.gallery.GalleryImageResponse;
-import com.junsu.cyr.model.gallery.GalleryResponse;
-import com.junsu.cyr.model.gallery.GalleryUploadRequest;
+import com.junsu.cyr.model.gallery.*;
 import com.junsu.cyr.service.gallery.GalleryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

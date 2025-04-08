@@ -4,10 +4,7 @@ import com.junsu.cyr.domain.gallery.Gallery;
 import com.junsu.cyr.domain.gallery.GalleryImage;
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.users.User;
-import com.junsu.cyr.model.gallery.GalleryImageRequest;
-import com.junsu.cyr.model.gallery.GalleryImageResponse;
-import com.junsu.cyr.model.gallery.GalleryResponse;
-import com.junsu.cyr.model.gallery.GalleryUploadRequest;
+import com.junsu.cyr.model.gallery.*;
 import com.junsu.cyr.repository.GalleryImageRepository;
 import com.junsu.cyr.repository.GalleryRepository;
 import com.junsu.cyr.repository.UserRepository;
@@ -51,7 +48,7 @@ public class GalleryService {
 
         galleryRepository.save(gallery);
 
-        uploadFileAndCreateGalleryImage(request, gallery);
+        uploadFileAndCreateGalleryImage(request, gallery, 0);
     }
 
     public Page<GalleryImageResponse> getAllGalleryImages(GalleryImageRequest condition) {
@@ -80,7 +77,7 @@ public class GalleryService {
         Gallery gallery = galleryRepository.findByGalleryId(galleryId)
                 .orElseThrow(() -> new BaseException(GalleryExceptionCode.NO_EXIST_GALLERY));
 
-        if(gallery.getUser().getUserId().equals(userId)) {
+        if(!gallery.getUser().getUserId().equals(userId)) {
             throw new BaseException(GalleryExceptionCode.REQUESTED_PERSON_IS_NOT_AUTHOR);
         }
 
@@ -106,12 +103,17 @@ public class GalleryService {
         );
 
         List<GalleryImage> oldImages = galleryImageRepository.findGalleryImage(galleryId);
-        galleryImageRepository.deleteAll(oldImages);
+        List<GalleryImage> toDelete = oldImages.stream()
+                .filter(img -> !request.getOriginalImages().contains(img.getUrl()))
+                .toList();
+        galleryImageRepository.deleteAll(toDelete);
 
-        uploadFileAndCreateGalleryImage(request, gallery);
+        if (request.getImages() != null && !request.getImages().isEmpty()) {
+            uploadFileAndCreateGalleryImage(request, gallery, request.getOriginalImages().size());
+        }
     }
 
-    private void uploadFileAndCreateGalleryImage(GalleryUploadRequest request, Gallery gallery) {
+    private void uploadFileAndCreateGalleryImage(GalleryUploadRequest request, Gallery gallery, Integer startSequence) {
         List<String> imageUrls;
         try {
             imageUrls = s3Service.uploadFiles(request.getImages(), Type.CYR);
@@ -128,7 +130,7 @@ public class GalleryService {
             GalleryImage galleryImage = GalleryImage.builder()
                     .gallery(gallery)
                     .url(imageUrls.get(i))
-                    .sequence(i + 1)
+                    .sequence(startSequence + i + 1)
                     .picturedAt(gallery.getPicturedAt())
                     .build();
 

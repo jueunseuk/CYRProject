@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -63,10 +62,8 @@ public class AttendanceService {
 
     public List<AttendanceListResponse> getAttendanceList() {
         LocalDate today = LocalDate.now();
-        LocalDateTime start = today.atStartOfDay();
-        LocalDateTime end = today.plusDays(1).atStartOfDay();
 
-        List<Attendance> attendanceList = attendanceRepository.findTodayAttendance(start, end);
+        List<Attendance> attendanceList = attendanceRepository.findTodayAttendance(today);
 
         return attendanceList.stream()
                 .map(att -> {

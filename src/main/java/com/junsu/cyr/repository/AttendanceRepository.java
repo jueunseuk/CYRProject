@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,8 +15,8 @@ import java.util.Optional;
 public interface AttendanceRepository extends JpaRepository<Attendance, AttendanceId> {
     Optional<Attendance> findByAttendanceId(AttendanceId attendanceId);
 
-    @Query("select a from Attendance a where a.attendanceId.attendedAt between :start and :end order by a.attendanceId.attendedAt desc")
-    List<Attendance> findTodayAttendance(LocalDateTime start, LocalDateTime end);
+    @Query("select a from Attendance a where a.attendanceId.attendedAt = :today order by a.createdAt desc")
+    List<Attendance> findTodayAttendance(LocalDate today);
 
     @Query("SELECT a.attendanceId.attendedAt AS date, COUNT(a) AS count " +
             "FROM Attendance a " +

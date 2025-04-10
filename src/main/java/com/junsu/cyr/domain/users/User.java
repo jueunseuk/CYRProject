@@ -89,4 +89,8 @@ public class User extends BaseTime {
         this.status = Status.SECESSION;
         this.deletedAt = LocalDateTime.now();
     }
+
+    public void updateAttendanceCnt() {
+        this.attendanceCnt++;
+    }
 }

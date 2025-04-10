@@ -45,7 +45,7 @@ public class AttendanceService {
     }
 
     public void createAttendance(AttendanceId attendanceId, AttendanceRequest request) {
-        if(request.getComment() == null) {
+        if(request.getComment() == null || request.getComment().isEmpty()) {
             throw new BaseException(AttendanceExceptionCode.CONTENT_DOES_NOT_EXISTS);
         }
 

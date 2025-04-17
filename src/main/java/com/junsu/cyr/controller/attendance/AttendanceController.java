@@ -18,7 +18,7 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
 
     @PostMapping("")
-    public ResponseEntity<?> makeAttendance(@RequestAttribute Integer userId, AttendanceRequest request) {
+    public ResponseEntity<?> makeAttendance(@RequestAttribute Integer userId, @RequestBody AttendanceRequest request) {
         attendanceService.makeAttendance(userId, request);
         return ResponseEntity.ok("success to make attendance");
     }

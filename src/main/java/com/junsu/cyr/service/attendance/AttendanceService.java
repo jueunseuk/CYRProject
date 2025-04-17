@@ -3,6 +3,7 @@ package com.junsu.cyr.service.attendance;
 import com.junsu.cyr.domain.attendances.Attendance;
 import com.junsu.cyr.domain.attendances.AttendanceId;
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.model.attendance.AttendanceDailyCount;
 import com.junsu.cyr.model.attendance.AttendanceListResponse;
 import com.junsu.cyr.model.attendance.AttendanceRequest;
 import com.junsu.cyr.model.attendance.AttendanceWeekCntResponse;
@@ -16,8 +17,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -42,10 +45,11 @@ public class AttendanceService {
                 .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
         user.updateAttendanceCnt();
+        userRepository.save(user);
     }
 
     public void createAttendance(AttendanceId attendanceId, AttendanceRequest request) {
-        if(request.getComment() == null) {
+        if(request.getComment() == null || request.getComment().isEmpty()) {
             throw new BaseException(AttendanceExceptionCode.CONTENT_DOES_NOT_EXISTS);
         }
 
@@ -59,10 +63,8 @@ public class AttendanceService {
 
     public List<AttendanceListResponse> getAttendanceList() {
         LocalDate today = LocalDate.now();
-        LocalDateTime start = today.atStartOfDay();
-        LocalDateTime end = today.plusDays(1).atStartOfDay();
 
-        List<Attendance> attendanceList = attendanceRepository.findTodayAttendance(start, end);
+        List<Attendance> attendanceList = attendanceRepository.findTodayAttendance(today);
 
         return attendanceList.stream()
                 .map(att -> {
@@ -77,7 +79,9 @@ public class AttendanceService {
 
     public AttendanceWeekCntResponse getAttendanceCnt() {
         LocalDate now = LocalDate.now();
-        LocalDate thisWeekStart = now.with(DayOfWeek.SUNDAY);
+
+        LocalDate thisWeekStart = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        LocalDate thisWeekEnd   = thisWeekStart.plusDays(6);
 
         LocalDate thisMonthStart = now.withDayOfMonth(1);
         LocalDate thisMonthEnd = now.withDayOfMonth(now.lengthOfMonth());
@@ -88,24 +92,36 @@ public class AttendanceService {
         LocalDate lastWeekStart = thisWeekStart.minusWeeks(1);
         LocalDate lastWeekEnd = thisWeekStart.minusDays(1);
 
-        Integer thisMonth = attendanceRepository.findMonthlyAttendance(thisMonthStart, thisMonthEnd);
-        Integer lastMonth = attendanceRepository.findMonthlyAttendance(lastMonthStart, lastMonthEnd);
-        Integer lastWeek = attendanceRepository.findAttendanceCntBetween(lastWeekStart, lastWeekEnd);
+        Integer thisMonth = attendanceRepository.findAttendanceCnt(thisMonthStart, thisMonthEnd);
+        Integer lastMonth = attendanceRepository.findAttendanceCnt(lastMonthStart, lastMonthEnd);
+        Integer thisWeek = attendanceRepository.findAttendanceCnt(thisWeekStart, thisWeekEnd);
+        Integer lastWeek = attendanceRepository.findAttendanceCnt(lastWeekStart, lastWeekEnd);
 
-        List<Integer> weeksCnt = attendanceRepository.findWeeklyAttendanceByDay(thisWeekStart, now);
+        List<AttendanceDailyCount> weeksCnt = attendanceRepository.findWeeklyAttendanceByDay(thisWeekStart, thisWeekEnd);
 
-        Integer thisWeek = sumThisWeek(weeksCnt);
+        Map<String, Integer> listByDay = convertToWeekMap(weeksCnt);
 
-        return new AttendanceWeekCntResponse(thisMonth, lastMonth, thisWeek, lastWeek, weeksCnt);
+        return new AttendanceWeekCntResponse(thisMonth, lastMonth, thisWeek, lastWeek, listByDay);
     }
 
-    public Integer sumThisWeek(List<Integer> list) {
-        Integer sum = 0;
-        for(Integer out : list) {
-            sum += out;
+    public Map<String, Integer> convertToWeekMap(List<AttendanceDailyCount> weekCounts) {
+        Map<String, Integer> weekMap = new LinkedHashMap<>();
+
+        weekMap.put("sunday", 0);
+        weekMap.put("monday", 0);
+        weekMap.put("tuesday", 0);
+        weekMap.put("wednesday", 0);
+        weekMap.put("thursday", 0);
+        weekMap.put("friday", 0);
+        weekMap.put("saturday", 0);
+
+        for (AttendanceDailyCount count : weekCounts) {
+            DayOfWeek dayOfWeek = count.getDate().getDayOfWeek();
+            String key = dayOfWeek.name().toLowerCase();
+            weekMap.put(key, count.getCount());
         }
 
-        return sum;
+        return weekMap;
     }
 
 }

@@ -1,19 +1,19 @@
 package com.junsu.cyr.service.post;
 
+import com.junsu.cyr.domain.boards.Board;
 import com.junsu.cyr.domain.posts.Post;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.post.*;
 import com.junsu.cyr.repository.PostRepository;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.PostExceptionCode;
+import com.junsu.cyr.service.board.BoardService;
 import com.junsu.cyr.service.user.UserService;
-import com.junsu.cyr.util.HtmlSanitizer;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,6 +24,7 @@ public class PostService {
 
     private final UserService userService;
     private final PostRepository postRepository;
+    private final BoardService boardService;
     private final EntityManager entityManager;
 
     public PostResponse getPost(Long postId) {
@@ -142,6 +143,8 @@ public class PostService {
     public PostUploadResponse uploadPost(PostUploadRequest request, Integer userId) {
         User user = userService.getUserById(userId);
 
+        Board board = boardService.findBoardByBoardId(Integer.parseInt(request.getBoardId()));
+
         if(request.getContent() == null){
             throw new BaseException(PostExceptionCode.CONTENT_IS_EMPTY);
         }
@@ -149,7 +152,7 @@ public class PostService {
         Post post = Post.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
-                .board(request.getBoard())
+                .board(board)
                 .user(user)
                 .viewCnt(1L)
                 .commentCnt(0L)

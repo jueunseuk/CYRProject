@@ -1,12 +1,16 @@
 package com.junsu.cyr.service.post;
 
 import com.junsu.cyr.domain.posts.Post;
+import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.post.PostListResponse;
 import com.junsu.cyr.model.post.PostResponse;
 import com.junsu.cyr.model.post.PostSearchConditionRequest;
+import com.junsu.cyr.model.post.PostUploadRequest;
 import com.junsu.cyr.repository.PostRepository;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.PostExceptionCode;
+import com.junsu.cyr.service.user.UserService;
+import com.junsu.cyr.util.HtmlSanitizer;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostService {
 
+    private final UserService userService;
     private final PostRepository postRepository;
     private final EntityManager entityManager;
 
@@ -109,7 +114,7 @@ public class PostService {
         return new PageImpl<>(postListResponses, pageable, totalCount);
     }
 
-    private static String getCondition(PostSearchConditionRequest condition) {
+    public String getCondition(PostSearchConditionRequest condition) {
         StringBuilder jpql = new StringBuilder("SELECT p FROM Post p WHERE 1=1");
 
         if (condition.getBoardId() != null) {
@@ -134,6 +139,25 @@ public class PostService {
                 .append(condition.getDirection());
 
         return jpql.toString();
+    }
+
+    public void uploadPost(PostUploadRequest request, Integer userId) {
+        User user = userService.getUserById(userId);
+
+        String content = HtmlSanitizer.sanitize(request.getContent());
+
+        Post post = Post.builder()
+                .title(request.getTitle())
+                .content(content)
+                .board(request.getBoard())
+                .user(user)
+                .viewCnt(1l)
+                .commentCnt(0l)
+                .empathyCnt(0l)
+                .locked(request.getLocked())
+                .build();
+
+        postRepository.save(post);
     }
 
 }

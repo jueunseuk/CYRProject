@@ -1,9 +1,6 @@
 package com.junsu.cyr.controller.post;
 
-import com.junsu.cyr.model.post.PostListResponse;
-import com.junsu.cyr.model.post.PostResponse;
-import com.junsu.cyr.model.post.PostSearchConditionRequest;
-import com.junsu.cyr.model.post.PostUploadRequest;
+import com.junsu.cyr.model.post.*;
 import com.junsu.cyr.service.post.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,9 +39,9 @@ public class PostController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> uploadPost(@ModelAttribute PostUploadRequest request, @RequestAttribute Integer userId) {
-        postService.uploadPost(request, userId);
-        return ResponseEntity.ok("success to upload post");
+    public ResponseEntity<PostUploadResponse> uploadPost(@ModelAttribute PostUploadRequest request, @RequestAttribute Integer userId) {
+        PostUploadResponse postUploadResponse = postService.uploadPost(request, userId);
+        return ResponseEntity.ok(postUploadResponse);
     }
 
 }

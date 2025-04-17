@@ -2,10 +2,7 @@ package com.junsu.cyr.service.post;
 
 import com.junsu.cyr.domain.posts.Post;
 import com.junsu.cyr.domain.users.User;
-import com.junsu.cyr.model.post.PostListResponse;
-import com.junsu.cyr.model.post.PostResponse;
-import com.junsu.cyr.model.post.PostSearchConditionRequest;
-import com.junsu.cyr.model.post.PostUploadRequest;
+import com.junsu.cyr.model.post.*;
 import com.junsu.cyr.repository.PostRepository;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.PostExceptionCode;
@@ -141,7 +138,7 @@ public class PostService {
         return jpql.toString();
     }
 
-    public void uploadPost(PostUploadRequest request, Integer userId) {
+    public PostUploadResponse uploadPost(PostUploadRequest request, Integer userId) {
         User user = userService.getUserById(userId);
 
         if(request.getContent() == null){
@@ -160,6 +157,8 @@ public class PostService {
                 .build();
 
         postRepository.save(post);
+
+        return new PostUploadResponse(post.getBoard(), post.getPostId());
     }
 
 }

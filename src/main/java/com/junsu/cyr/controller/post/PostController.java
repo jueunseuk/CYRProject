@@ -39,7 +39,7 @@ public class PostController {
     }
 
     @PostMapping("")
-    public ResponseEntity<PostUploadResponse> uploadPost(@ModelAttribute PostUploadRequest request, @RequestAttribute Integer userId) {
+    public ResponseEntity<PostUploadResponse> uploadPost(@RequestBody PostUploadRequest request, @RequestAttribute Integer userId) {
         PostUploadResponse postUploadResponse = postService.uploadPost(request, userId);
         return ResponseEntity.ok(postUploadResponse);
     }

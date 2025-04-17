@@ -45,6 +45,7 @@ public class AttendanceService {
                 .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
         user.updateAttendanceCnt();
+        userRepository.save(user);
     }
 
     public void createAttendance(AttendanceId attendanceId, AttendanceRequest request) {

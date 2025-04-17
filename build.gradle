@@ -34,6 +34,9 @@ dependencies {
     implementation platform('software.amazon.awssdk:bom:2.20.143')
     implementation 'software.amazon.awssdk:s3'
 
+    // jsoup
+    implementation 'org.jsoup:jsoup:1.15.3'
+
     // test
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'

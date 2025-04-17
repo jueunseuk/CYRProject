@@ -146,14 +146,18 @@ public class PostService {
 
         String content = HtmlSanitizer.sanitize(request.getContent());
 
+        if(content == null){
+            throw new BaseException(PostExceptionCode.CONTENT_IS_EMPTY);
+        }
+
         Post post = Post.builder()
                 .title(request.getTitle())
                 .content(content)
                 .board(request.getBoard())
                 .user(user)
-                .viewCnt(1l)
-                .commentCnt(0l)
-                .empathyCnt(0l)
+                .viewCnt(1L)
+                .commentCnt(0L)
+                .empathyCnt(0L)
                 .locked(request.getLocked())
                 .build();
 

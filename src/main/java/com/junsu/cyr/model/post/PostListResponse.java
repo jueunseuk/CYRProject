@@ -11,6 +11,7 @@ public class PostListResponse {
     private Long postId;
     private String title;
     private Integer boardId;
+    private String boardName;
     private String boardKorean;
     private Integer userId;
     private String userNickname;
@@ -25,6 +26,7 @@ public class PostListResponse {
         this.postId = post.getPostId();
         this.title = post.getTitle();
         this.boardId = post.getBoard().getBoardId();
+        this.boardName = post.getBoard().getName();
         this.boardKorean = post.getBoard().getKorean();
         this.userId = post.getUser().getUserId();
         this.userNickname = post.getUser().getNickname();

@@ -144,15 +144,13 @@ public class PostService {
     public void uploadPost(PostUploadRequest request, Integer userId) {
         User user = userService.getUserById(userId);
 
-        String content = HtmlSanitizer.sanitize(request.getContent());
-
-        if(content == null){
+        if(request.getContent() == null){
             throw new BaseException(PostExceptionCode.CONTENT_IS_EMPTY);
         }
 
         Post post = Post.builder()
                 .title(request.getTitle())
-                .content(content)
+                .content(request.getContent())
                 .board(request.getBoard())
                 .user(user)
                 .viewCnt(1L)

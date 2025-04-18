@@ -52,4 +52,8 @@ public class Post extends BaseTime {
     @Enumerated(EnumType.STRING)
     @Column(name = "locked")
     private Locked locked;
+
+    public void increaseViewCnt() {
+        this.viewCnt++;
+    }
 }

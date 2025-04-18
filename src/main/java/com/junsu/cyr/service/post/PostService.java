@@ -30,6 +30,9 @@ public class PostService {
     public PostResponse getPost(Long postId) {
         Post post = postRepository.findByPostId(postId)
                 .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
+
+        post.increaseViewCnt();
+
         return new PostResponse(post);
     }
 

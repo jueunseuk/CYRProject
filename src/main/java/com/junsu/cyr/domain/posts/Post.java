@@ -54,6 +54,6 @@ public class Post extends BaseTime {
     private Locked locked;
 
     public void increaseViewCnt() {
-        this.viewCnt++;
+        this.viewCnt += 1;
     }
 }

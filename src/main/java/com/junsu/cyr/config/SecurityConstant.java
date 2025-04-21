@@ -33,6 +33,7 @@ public class SecurityConstant {
             "/gallery",
             "/attendance/today",
             "/attendance/statistic",
-            "/calendar/monthly"
+            "/calendar/monthly",
+            "/calendar/request"
     );
 }

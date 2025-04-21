@@ -1,4 +1,4 @@
-package com.junsu.cyr.domain.schedules;
+package com.junsu.cyr.domain.calendar;
 
 import com.junsu.cyr.domain.globals.BaseTime;
 import com.junsu.cyr.domain.users.User;
@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,20 +16,20 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "schedule_log")
-public class Schedule_log extends BaseTime {
+@Table(name = "calendar")
+public class Calendar extends BaseTime implements Comparable<Calendar> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "schedule_log_id", nullable = false)
-    private Long scheduleLogId;
+    @Column(name = "calendar_id", nullable = false)
+    private Long calendarId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "schedule")
-    private Schedule schedule;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private Type type;
 
     @Column(name = "title", nullable = false, length = 1000)
     private String title;
@@ -36,12 +37,17 @@ public class Schedule_log extends BaseTime {
     @Column(name = "description", nullable = false, length = 1000)
     private String description;
 
-    @Column(name = "start", nullable = false)
-    private LocalDateTime start;
+    @Column(name = "location")
+    private String location;
 
-    @Column(name = "end")
-    private LocalDateTime end;
+    @Column(name = "date", nullable = false)
+    private LocalDate date;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Override
+    public int compareTo(Calendar o) {
+        return this.getDate().compareTo(o.getDate());
+    }
 }

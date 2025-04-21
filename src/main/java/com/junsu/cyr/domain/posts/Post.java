@@ -34,7 +34,7 @@ public class Post extends BaseTime {
     @Column(name = "title", nullable = false, length = 1000)
     private String title;
 
-    @Column(name = "content", nullable = false)
+    @Column(name = "content", nullable = false, columnDefinition = "LONGTEXT")
     private String content;
 
     @Column(name = "view_cnt", nullable = false)

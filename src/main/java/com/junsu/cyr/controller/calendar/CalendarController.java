@@ -30,7 +30,7 @@ public class CalendarController {
         return ResponseEntity.ok("success to upload request");
     }
 
-    @GetMapping("/request")
+    @GetMapping("/request/all")
     public ResponseEntity<List<ScheduleRequestResponse>> requestSchedule() {
         List<ScheduleRequestResponse> scheduleRequestResponse = calendarService.getSchedule();
         return ResponseEntity.ok(scheduleRequestResponse);

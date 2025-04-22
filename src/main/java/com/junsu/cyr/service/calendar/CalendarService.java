@@ -4,10 +4,7 @@ import com.junsu.cyr.domain.calendar.Calendar;
 import com.junsu.cyr.domain.calendar.CalendarRequest;
 import com.junsu.cyr.domain.users.Role;
 import com.junsu.cyr.domain.users.User;
-import com.junsu.cyr.model.calendar.CalendarRequestUpdateRequest;
-import com.junsu.cyr.model.calendar.CalendarResponse;
-import com.junsu.cyr.model.calendar.MonthlyScheduleResponse;
-import com.junsu.cyr.model.calendar.ScheduleRequestResponse;
+import com.junsu.cyr.model.calendar.*;
 import com.junsu.cyr.repository.CalendarRepository;
 import com.junsu.cyr.repository.CalendarRequestRepository;
 import com.junsu.cyr.response.exception.BaseException;
@@ -15,6 +12,7 @@ import com.junsu.cyr.response.exception.code.CalendarExceptionCode;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -45,7 +43,8 @@ public class CalendarService {
         return new MonthlyScheduleResponse(map);
     }
 
-    public void uploadSchedule(String content, Integer userId) {
+    @Transactional
+    public void uploadScheduleRequest(String content, Integer userId) {
         User user = userService.getUserById(userId);
 
         CalendarRequest calendarRequest = CalendarRequest.builder()
@@ -64,7 +63,8 @@ public class CalendarService {
                 .toList();
     }
 
-    public void updateSchedule(Long calendarRequestId, Integer userId) {
+    @Transactional
+    public void checkScheduleRequest(Long calendarRequestId, Integer userId) {
         User user = userService.getUserById(userId);
 
         if(user.getRole() == Role.GUEST || user.getRole() == Role.MEMBER) {
@@ -76,7 +76,8 @@ public class CalendarService {
         calendarRequestRepository.save(calendarRequest);
     }
 
-    public void updateCalendarRequest(CalendarRequestUpdateRequest request, Integer userId) {
+    @Transactional
+    public void updateScheduleRequest(CalendarRequestUpdateRequest request, Integer userId) {
         User user = userService.getUserById(userId);
 
         if(!user.getUserId().equals(userId)) {
@@ -93,7 +94,8 @@ public class CalendarService {
                 .orElseThrow(() -> new BaseException(CalendarExceptionCode.NOT_EXIST_CALENDAR_REQUEST_ID));
     }
 
-    public void deleteCalendarRequest(Long calendarRequestId, Integer userId) {
+    @Transactional
+    public void deleteScheduleRequest(Long calendarRequestId, Integer userId) {
         User user = userService.getUserById(userId);
 
         if(!user.getUserId().equals(userId)) {
@@ -104,4 +106,33 @@ public class CalendarService {
         calendarRequestRepository.delete(calendarRequest);
     }
 
+    @Transactional
+    public void uploadSchedule(CalendarUploadRequest request, Integer userId) {
+        User user = userService.getUserById(userId);
+
+        if(user.getRole() == Role.GUEST || user.getRole() == Role.MEMBER) {
+            throw new BaseException(CalendarExceptionCode.DO_NOT_HAVE_PERMISSION_TO_PROCESS);
+        }
+
+        Calendar calendar = Calendar.builder()
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .location(request.getLocation())
+                .date(LocalDate.parse(request.getDate()))
+                .type(request.getType())
+                .user(user)
+                .build();
+
+        calendarRepository.save(calendar);
+    }
+
+    @Transactional
+    public void updateSchedule(CalendarUploadRequest request, Integer userId) {
+
+    }
+
+    @Transactional
+    public void deleteSchedule(Long calendarId, Integer userId) {
+
+    }
 }

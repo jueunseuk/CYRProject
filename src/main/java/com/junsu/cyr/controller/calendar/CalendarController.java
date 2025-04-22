@@ -1,5 +1,6 @@
 package com.junsu.cyr.controller.calendar;
 
+import com.junsu.cyr.model.calendar.CalendarUploadRequest;
 import com.junsu.cyr.model.calendar.CalendarRequestUpdateRequest;
 import com.junsu.cyr.model.calendar.MonthlyScheduleResponse;
 import com.junsu.cyr.model.calendar.ScheduleRequestResponse;
@@ -17,15 +18,15 @@ public class CalendarController {
 
     private final CalendarService calendarService;
 
-    @GetMapping("/monthly")
+    @GetMapping("/request/monthly")
     public ResponseEntity<MonthlyScheduleResponse> getMonthlySchedule(@RequestParam Integer year, @RequestParam Integer month) {
         MonthlyScheduleResponse monthlyScheduleResponse = calendarService.getMonthlySchedule(year, month);
         return ResponseEntity.ok(monthlyScheduleResponse);
     }
 
-    @PostMapping("")
+    @PostMapping("/request")
     public ResponseEntity<?> requestSchedule(@RequestBody String content, @RequestAttribute Integer userId) {
-        calendarService.uploadSchedule(content, userId);
+        calendarService.uploadScheduleRequest(content, userId);
         return ResponseEntity.ok("success to upload request");
     }
 
@@ -35,22 +36,40 @@ public class CalendarController {
         return ResponseEntity.ok(scheduleRequestResponse);
     }
 
-    @PatchMapping("/process")
+    @PatchMapping("/request/process")
     public ResponseEntity<?> processSchedule(@RequestParam Long calendarRequestId, @RequestAttribute Integer userId) {
-        calendarService.updateSchedule(calendarRequestId, userId);
+        calendarService.checkScheduleRequest(calendarRequestId, userId);
         return ResponseEntity.ok("success to process request");
     }
 
-    @PatchMapping("")
+    @PatchMapping("/request")
     public ResponseEntity<?> modifySchedule(@RequestBody CalendarRequestUpdateRequest request, @RequestAttribute Integer userId) {
-        calendarService.updateCalendarRequest(request, userId);
+        calendarService.updateScheduleRequest(request, userId);
         return ResponseEntity.ok("success to modify request");
     }
 
-    @DeleteMapping("")
-    public ResponseEntity<?> deleteSchedule(@RequestParam Long calendarRequestId, @RequestAttribute Integer userId) {
-        calendarService.deleteCalendarRequest(calendarRequestId, userId);
+    @DeleteMapping("/request")
+    public ResponseEntity<?> deleteScheduleRequest(@RequestParam Long calendarRequestId, @RequestAttribute Integer userId) {
+        calendarService.deleteScheduleRequest(calendarRequestId, userId);
         return ResponseEntity.ok("success to delete request");
+    }
+
+    @PostMapping("")
+    public ResponseEntity<?> uploadSchedule(@RequestBody CalendarUploadRequest request, @RequestAttribute Integer userId) {
+        calendarService.uploadSchedule(request, userId);
+        return ResponseEntity.ok("success to add schedule");
+    }
+
+    @PutMapping("")
+    public ResponseEntity<?> updateSchedule(@RequestBody CalendarUploadRequest request, @RequestAttribute Integer userId) {
+        calendarService.updateSchedule(request, userId);
+        return ResponseEntity.ok("success to update schedule");
+    }
+
+    @DeleteMapping("")
+    public ResponseEntity<?> deleteSchedule(@RequestParam Long calendarId, @RequestAttribute Integer userId) {
+        calendarService.deleteSchedule(calendarId, userId);
+        return ResponseEntity.ok("success to delete schedule");
     }
 
 }

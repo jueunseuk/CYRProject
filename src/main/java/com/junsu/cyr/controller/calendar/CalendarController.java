@@ -1,9 +1,6 @@
 package com.junsu.cyr.controller.calendar;
 
-import com.junsu.cyr.model.calendar.CalendarUploadRequest;
-import com.junsu.cyr.model.calendar.CalendarRequestUpdateRequest;
-import com.junsu.cyr.model.calendar.MonthlyScheduleResponse;
-import com.junsu.cyr.model.calendar.ScheduleRequestResponse;
+import com.junsu.cyr.model.calendar.*;
 import com.junsu.cyr.service.calendar.CalendarService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +22,8 @@ public class CalendarController {
     }
 
     @PostMapping("/request")
-    public ResponseEntity<?> requestSchedule(@RequestBody String content, @RequestAttribute Integer userId) {
-        calendarService.uploadScheduleRequest(content, userId);
+    public ResponseEntity<?> requestSchedule(@RequestBody CalendarRequestRequest request, @RequestAttribute Integer userId) {
+        calendarService.uploadScheduleRequest(request.getContent(), userId);
         return ResponseEntity.ok("success to upload request");
     }
 

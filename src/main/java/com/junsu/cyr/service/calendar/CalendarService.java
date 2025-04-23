@@ -135,4 +135,15 @@ public class CalendarService {
     public void deleteSchedule(Long calendarId, Integer userId) {
 
     }
+
+    public List<CalendarResponse> getCalendarBeforeList(Integer before) {
+        List<Calendar> list = calendarRepository.findTop5ByOrder(LocalDate.now().minusDays(before), LocalDate.now());
+        return list.stream().map(CalendarResponse::new).toList();
+    }
+
+    public List<CalendarResponse> getCalendarAfterList(Integer after) {
+        List<Calendar> list = calendarRepository.findTop5ByOrder(LocalDate.now(), LocalDate.now().plusDays(after));
+        Collections.reverse(list);
+        return list.stream().map(CalendarResponse::new).toList();
+    }
 }

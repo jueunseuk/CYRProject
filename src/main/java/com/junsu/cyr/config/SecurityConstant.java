@@ -34,6 +34,8 @@ public class SecurityConstant {
             "/attendance/today",
             "/attendance/statistic",
             "/calendar/request/monthly",
-            "/calendar/request/all"
+            "/calendar/request/all",
+            "/calendar/before",
+            "/calendar/after"
     );
 }

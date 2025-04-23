@@ -1,0 +1,13 @@
+.git
+.gradle
+build
+*.log
+*.iml
+.idea
+.vscode
+.DS_Store
+*.md
+*.sh
+*.yml
+scripts
+.dockerignore

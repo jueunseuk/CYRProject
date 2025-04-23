@@ -69,4 +69,16 @@ public class CalendarController {
         return ResponseEntity.ok("success to delete schedule");
     }
 
+    @GetMapping("/before")
+    public ResponseEntity<List<CalendarResponse>> getScheduleBefore(@RequestParam Integer before) {
+        List<CalendarResponse> calendarResponseList = calendarService.getCalendarBeforeList(before);
+        return ResponseEntity.ok(calendarResponseList);
+    }
+
+    @GetMapping("/after")
+    public ResponseEntity<List<CalendarResponse>> getScheduleAfter(@RequestParam Integer after) {
+        List<CalendarResponse> calendarResponseList = calendarService.getCalendarAfterList(after);
+        return ResponseEntity.ok(calendarResponseList);
+    }
+
 }

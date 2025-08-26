@@ -45,34 +45,40 @@
 
 ## Overview
 
-CYRProject is a comprehensive backend framework tailored for building scalable, secure, and maintainable web applications. It integrates modern security practices, cloud storage solutions, and a rich domain model to streamline development workflows.
+**CYRProject** is a customized fan community platform designed for fans of the artist **Choi Yoori**.  
+It goes beyond the limitations of official fan cafes by providing a space where fans can **participate, create, and communicate freely**.
 
-**Why CYRProject?**
+### Key Goals:
+- Provide an integrated platform for both official and unofficial artist-related information.
+- Enable fans to share and showcase their own creative works.
+- Offer interactive social features (XP system, polls/surveys, event calendar) to foster an engaging fan culture.
+- Maintain a safe and sustainable community with moderation tools.
 
-This project aims to simplify backend development with a robust architecture that supports secure user management, media handling, and flexible data modeling. The core features include:
+---
 
-- 🛡️ **Security & Authentication:** Implements JWT, OAuth, and role-based access control for secure user interactions.
-- ☁️ **Cloud Storage Integration:** Seamlessly manages media uploads and retrievals via Amazon S3.
-- 📊 **Standardized API Responses:** Ensures consistent success and error messaging across all endpoints.
-- 🖼️ **Media & Gallery Management:** Supports image uploads, galleries, and media organization.
-- 🔧 **Modular Domain Models:** Rich entities for users, posts, comments, polls, and more, enabling flexible application design.
-- 🚀 **Deployment & Build Automation:** Uses Gradle and Docker for streamlined build, testing, and deployment processes.
+## Target Audience & Market
+
+- **Target Users:** Fans of Choi Yoori currently using fan cafes or online communities, and those interested in creative fan activities.
+- **Market Focus:** Online fan community platforms and user-generated content ecosystems, tailored for specific artist fandoms.
 
 ---
 
 ## Features
-
-|      | Component            | Details                                                                                     |
-| :--- | :------------------- | :------------------------------------------------------------------------------------------ |
-| ⚙️  | **Architecture**     | <ul><li>Spring Boot MVC architecture</li><li>Layered structure: Controller, Service, Repository</li><li>Uses MySQL as primary database</li></ul> |
-| 🔩 | **Code Quality**     | <ul><li>Uses Lombok for reducing boilerplate</li><li>Adheres to Java best practices</li><li>Gradle build with clear task separation</li></ul> |
-| 📄 | **Documentation**    | <ul><li>Dockerfile for containerization</li><li>README includes setup and usage instructions</li></ul> |
-| 🔌 | **Integrations**      | <ul><li>Spring Boot for web framework</li><li>JWT for authentication</li><li>Jsoup for HTML parsing</li><li>AWS SDK for cloud interactions</li></ul> |
-| 🧩 | **Modularity**        | <ul><li>Component-based with clear separation of concerns</li><li>Uses Spring's dependency injection</li></ul> |
-| 🧪 | **Testing**           | <ul><li>JUnit 5 (Jupiter) for unit tests</li><li>Tests cover controllers, services, repositories</li></ul> |
-| ⚡️  | **Performance**       | <ul><li>Uses Spring Boot's asynchronous processing where applicable</li><li>Dockerized environment for consistent deployment</li></ul> |
-| 🛡️ | **Security**          | <ul><li>JWT tokens for stateless authentication</li><li>Spring Security integration</li></ul> |
-| 📦 | **Dependencies**      | <ul><li>Java 21 JDK</li><li>Spring Boot, Lombok, MySQL connector, AWS SDK, Jsoup, JUnit</li></ul> |
+| **Category**                | **Details**                                                                 |
+|-----------------------------|-----------------------------------------------------------------------------|
+| **Core Platform Features**  |                                                                             |
+| 🔐 Authentication & Social Login | Easy registration and login, supporting OAuth 2.0                         |
+| 🗂️ Segmented Community Boards  | Multiple boards for different purposes (concert reviews, fan letters, fan art, etc.) |
+| 🖼️ Personalized Artist Gallery | Users can curate and share their own galleries of artist-related content   |
+| 🏆 Experience & Achievement System | Earn XP and badges through posting, commenting, and attendance          |
+| 📊 Polls & Surveys             | Fans can create polls on events, concerts, merchandise, with real-time results |
+| 📅 Integrated Calendar         | Combines official schedules with fan-submitted events                      |
+| 🛡️ Safety & Moderation         | User reporting and admin tools to ensure a healthy community               |
+| **Architecture & Tech Stack** |                                                                            |
+| ⚙️ Backend                     | Spring Boot, Java 21, Spring Security, OAuth 2.0, JPA, MySQL               |
+| 🎨 Frontend                    | React, Vite, Styled Components, Recoil                                     |
+| ☁️ Infrastructure              | AWS EC2, S3, RDS, Docker, Vercel                                           |
+| ➕ Additional                  | Jsoup (HTML parsing), Lombok, JUnit for testing                            |
 
 ---
 
@@ -160,6 +166,19 @@ echo 'INSERT-TEST-COMMAND-HERE'
 ```sh
 gradle test
 ```
+
+---
+## Expected Impact
+
+- Fan Community Activation: Encourage active participation through interactive boards, real-time chat, and XP rewards.
+
+- Differentiated Fan Experience: Offers galleries, goods exchange, and polls not available in official fan cafes.
+
+- User-Generated Content Growth: Supports fan-made artwork, covers, videos, with systems to highlight popular content.
+
+- Potential Collaboration with Agencies: Community analytics provide quantitative insights into fan preferences.
+
+- Safe & Sustainable Environment: User reporting and moderation ensure healthy community culture.
 
 ---
 

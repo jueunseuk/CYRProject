@@ -14,12 +14,16 @@
 
 <em>Built with the tools and technologies:</em>
 
-<img src="https://img.shields.io/badge/Spring-6DB33F.svg?style=flat&logo=Spring&logoColor=white" alt="Amazon">
+<img src="https://img.shields.io/badge/Spring Boot-6DB33F.svg?style=flat&logo=SpringBoot&logoColor=white" alt="Amazon">
+<img src="https://img.shields.io/badge/Spring Security-6DB33F.svg?style=flat&logo=SpringSecurity&logoColor=white" alt="Amazon">
 <img src="https://img.shields.io/badge/Gradle-02303A.svg?style=flat&logo=Gradle&logoColor=white" alt="Gradle">
-<img src="https://img.shields.io/badge/AWS-FF9900.svg?style=flat&logo=Amazon&logoColor=white" alt="Amazon">
+<br/>
 <img src="https://img.shields.io/badge/MySQL-4479A1.svg?style=flat&logo=MySQL&logoColor=white" alt="MySQL">
+<img src="https://img.shields.io/badge/AWS-FF9900.svg?style=flat&logo=Amazon&logoColor=white" alt="Amazon">
+<img src="https://img.shields.io/badge/render-000000.svg?style=flat&logo=render&logoColor=white" alt="Docker">
 <img src="https://img.shields.io/badge/Docker-2496ED.svg?style=flat&logo=Docker&logoColor=white" alt="Docker">
-<img src="https://img.shields.io/badge/bat-31369E.svg?style=flat&logo=bat&logoColor=white" alt="bat">
+<br/>
+<img src="https://img.shields.io/badge/intellijidea-000000.svg?style=flat&logo=intellijidea&logoColor=white" alt="Docker">
 
 </div>
 <br>

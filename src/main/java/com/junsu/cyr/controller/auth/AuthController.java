@@ -34,14 +34,14 @@ public class AuthController {
         return ResponseEntity.ok(SuccessResponse.success("Success to request authentication code"));
     }
 
-    @PostMapping("/email/check")
-    public ResponseEntity<?> codeCheck(@RequestBody EmailMatchRequest request) {
+    @PostMapping("/email/check-signup")
+    public ResponseEntity<?> signupCodeCheck(@RequestBody EmailMatchRequest request) {
         mailService.verifyCode(request.getEmail(), request.getCode());
         return ResponseEntity.ok(SuccessResponse.success("Matches with authentication code"));
     }
 
-    @PostMapping("/email/check/password")
-    public ResponseEntity<?> codeCheckPassword(@RequestBody EmailMatchRequest request) {
+    @PostMapping("/email/check")
+    public ResponseEntity<?> resetCodeCheck(@RequestBody EmailMatchRequest request) {
         mailService.verifyCodeWithPassword(request.getEmail(), request.getCode());
         return ResponseEntity.ok(SuccessResponse.success("Matches with authentication code"));
     }

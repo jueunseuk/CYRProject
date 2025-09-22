@@ -50,7 +50,7 @@ public class MailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(inputEmail);
-            helper.setSubject("회원가입 인증 코드");
+            helper.setSubject("최유리 커뮤니티 회원가입 인증 코드입니다.");
             helper.setText("인증 코드: " + authCode, true);
             mailSender.send(message);
         } catch (MessagingException e) {

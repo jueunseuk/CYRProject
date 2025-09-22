@@ -42,7 +42,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Optional<Cookie> cookie = cookieUtil.getCookie(request, "accessToken");
 
         if (cookie.isEmpty()) {
-            throw new AuthenticationCredentialsNotFoundException("not exist access token");
+            filterChain.doFilter(request, response);
+            return;
         }
 
         String token = cookie.get().getValue();

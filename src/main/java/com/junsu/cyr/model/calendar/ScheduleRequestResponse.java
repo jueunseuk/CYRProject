@@ -4,7 +4,6 @@ import com.junsu.cyr.domain.calendar.CalendarRequest;
 import com.junsu.cyr.domain.users.User;
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data

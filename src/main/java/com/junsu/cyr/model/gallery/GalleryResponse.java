@@ -14,6 +14,7 @@ public class GalleryResponse {
     private String profileImageUrl;
     private String title;
     private String description;
+    private Long viewCnt;
     private LocalDateTime createdAt;
     private LocalDateTime picturedAt;
     private List<String> imageUrls;
@@ -25,6 +26,7 @@ public class GalleryResponse {
         this.profileImageUrl = gallery.getUser().getProfileUrl();
         this.title = gallery.getTitle();
         this.description = gallery.getDescription();
+        this.viewCnt = gallery.getViewCnt();
         this.createdAt = gallery.getCreatedAt();
         this.picturedAt = gallery.getPicturedAt();
         this.imageUrls = imageUrls;

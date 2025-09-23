@@ -58,7 +58,7 @@ public class CalendarController {
     }
 
     @PutMapping("")
-    public ResponseEntity<?> updateSchedule(@RequestBody CalendarUploadRequest request, @RequestAttribute Integer userId) {
+    public ResponseEntity<?> updateSchedule(@RequestBody CalendarEditRequest request, @RequestAttribute Integer userId) {
         calendarService.updateSchedule(request, userId);
         return ResponseEntity.ok("success to update schedule");
     }

@@ -127,8 +127,17 @@ public class CalendarService {
     }
 
     @Transactional
-    public void updateSchedule(CalendarUploadRequest request, Integer userId) {
+    public void updateSchedule(CalendarEditRequest request, Integer userId) {
+        User user = userService.getUserById(userId);
 
+        if(user.getRole() == Role.GUEST || user.getRole() == Role.MEMBER) {
+            throw new BaseException(CalendarExceptionCode.DO_NOT_HAVE_PERMISSION_TO_PROCESS);
+        }
+
+        Calendar calendar = calendarRepository.findById(request.getCalendarId())
+                .orElseThrow(() -> new BaseException(CalendarExceptionCode.NOT_EXIST_CALENDAR_ID));
+
+        calendar.updateCalendar(request);
     }
 
     @Transactional

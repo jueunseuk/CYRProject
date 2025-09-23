@@ -133,7 +133,13 @@ public class CalendarService {
 
     @Transactional
     public void deleteSchedule(Long calendarId, Integer userId) {
+        User user = userService.getUserById(userId);
 
+        if(user.getRole() == Role.GUEST || user.getRole() == Role.MEMBER) {
+            throw new BaseException(CalendarExceptionCode.DO_NOT_HAVE_PERMISSION_TO_PROCESS);
+        }
+
+        calendarRepository.deleteById(calendarId);
     }
 
     public List<CalendarResponse> getCalendarBeforeList(Integer before) {

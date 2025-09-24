@@ -48,4 +48,8 @@ public class Gallery extends BaseTime {
         this.description = description;
         this.picturedAt = picturedAt;
     }
+
+    public void updateViewCnt() {
+        this.viewCnt += 1;
+    }
 }

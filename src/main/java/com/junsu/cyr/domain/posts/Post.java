@@ -56,4 +56,12 @@ public class Post extends BaseTime {
     public void increaseViewCnt() {
         this.viewCnt += 1;
     }
+
+    public void increaseCommentCnt() {
+        this.commentCnt += 1;
+    }
+
+    public void increaseEmpathyCnt() {
+        this.empathyCnt += 1;
+    }
 }

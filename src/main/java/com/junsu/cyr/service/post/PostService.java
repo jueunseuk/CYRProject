@@ -14,6 +14,7 @@ import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,6 +28,7 @@ public class PostService {
     private final BoardService boardService;
     private final EntityManager entityManager;
 
+    @Transactional
     public PostResponse getPost(Long postId) {
         Post post = postRepository.findByPostId(postId)
                 .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
@@ -143,6 +145,7 @@ public class PostService {
         return jpql.toString();
     }
 
+    @Transactional
     public PostUploadResponse uploadPost(PostUploadRequest request, Integer userId) {
         User user = userService.getUserById(userId);
 
@@ -167,5 +170,4 @@ public class PostService {
 
         return new PostUploadResponse(post.getBoard(), post.getPostId());
     }
-
 }

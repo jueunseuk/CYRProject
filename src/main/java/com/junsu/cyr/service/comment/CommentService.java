@@ -62,7 +62,6 @@ public class CommentService {
 
         return comments.stream()
                 .map(comment -> new CommentResponse(comment, comment.getUser(), post))
-                .sorted()
                 .collect(Collectors.toList());
     }
 }

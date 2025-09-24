@@ -14,6 +14,7 @@ import com.junsu.cyr.response.exception.code.AttendanceExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -30,6 +31,7 @@ public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public void makeAttendance(Integer userId, AttendanceRequest request) {
         AttendanceId attendanceId = new AttendanceId(userId, LocalDate.now());
 

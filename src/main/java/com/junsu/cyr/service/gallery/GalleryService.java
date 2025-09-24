@@ -42,6 +42,7 @@ public class GalleryService {
                 .user(user)
                 .title(request.getTitle())
                 .description(request.getDescription())
+                .viewCnt(1l)
                 .picturedAt(LocalDateTime.parse(request.getPicturedAt()))
                 .type(request.getType())
                 .build();
@@ -59,6 +60,7 @@ public class GalleryService {
         return galleryImages.map(GalleryImageResponse::new);
     }
 
+    @Transactional
     public GalleryResponse getGallery(Long galleryId) {
         Gallery gallery = galleryRepository.findByGalleryId(galleryId)
                 .orElseThrow(() -> new BaseException(GalleryExceptionCode.NO_EXIST_GALLERY));
@@ -68,6 +70,8 @@ public class GalleryService {
         if(galleryImages.isEmpty()) {
             throw new BaseException(GalleryExceptionCode.NO_EXIST_IMAGE);
         }
+
+        gallery.updateViewCnt();
 
         return new GalleryResponse(gallery, galleryImages);
     }

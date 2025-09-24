@@ -1,17 +1,20 @@
 package com.junsu.cyr.service.post;
 
+import com.junsu.cyr.domain.boards.Board;
 import com.junsu.cyr.domain.posts.Post;
-import com.junsu.cyr.model.post.PostListResponse;
-import com.junsu.cyr.model.post.PostResponse;
-import com.junsu.cyr.model.post.PostSearchConditionRequest;
+import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.model.post.*;
 import com.junsu.cyr.repository.PostRepository;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.PostExceptionCode;
+import com.junsu.cyr.service.board.BoardService;
+import com.junsu.cyr.service.user.UserService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,12 +23,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostService {
 
+    private final UserService userService;
     private final PostRepository postRepository;
+    private final BoardService boardService;
     private final EntityManager entityManager;
 
+    @Transactional
     public PostResponse getPost(Long postId) {
         Post post = postRepository.findByPostId(postId)
                 .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
+
+        post.increaseViewCnt();
+
         return new PostResponse(post);
     }
 
@@ -109,7 +118,7 @@ public class PostService {
         return new PageImpl<>(postListResponses, pageable, totalCount);
     }
 
-    private static String getCondition(PostSearchConditionRequest condition) {
+    public String getCondition(PostSearchConditionRequest condition) {
         StringBuilder jpql = new StringBuilder("SELECT p FROM Post p WHERE 1=1");
 
         if (condition.getBoardId() != null) {
@@ -136,4 +145,29 @@ public class PostService {
         return jpql.toString();
     }
 
+    @Transactional
+    public PostUploadResponse uploadPost(PostUploadRequest request, Integer userId) {
+        User user = userService.getUserById(userId);
+
+        Board board = boardService.findBoardByBoardId(Integer.parseInt(request.getBoardId()));
+
+        if(request.getContent() == null){
+            throw new BaseException(PostExceptionCode.CONTENT_IS_EMPTY);
+        }
+
+        Post post = Post.builder()
+                .title(request.getTitle())
+                .content(request.getContent())
+                .board(board)
+                .user(user)
+                .viewCnt(1L)
+                .commentCnt(0L)
+                .empathyCnt(0L)
+                .locked(request.getLocked())
+                .build();
+
+        postRepository.save(post);
+
+        return new PostUploadResponse(post.getBoard(), post.getPostId());
+    }
 }

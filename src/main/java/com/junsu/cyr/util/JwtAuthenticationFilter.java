@@ -42,13 +42,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Optional<Cookie> cookie = cookieUtil.getCookie(request, "accessToken");
 
         if (cookie.isEmpty()) {
-            throw new AuthenticationCredentialsNotFoundException("not exist access token");
+            filterChain.doFilter(request, response);
+            return;
         }
 
         String token = cookie.get().getValue();
 
         if (token == null || !jwtTokenProvider.validateToken(token)) {
-            throw new AuthenticationCredentialsNotFoundException("not valid access token");
+            throw new BaseException(AuthExceptionCode.INVALID_ACCESS_TOKEN);
         }
 
         Claims claims = jwtTokenProvider.parseClaims(token);

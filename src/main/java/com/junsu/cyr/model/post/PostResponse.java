@@ -14,7 +14,8 @@ public class PostResponse {
     private String title;
     private String content;
     private Integer userId;
-    private String userName;
+    private String profileImageUrl;
+    private String userNickname;
     private Long viewCnt;
     private Long commentCnt;
     private Long empathyCnt;
@@ -29,7 +30,8 @@ public class PostResponse {
         this.title = post.getTitle();
         this.content = post.getContent();
         this.userId = post.getUser().getUserId();
-        this.userName = post.getUser().getName();
+        this.profileImageUrl = post.getUser().getProfileUrl();
+        this.userNickname = post.getUser().getNickname();
         this.viewCnt = post.getViewCnt();
         this.commentCnt = post.getCommentCnt();
         this.empathyCnt = post.getEmpathyCnt();

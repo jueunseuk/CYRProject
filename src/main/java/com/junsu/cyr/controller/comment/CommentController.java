@@ -28,4 +28,15 @@ public class CommentController {
         return ResponseEntity.ok(response);
     }
 
+    @PatchMapping("/{commentId}")
+    public ResponseEntity<?> updateComment(@PathVariable Long commentId, @RequestBody CommentRequest request, @RequestAttribute Integer userId) {
+        commentService.updateComment(request, commentId, userId);
+        return ResponseEntity.ok("success to update comment");
+    }
+
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<?> deleteComment(@PathVariable Long commentId, @RequestAttribute Integer userId) {
+        commentService.deleteComment(commentId, userId);
+        return ResponseEntity.ok("success to delete comment");
+    }
 }

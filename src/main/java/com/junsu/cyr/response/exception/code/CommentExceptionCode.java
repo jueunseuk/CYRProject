@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum CommentExceptionCode implements ExceptionCode {
     TOO_SHORT_COMMENT("COM_001", "댓글이 너무 짧습니다.", HttpStatus.BAD_REQUEST),
+    NOT_FOUND_COMMENT("COM_002", "해당 댓글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    DO_NOT_HAVE_PERMISSION("COM_003", "권한이 없습니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String code;

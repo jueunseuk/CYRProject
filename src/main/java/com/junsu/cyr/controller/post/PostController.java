@@ -44,4 +44,10 @@ public class PostController {
         return ResponseEntity.ok(postUploadResponse);
     }
 
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<?> deletePost(@PathVariable Long postId, @RequestAttribute Integer userId) {
+        postService.deletePosts(postId, userId);
+        return ResponseEntity.ok("success to delete post");
+    }
+
 }

@@ -53,6 +53,14 @@ public class Post extends BaseTime {
     @Column(name = "locked")
     private Locked locked;
 
+    public void update(String title, String content, Board board, Locked locked) {
+        this.title = title;
+        this.content = content;
+        this.board = board;
+        this.locked = locked;
+        this.updatedAt = LocalDateTime.now();
+    }
+
     public void increaseViewCnt() {
         this.viewCnt += 1;
     }

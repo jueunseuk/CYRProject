@@ -44,6 +44,12 @@ public class PostController {
         return ResponseEntity.ok(postUploadResponse);
     }
 
+    @PatchMapping("/{postId}")
+    public ResponseEntity<PostUploadResponse> updatePost(@RequestBody PostUploadRequest request,@PathVariable Long postId, @RequestAttribute Integer userId) {
+        PostUploadResponse postUploadResponse = postService.updatePosts(request, postId, userId);
+        return ResponseEntity.ok(postUploadResponse);
+    }
+
     @DeleteMapping("/{postId}")
     public ResponseEntity<?> deletePost(@PathVariable Long postId, @RequestAttribute Integer userId) {
         postService.deletePosts(postId, userId);

@@ -184,4 +184,29 @@ public class PostService {
 
         postRepository.delete(post);
     }
+
+    @Transactional
+    public PostUploadResponse updatePosts(PostUploadRequest request, Long postId, Integer userId) {
+        User user = userService.getUserById(userId);
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
+
+        if(post.getUser().getUserId() != userId) {
+            throw new BaseException(PostExceptionCode.DO_NOT_HAVE_PERMISSION);
+        }
+
+        if(request.getContent() == null || request.getContent().isEmpty()){
+            throw new BaseException(PostExceptionCode.CONTENT_IS_EMPTY);
+        }
+
+        Board board = boardService.findBoardByBoardId(Integer.parseInt(request.getBoardId()));
+
+        post.update(request.getTitle(),
+                request.getContent(),
+                board,
+                request.getLocked());
+
+        return new PostUploadResponse(post.getBoard(), post.getPostId());
+    }
 }

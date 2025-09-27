@@ -64,4 +64,39 @@ public class CommentService {
                 .map(comment -> new CommentResponse(comment, comment.getUser(), post))
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public void updateComment(CommentRequest request, Long commentId, Integer userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
+
+        if(request.getComment().length() < 5) {
+            throw new BaseException(CommentExceptionCode.TOO_SHORT_COMMENT);
+        }
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new BaseException(CommentExceptionCode.NOT_FOUND_COMMENT));
+
+        if(comment.getUser().getUserId() != userId) {
+            throw new BaseException(CommentExceptionCode.DO_NOT_HAVE_PERMISSION);
+        }
+
+        comment.update(request.getComment(), request.getLocked());
+    }
+
+    @Transactional
+    public void deleteComment(Long commentId, Integer userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new BaseException(CommentExceptionCode.NOT_FOUND_COMMENT));
+
+        if(comment.getUser().getUserId() != userId) {
+            throw new BaseException(CommentExceptionCode.DO_NOT_HAVE_PERMISSION);
+        }
+
+        commentRepository.delete(comment);
+        comment.getPost().decreaseCommentCnt();
+    }
 }

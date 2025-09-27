@@ -97,5 +97,6 @@ public class CommentService {
         }
 
         commentRepository.delete(comment);
+        comment.getPost().decreaseCommentCnt();
     }
 }

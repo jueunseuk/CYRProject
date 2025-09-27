@@ -68,8 +68,20 @@ public class Post extends BaseTime {
     public void increaseCommentCnt() {
         this.commentCnt += 1;
     }
+    public void decreaseCommentCnt() {
+        this.commentCnt -= 1;
+        if(this.commentCnt < 0) {
+            this.commentCnt = 0L;
+        }
+    }
 
     public void increaseEmpathyCnt() {
         this.empathyCnt += 1;
+    }
+    public void decreaseEmpathyCnt() {
+        this.empathyCnt -= 1;
+        if(this.empathyCnt < 0) {
+            this.empathyCnt = 0L;
+        }
     }
 }

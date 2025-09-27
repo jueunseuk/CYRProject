@@ -170,4 +170,18 @@ public class PostService {
 
         return new PostUploadResponse(post.getBoard(), post.getPostId());
     }
+
+    @Transactional
+    public void deletePosts(Long postId, Integer userId) {
+        User user = userService.getUserById(userId);
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
+
+        if(post.getUser().getUserId() != userId) {
+            throw new BaseException(PostExceptionCode.DO_NOT_HAVE_PERMISSION);
+        }
+
+        postRepository.delete(post);
+    }
 }

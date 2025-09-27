@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, Integer> {
+public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findByPostId(Long postId);
 
     @Query("SELECT p FROM Post p WHERE p.board.boardId BETWEEN :start AND :end")

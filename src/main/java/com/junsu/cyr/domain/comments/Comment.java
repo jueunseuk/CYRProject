@@ -40,4 +40,10 @@ public class Comment extends BaseTime {
     @Enumerated(EnumType.STRING)
     @Column(name = "locked")
     private Locked locked;
+
+    public void update(String content, Locked locked) {
+        this.content = content;
+        this.locked = locked;
+        this.updatedAt = LocalDateTime.now();
+    }
 }

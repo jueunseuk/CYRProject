@@ -1,0 +1,67 @@
+package com.junsu.cyr.service.empathy;
+
+import com.junsu.cyr.domain.empathys.Empathy;
+import com.junsu.cyr.domain.empathys.EmpathyId;
+import com.junsu.cyr.domain.posts.Post;
+import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.model.empathy.EmpathyResponse;
+import com.junsu.cyr.repository.EmpathyRepository;
+import com.junsu.cyr.repository.PostRepository;
+import com.junsu.cyr.response.exception.BaseException;
+import com.junsu.cyr.response.exception.code.EmpathyExceptionCode;
+import com.junsu.cyr.response.exception.code.PostExceptionCode;
+import com.junsu.cyr.service.user.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class EmpathyService {
+
+    private final UserService userService;
+    private final PostRepository postRepository;
+    private final EmpathyRepository empathyRepository;
+
+    @Transactional
+    public EmpathyResponse createEmpathy(Long postId, Integer userId) {
+        User user = userService.getUserById(userId);
+
+        Post post = postRepository.findByPostId(postId)
+                .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
+
+        EmpathyId empathyId = new EmpathyId(postId, userId);
+
+        if (empathyRepository.existsById(empathyId)) {
+            throw new BaseException(EmpathyExceptionCode.ALREADY_EMPATHIZE_POST);
+        }
+
+        Empathy empathy = Empathy.builder()
+                .empathyId(empathyId)
+                .post(post)
+                .user(user)
+                .build();
+
+        empathyRepository.save(empathy);
+        post.increaseEmpathyCnt();
+
+        return new EmpathyResponse(postId, userId);
+    }
+
+    @Transactional
+    public void deleteEmpathy(Long postId, Integer userId) {
+        User user = userService.getUserById(userId);
+
+        Post post = postRepository.findByPostId(postId)
+                .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
+
+        EmpathyId empathyId = new EmpathyId(postId, userId);
+
+        if (!empathyRepository.existsById(empathyId)) {
+            throw new BaseException(EmpathyExceptionCode.NEVER_EMPATHIZE);
+        }
+
+        post.decreaseEmpathyCnt();
+        empathyRepository.deleteById(empathyId);
+    }
+}

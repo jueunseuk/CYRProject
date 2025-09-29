@@ -22,8 +22,9 @@ public class PostResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Locked locked;
+    private Boolean alreadyEmpathy;
 
-    public PostResponse(Post post) {
+    public PostResponse(Post post, Boolean alreadyEmpathy) {
         this.postId = post.getPostId();
         this.boardId = post.getBoard().getBoardId();
         this.boardName = post.getBoard().getName();
@@ -38,5 +39,6 @@ public class PostResponse {
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
         this.locked = post.getLocked();
+        this.alreadyEmpathy = alreadyEmpathy;
     }
 }

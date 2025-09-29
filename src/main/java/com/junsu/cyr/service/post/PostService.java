@@ -1,11 +1,15 @@
 package com.junsu.cyr.service.post;
 
 import com.junsu.cyr.domain.boards.Board;
+import com.junsu.cyr.domain.empathys.Empathy;
+import com.junsu.cyr.domain.empathys.EmpathyId;
 import com.junsu.cyr.domain.posts.Post;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.post.*;
+import com.junsu.cyr.repository.EmpathyRepository;
 import com.junsu.cyr.repository.PostRepository;
 import com.junsu.cyr.response.exception.BaseException;
+import com.junsu.cyr.response.exception.code.EmpathyExceptionCode;
 import com.junsu.cyr.response.exception.code.PostExceptionCode;
 import com.junsu.cyr.service.board.BoardService;
 import com.junsu.cyr.service.user.UserService;
@@ -27,15 +31,20 @@ public class PostService {
     private final PostRepository postRepository;
     private final BoardService boardService;
     private final EntityManager entityManager;
+    private final EmpathyRepository empathyRepository;
 
     @Transactional
-    public PostResponse getPost(Long postId) {
+    public PostResponse getPost(Long postId, Integer userId) {
+        User user = userService.getUserById(userId);
+
         Post post = postRepository.findByPostId(postId)
                 .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
 
+        Boolean alreadyEmpathy = empathyRepository.existsById(new EmpathyId(postId, userId));
+
         post.increaseViewCnt();
 
-        return new PostResponse(post);
+        return new PostResponse(post, alreadyEmpathy);
     }
 
     public Page<PostListResponse> getAllPosts(PostSearchConditionRequest condition) {

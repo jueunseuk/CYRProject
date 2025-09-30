@@ -47,22 +47,54 @@ public class AttendanceService {
 
         userService.addExpAndSand(user, 4, 12);
 
-        // update temp
-        long gap = getLastAttendanceDate(user);
+        long gap = getGapWithLastAttendanceDate(user);
+        if(gap == 0) {
+            userService.addTemperature(user, 1);
+            user.initConsecutiveAttendanceCnt();
+        } else if(gap == 1) {
+            userService.addTemperature(user, 2);
+            user.increaseConsecutiveAttendanceCnt();
+        } else if(gap >= 2) {
+            user.initConsecutiveAttendanceCnt();
+            if(gap <= 3) {
+                userService.addTemperature(user, 7);
+            } else if(gap <= 30) {
+                userService.addTemperature(user, 8);
+            } else {
+                user.initTemperature();
+            }
+        }
 
+        if(user.getConsecutiveAttendanceCnt() % 7 == 0) {
+            userService.addTemperature(user, 3);
+        } else if(user.getConsecutiveAttendanceCnt() % 30 == 0) {
+            userService.addTemperature(user, 4);
+        } else if(user.getConsecutiveAttendanceCnt() % 100 == 0) {
+            userService.addTemperature(user, 5);
+        } else if(user.getConsecutiveAttendanceCnt() % 365 == 0) {
+            userService.addTemperature(user, 6);
+        }
 
+        createAttendance(attendanceId, request);
         user.updateAttendanceCnt();
         userRepository.save(user);
     }
 
-    private long getLastAttendanceDate(User user) {
-        Attendance lastAttendance = attendanceRepository.findTopByAttendanceIdUserIdOrderByCreatedAtDesc(user.getUserId())
-                .orElseThrow(() -> new BaseException(AttendanceExceptionCode.NOT_FOUND_ATTENDANCE));
+    private long getGapWithLastAttendanceDate(User user) {
+        Optional<Attendance> getAttendance = getLastAttendanceDate(user.getUserId());
+        if(getAttendance.isEmpty()) {
+            return 0;
+        }
 
+        Attendance lastAttendance = getAttendance.get();
         LocalDate lastDate = lastAttendance.getCreatedAt().toLocalDate();
         LocalDate today = LocalDate.now();
 
         return ChronoUnit.DAYS.between(lastDate, today);
+    }
+
+    public Optional<Attendance> getLastAttendanceDate(Integer userId) {
+        return attendanceRepository.findTopByAttendanceIdUserIdOrderByCreatedAtDesc(userId);
     }
 
     public void createAttendance(AttendanceId attendanceId, AttendanceRequest request) {

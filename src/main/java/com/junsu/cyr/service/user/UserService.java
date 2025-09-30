@@ -1,18 +1,24 @@
 package com.junsu.cyr.service.user;
 
+import com.junsu.cyr.domain.attendances.Attendance;
 import com.junsu.cyr.domain.experiences.Experience;
 import com.junsu.cyr.domain.sand.Sand;
+import com.junsu.cyr.domain.temperature.Temperature;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.user.UserProfileResponse;
 import com.junsu.cyr.model.user.UserSidebarResponse;
 import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
+import com.junsu.cyr.service.attendance.AttendanceService;
 import com.junsu.cyr.service.experience.ExperienceService;
 import com.junsu.cyr.service.sand.SandService;
+import com.junsu.cyr.service.temperature.TemperatureService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +27,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final ExperienceService experienceService;
     private final SandService sandService;
+    private final TemperatureService temperatureService;
+    private final AttendanceService attendanceService;
 
     public User getUserById(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
@@ -61,5 +69,13 @@ public class UserService {
         user.updateSand(sand.getAmount());
 
         sandService.createSandLog(sand, user);
+    }
+
+    @Transactional
+    public void addTemperature(User user, Integer temperatureId) {
+        Temperature temperature = temperatureService.getTemperature(temperatureId);
+        user.updateTemperature(temperature.getAmount());
+
+        temperatureService.createTemperatureLog(user, temperature);
     }
 }

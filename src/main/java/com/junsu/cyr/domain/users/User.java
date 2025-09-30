@@ -79,6 +79,9 @@ public class User extends BaseTime {
     @Column(name = "attendance_cnt")
     private Integer attendanceCnt;
 
+    @Column(name = "consecutive_attendance_cnt", nullable = false)
+    private Integer consecutiveAttendanceCnt;
+
     @Column(name = "cheer_cnt")
     private Long cheerCnt;
 
@@ -101,6 +104,14 @@ public class User extends BaseTime {
 
     public void updateAttendanceCnt() {
         this.attendanceCnt++;
+    }
+
+    public void increaseConsecutiveAttendanceCnt() {
+        this.consecutiveAttendanceCnt++;
+    }
+
+    public void initConsecutiveAttendanceCnt() {
+        this.consecutiveAttendanceCnt = 1;
     }
 
     public void increaseExpCnt(Integer amount) {

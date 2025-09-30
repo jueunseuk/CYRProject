@@ -101,6 +101,8 @@ public class AuthService {
                 .temperature(0)
                 .cheerCnt(0L)
                 .warn(0)
+                .attendanceCnt(0)
+                .consecutiveAttendanceCnt(0)
                 .build();
 
         return userRepository.save(user);
@@ -121,6 +123,8 @@ public class AuthService {
                 .temperature(0)
                 .cheerCnt(0L)
                 .warn(0)
+                .attendanceCnt(0)
+                .consecutiveAttendanceCnt(0)
                 .build();
 
         return userRepository.save(user);

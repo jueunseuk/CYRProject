@@ -96,6 +96,9 @@ public class AuthService {
                 .status(Status.ACTIVE)
                 .method(signupRequest.getMethod())
                 .epxCnt(0L)
+                .glass(0)
+                .sand(0)
+                .temperature(0)
                 .cheerCnt(0L)
                 .warn(0)
                 .build();
@@ -113,6 +116,9 @@ public class AuthService {
                 .status(Status.ACTIVE)
                 .method(userInfo.getMethod())
                 .epxCnt(0L)
+                .glass(0)
+                .sand(0)
+                .temperature(0)
                 .cheerCnt(0L)
                 .warn(0)
                 .build();

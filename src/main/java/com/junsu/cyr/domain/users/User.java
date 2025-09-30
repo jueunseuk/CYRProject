@@ -53,10 +53,10 @@ public class User extends BaseTime {
     private Long epxCnt;
 
     @Column(name = "sand", nullable = false)
-    private Long sand;
+    private Integer sand;
 
     @Column(name = "glass", nullable = false)
-    private Long glass;
+    private Integer glass;
 
     @Column(name = "temperature", nullable = false)
     private Integer temperature;
@@ -101,5 +101,37 @@ public class User extends BaseTime {
 
     public void updateAttendanceCnt() {
         this.attendanceCnt++;
+    }
+
+    public void increaseExpCnt(Integer amount) {
+        this.epxCnt += amount;
+    }
+
+    public void updateSand(Integer amount) {
+        this.sand += amount;
+        if(this.sand < 0) {
+            this.sand = 0;
+        }
+    }
+
+    public void increaseGlass() {
+        this.glass++;
+    }
+
+    public void decreaseGlass() {
+        this.glass--;
+    }
+
+    public void updateTemperature(Integer amount) {
+        this.temperature += amount;
+        if(temperature > 1800) {
+            this.temperature = 1800;
+        } else if(temperature < 0) {
+            this.temperature = 0;
+        }
+    }
+
+    public void initTemperature() {
+        this.temperature = 0;
     }
 }

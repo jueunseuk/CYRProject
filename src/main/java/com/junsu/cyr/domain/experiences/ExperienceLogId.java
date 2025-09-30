@@ -9,13 +9,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 @Embeddable
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class ExperienceLogId extends BaseTime implements Serializable {
+public class ExperienceLogId implements Serializable {
     @Column(name = "user_id", nullable = false)
     private Integer userId;
+
+    @Column(name = "attended_at", nullable = false)
+    private LocalDate attended_at;
 }

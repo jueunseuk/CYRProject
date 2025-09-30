@@ -1,4 +1,4 @@
-package com.junsu.cyr.domain.temperature;
+package com.junsu.cyr.domain.sand;
 
 import com.junsu.cyr.domain.globals.BaseTime;
 import com.junsu.cyr.domain.users.User;
@@ -13,16 +13,16 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "temperature_log")
-public class TemperatureLog extends BaseTime {
+@Table(name = "sand_log")
+public class SandLog extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "temperature_log_id", nullable = false)
-    private Integer temperatureLogId;
+    @Column(name = "sand_log_id", nullable = false)
+    private Long sandLogId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "temperature")
-    private Temperature temperature;
+    @JoinColumn(name = "sand")
+    private Sand sand;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user")

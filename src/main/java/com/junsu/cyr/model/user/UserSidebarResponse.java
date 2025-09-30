@@ -8,7 +8,7 @@ import lombok.Data;
 public class UserSidebarResponse {
     private Integer userId;
     private Long expCnt;
-    private Long sand;
-    private Long glass;
+    private Integer sand;
+    private Integer glass;
     private Integer temperature;
 }

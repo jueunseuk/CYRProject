@@ -1,4 +1,4 @@
-package com.junsu.cyr.service.service;
+package com.junsu.cyr.service.cheer;
 
 import com.junsu.cyr.domain.cheers.Cheer;
 import com.junsu.cyr.domain.users.User;
@@ -21,8 +21,7 @@ public class CheerService {
     private final UserService userService;
 
     public Long getTotalCheer() {
-        Long totalCheer = cheerRepository.sumCheer();
-        return totalCheer;
+        return cheerRepository.sumCheer();
     }
 
     @Transactional

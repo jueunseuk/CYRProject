@@ -14,12 +14,6 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/exp")
-    public ResponseEntity<Long> getExp(@RequestAttribute Integer userId) {
-        Long totalExp = userService.getUserExp(userId);
-        return ResponseEntity.ok(totalExp);
-    }
-
     @GetMapping("/sidebar")
     public ResponseEntity<UserSidebarResponse> getUserProfile(@RequestAttribute Integer userId) {
         UserSidebarResponse userSidebarResponse = userService.getUserSidebar(userId);

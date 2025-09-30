@@ -1,5 +1,7 @@
 package com.junsu.cyr.controller.user;
 
+import com.junsu.cyr.model.user.UserProfileResponse;
+import com.junsu.cyr.model.user.UserSidebarResponse;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,5 +18,17 @@ public class UserController {
     public ResponseEntity<Long> getExp(@RequestAttribute Integer userId) {
         Long totalExp = userService.getUserExp(userId);
         return ResponseEntity.ok(totalExp);
+    }
+
+    @GetMapping("/sidebar")
+    public ResponseEntity<UserSidebarResponse> getUserProfile(@RequestAttribute Integer userId) {
+        UserSidebarResponse userSidebarResponse = userService.getUserSidebar(userId);
+        return ResponseEntity.ok(userSidebarResponse);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserProfileResponse> getMyProfile(@RequestAttribute Integer userId) {
+        UserProfileResponse userProfileResponse = userService.getUserProfile(userId);
+        return ResponseEntity.ok(userProfileResponse);
     }
 }

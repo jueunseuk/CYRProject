@@ -52,6 +52,15 @@ public class User extends BaseTime {
     @Column(name = "exp_cnt", nullable = false)
     private Long epxCnt;
 
+    @Column(name = "sand", nullable = false)
+    private Long sand;
+
+    @Column(name = "glass", nullable = false)
+    private Long glass;
+
+    @Column(name = "temperature", nullable = false)
+    private Integer temperature;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "method", nullable = false)
     private Method method;

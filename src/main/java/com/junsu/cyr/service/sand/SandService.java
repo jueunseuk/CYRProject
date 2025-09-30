@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SandService {
 
-    private SandRepository sandRepository;
-    private SandLogRepository sandLogRepository;
+    private final SandRepository sandRepository;
+    private final SandLogRepository sandLogRepository;
 
     public Sand getSand(Integer sandId) {
         return sandRepository.findById(sandId)

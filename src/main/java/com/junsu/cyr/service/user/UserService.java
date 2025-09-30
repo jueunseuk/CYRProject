@@ -28,7 +28,6 @@ public class UserService {
     private final ExperienceService experienceService;
     private final SandService sandService;
     private final TemperatureService temperatureService;
-    private final AttendanceService attendanceService;
 
     public User getUserById(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));

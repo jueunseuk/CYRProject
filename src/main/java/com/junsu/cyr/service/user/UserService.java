@@ -1,6 +1,8 @@
 package com.junsu.cyr.service.user;
 
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.model.user.UserProfileResponse;
+import com.junsu.cyr.model.user.UserSidebarResponse;
 import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
@@ -24,4 +26,15 @@ public class UserService {
     }
 
 
+    public UserSidebarResponse getUserSidebar(Integer userId) {
+        User user = getUserById(userId);
+
+        return new UserSidebarResponse(userId, user.getEpxCnt(), user.getSand(), user.getGlass(), user.getTemperature());
+    }
+
+    public UserProfileResponse getUserProfile(Integer userId) {
+        User user = getUserById(userId);
+
+        return new UserProfileResponse(user);
+    }
 }

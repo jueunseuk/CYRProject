@@ -12,12 +12,14 @@ import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.AttendanceExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
+import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,24 +32,69 @@ public class AttendanceService {
 
     private final AttendanceRepository attendanceRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @Transactional
     public void makeAttendance(Integer userId, AttendanceRequest request) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
+
         AttendanceId attendanceId = new AttendanceId(userId, LocalDate.now());
-
         Optional<Attendance> attendance = attendanceRepository.findByAttendanceId(attendanceId);
-
         if(attendance.isPresent()) {
             throw new BaseException(AttendanceExceptionCode.ALREADY_ATTEND_USER);
         }
 
+        userService.addExpAndSand(user, 4, 12);
+
+        long gap = getGapWithLastAttendanceDate(user);
+        if(gap == 0) {
+            userService.addTemperature(user, 1);
+            user.initConsecutiveAttendanceCnt();
+        } else if(gap == 1) {
+            userService.addTemperature(user, 2);
+            user.increaseConsecutiveAttendanceCnt();
+        } else if(gap >= 2) {
+            user.initConsecutiveAttendanceCnt();
+            if(gap <= 3) {
+                userService.addTemperature(user, 7);
+            } else if(gap <= 30) {
+                userService.addTemperature(user, 8);
+            } else {
+                user.initTemperature();
+            }
+        }
+
+        if(user.getConsecutiveAttendanceCnt() % 7 == 0) {
+            userService.addTemperature(user, 3);
+        } else if(user.getConsecutiveAttendanceCnt() % 30 == 0) {
+            userService.addTemperature(user, 4);
+        } else if(user.getConsecutiveAttendanceCnt() % 100 == 0) {
+            userService.addTemperature(user, 5);
+        } else if(user.getConsecutiveAttendanceCnt() % 365 == 0) {
+            userService.addTemperature(user, 6);
+        }
+
         createAttendance(attendanceId, request);
-
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
-
         user.updateAttendanceCnt();
         userRepository.save(user);
+    }
+
+    private long getGapWithLastAttendanceDate(User user) {
+        Optional<Attendance> getAttendance = getLastAttendanceDate(user.getUserId());
+        if(getAttendance.isEmpty()) {
+            return 0;
+        }
+
+        Attendance lastAttendance = getAttendance.get();
+        LocalDate lastDate = lastAttendance.getCreatedAt().toLocalDate();
+        LocalDate today = LocalDate.now();
+
+        return ChronoUnit.DAYS.between(lastDate, today);
+    }
+
+    public Optional<Attendance> getLastAttendanceDate(Integer userId) {
+        return attendanceRepository.findTopByAttendanceIdUserIdOrderByCreatedAtDesc(userId);
     }
 
     public void createAttendance(AttendanceId attendanceId, AttendanceRequest request) {

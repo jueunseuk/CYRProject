@@ -1,4 +1,4 @@
-package com.junsu.cyr.domain.temperature;
+package com.junsu.cyr.domain.sand;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,12 +11,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "temperature")
-public class Temperature {
+@Table(name = "sand")
+public class Sand {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "temperature_id", nullable = false)
-    private Integer temperatureId;
+    @Column(name = "sand_id")
+    private Integer sandId;
 
     @Column(name = "name", nullable = false)
     private String name;

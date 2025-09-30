@@ -1,6 +1,6 @@
 package com.junsu.cyr.controller.cheer;
 
-import com.junsu.cyr.service.service.CheerService;
+import com.junsu.cyr.service.cheer.CheerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

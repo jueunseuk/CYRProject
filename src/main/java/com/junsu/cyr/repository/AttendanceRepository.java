@@ -28,4 +28,5 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Attendan
     @Query("SELECT COUNT(a) FROM Attendance a WHERE a.attendanceId.attendedAt BETWEEN :start AND :end")
     Integer findAttendanceCnt(LocalDate start, LocalDate end);
 
+    Optional<Attendance> findTopByAttendanceIdUserIdOrderByCreatedAtDesc(Integer userId);
 }

@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Data
 public class UserProfileResponse {
     private Integer userId;
+    private String name;
     private String nickname;
     private String email;
     private String profileUrl;
@@ -22,9 +23,12 @@ public class UserProfileResponse {
     private Integer attendanceCnt;
     private Role role;
     private LocalDateTime createdAt;
+    private Integer warn;
+    private LocalDateTime passwordUpdatedAt;
 
     public UserProfileResponse(User user) {
         this.userId = user.getUserId();
+        this.name = user.getName();
         this.nickname = user.getNickname();
         this.email = user.getEmail();
         this.profileUrl = user.getProfileUrl();
@@ -36,5 +40,7 @@ public class UserProfileResponse {
         this.attendanceCnt = user.getAttendanceCnt();
         this.role = user.getRole();
         this.createdAt = user.getCreatedAt();
+        this.warn = user.getWarn();
+        this.passwordUpdatedAt = user.getPasswordUpdatedAt();
     }
 }

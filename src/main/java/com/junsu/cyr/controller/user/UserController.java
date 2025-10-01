@@ -1,5 +1,6 @@
 package com.junsu.cyr.controller.user;
 
+import com.junsu.cyr.model.user.OtherProfileResponse;
 import com.junsu.cyr.model.user.UserProfileResponse;
 import com.junsu.cyr.model.user.UserSidebarResponse;
 import com.junsu.cyr.service.user.UserService;
@@ -24,5 +25,11 @@ public class UserController {
     public ResponseEntity<UserProfileResponse> getMyProfile(@RequestAttribute Integer userId) {
         UserProfileResponse userProfileResponse = userService.getUserProfile(userId);
         return ResponseEntity.ok(userProfileResponse);
+    }
+
+    @GetMapping("/{otherId}")
+    public ResponseEntity<OtherProfileResponse> getOtherProfile(@PathVariable Integer otherId) {
+        OtherProfileResponse otherProfileResponse = userService.getOtherProfile(otherId);
+        return ResponseEntity.ok(otherProfileResponse);
     }
 }

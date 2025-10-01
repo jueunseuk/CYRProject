@@ -7,11 +7,10 @@ import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.gallery.*;
 import com.junsu.cyr.repository.GalleryImageRepository;
 import com.junsu.cyr.repository.GalleryRepository;
-import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.GalleryExceptionCode;
-import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.service.image.S3Service;
+import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,24 +29,27 @@ public class GalleryService {
 
     private final GalleryRepository galleryRepository;
     private final GalleryImageRepository galleryImageRepository;
-    private final UserRepository userRepository;
     private final S3Service s3Service;
+    private final UserService userService;
 
     @Transactional
     public void uploadGallery(GalleryUploadRequest request, Integer userId) {
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
+        User user = userService.getUserById(userId);
 
         Gallery gallery = Gallery.builder()
                 .user(user)
                 .title(request.getTitle())
                 .description(request.getDescription())
-                .viewCnt(1l)
+                .viewCnt(0L)
                 .picturedAt(LocalDateTime.parse(request.getPicturedAt()))
                 .type(request.getType())
                 .build();
 
         galleryRepository.save(gallery);
+
+        for(int i = 0; i < request.getImages().size(); i++) {
+            userService.addExpAndSand(user, 3, 11);
+        }
 
         uploadFileAndCreateGalleryImage(request, gallery, 0);
     }
@@ -93,6 +95,8 @@ public class GalleryService {
 
     @Transactional
     public void updateGallery(Long galleryId, GalleryUploadRequest request, Integer userId) {
+        User user = userService.getUserById(userId);
+
         Gallery gallery = galleryRepository.findByGalleryId(galleryId)
                 .orElseThrow(() -> new BaseException(GalleryExceptionCode.NO_EXIST_GALLERY));
 
@@ -114,6 +118,9 @@ public class GalleryService {
 
         if (request.getImages() != null && !request.getImages().isEmpty()) {
             uploadFileAndCreateGalleryImage(request, gallery, request.getOriginalImages().size());
+            for (int i = 0; i < request.getImages().size(); i++) {
+                userService.addExpAndSand(user, 3, 11);
+            }
         }
     }
 
@@ -143,5 +150,4 @@ public class GalleryService {
 
         galleryImageRepository.saveAll(newImages);
     }
-
 }

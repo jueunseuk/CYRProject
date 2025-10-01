@@ -31,6 +31,7 @@ public class CheerService {
         Cheer cheer = getCheerOrCreateCheer(user);
         if(isValidCheerRequest(cheer)){
             cheer.updateCheer();
+            userService.addExpAndSand(user, 5,13);
         } else {
             throw new BaseException(CheerExceptionCode.INVALID_REQUEST_PERIOD);
         }

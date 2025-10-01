@@ -14,6 +14,7 @@ import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.CommentExceptionCode;
 import com.junsu.cyr.response.exception.code.PostExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
+import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ public class CommentService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final UserService userService;
 
     @Transactional
     public void uploadComment(CommentRequest request, Integer userId) {
@@ -50,6 +52,8 @@ public class CommentService {
                 .fixed(Fixed.F)
                 .locked(request.getLocked())
                 .build();
+
+        userService.addExpAndSand(user, 2, 10);
 
         commentRepository.save(comment);
     }

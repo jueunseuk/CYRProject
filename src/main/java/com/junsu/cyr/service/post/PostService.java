@@ -177,6 +177,20 @@ public class PostService {
 
         postRepository.save(post);
 
+        switch(board.getBoardId()) {
+            case 9 -> userService.addSand(user, 1);
+            case 10 -> userService.addSand(user, 2);
+            case 11 -> userService.addSand(user, 3);
+            case 12 -> userService.addSand(user, 4);
+            case 13 -> userService.addSand(user, 5);
+            case 14 -> userService.addSand(user, 6);
+            case 15 -> userService.addSand(user, 7);
+            case 16 -> userService.addSand(user, 8);
+            case 17 -> userService.addSand(user, 9);
+            default -> userService.addSand(user, 10);
+        }
+        userService.addExperience(user, 1);
+
         return new PostUploadResponse(post.getBoard(), post.getPostId());
     }
 

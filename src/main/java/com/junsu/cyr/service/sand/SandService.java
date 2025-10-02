@@ -6,9 +6,10 @@ import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.common.UserAssetDateResponse;
 import com.junsu.cyr.repository.SandLogRepository;
 import com.junsu.cyr.repository.SandRepository;
+import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.SandExceptionCode;
-import com.junsu.cyr.service.user.UserService;
+import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public class SandService {
 
     private final SandRepository sandRepository;
     private final SandLogRepository sandLogRepository;
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     public Sand getSand(Integer sandId) {
         return sandRepository.findById(sandId)
@@ -40,10 +41,11 @@ public class SandService {
     }
 
     public UserAssetDateResponse getAssetData(Integer userId) {
-        User user = userService.getUserById(userId);
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
         UserAssetDateResponse response = new UserAssetDateResponse();
-        response.setCurrent(user.getEpxCnt());
+        response.setCurrent(Long.valueOf(user.getSand()));
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime todayMidnight = LocalDate.now().atStartOfDay();

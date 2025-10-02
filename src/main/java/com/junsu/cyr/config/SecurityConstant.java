@@ -36,7 +36,6 @@ public class SecurityConstant {
             "/calendar/request/monthly",
             "/calendar/request/all",
             "/calendar/before",
-            "/calendar/after",
-            "/experience/*"
+            "/calendar/after"
     );
 }

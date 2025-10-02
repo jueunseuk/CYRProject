@@ -7,9 +7,10 @@ import com.junsu.cyr.model.common.ExperienceHistoryResponse;
 import com.junsu.cyr.model.common.UserAssetDateResponse;
 import com.junsu.cyr.repository.ExperienceLogRepository;
 import com.junsu.cyr.repository.ExperienceRepository;
+import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.ExperienceExceptionCode;
-import com.junsu.cyr.service.user.UserService;
+import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ public class ExperienceService {
 
     private final ExperienceRepository experienceRepository;
     private final ExperienceLogRepository experienceLogRepository;
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     public Experience getExperience(Integer experienceId) {
         return experienceRepository.findById(experienceId)
@@ -41,7 +42,8 @@ public class ExperienceService {
     }
 
     public UserAssetDateResponse getAssetData(Integer userId) {
-        User user = userService.getUserById(userId);
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
         UserAssetDateResponse response = new UserAssetDateResponse();
         response.setCurrent(user.getEpxCnt());

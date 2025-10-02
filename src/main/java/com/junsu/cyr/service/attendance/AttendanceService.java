@@ -40,6 +40,7 @@ public class AttendanceService {
                 .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
         AttendanceId attendanceId = new AttendanceId(userId, LocalDate.now());
+
         Optional<Attendance> attendance = attendanceRepository.findByAttendanceId(attendanceId);
         if(attendance.isPresent()) {
             throw new BaseException(AttendanceExceptionCode.ALREADY_ATTEND_USER);

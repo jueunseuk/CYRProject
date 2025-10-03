@@ -4,6 +4,7 @@ import com.junsu.cyr.domain.sand.Sand;
 import com.junsu.cyr.domain.sand.SandLog;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.common.UserAssetDateResponse;
+import com.junsu.cyr.model.user.GraphResponse;
 import com.junsu.cyr.repository.SandLogRepository;
 import com.junsu.cyr.repository.SandRepository;
 import com.junsu.cyr.repository.UserRepository;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -81,6 +83,22 @@ public class SandService {
         response.setIncrementByMonth(monthExp - lastMonthExp);
 
         return response;
+    }
+
+    public List<GraphResponse> getSandHistory(Integer userId) {
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime aYearAgo = today.minusYears(1);
+
+        List<SandLog> sandLogs = sandLogRepository.findAllByUserIdAndCreatedAtBetween(userId, aYearAgo, today);
+
+        List<GraphResponse.Point> points = new ArrayList<>();
+        for(SandLog sandLog : sandLogs) {
+            points.add(new GraphResponse.Point(sandLog.getCreatedAt().toLocalDate(), Long.valueOf(sandLog.getAfter())));
+        }
+
+        GraphResponse graphResponse = new GraphResponse("모래알", points);
+
+        return List.of(graphResponse);
     }
 
     private Long countDuringPeriod(Integer userId, Integer sandId, LocalDateTime start, LocalDateTime end) {

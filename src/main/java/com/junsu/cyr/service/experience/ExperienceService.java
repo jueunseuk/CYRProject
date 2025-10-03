@@ -5,6 +5,7 @@ import com.junsu.cyr.domain.experiences.ExperienceLog;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.common.ExperienceHistoryResponse;
 import com.junsu.cyr.model.common.UserAssetDateResponse;
+import com.junsu.cyr.model.user.GraphResponse;
 import com.junsu.cyr.repository.ExperienceLogRepository;
 import com.junsu.cyr.repository.ExperienceRepository;
 import com.junsu.cyr.repository.UserRepository;
@@ -12,10 +13,12 @@ import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.ExperienceExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.graph.Graph;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -84,8 +87,20 @@ public class ExperienceService {
         return response;
     }
 
-    public ExperienceHistoryResponse getExperienceHistory(Integer userId) {
-        return null;
+    public List<GraphResponse> getExperienceHistory(Integer userId) {
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime aYearAgo = today.minusYears(1);
+
+        List<ExperienceLog> experienceLogs = experienceLogRepository.findAllByUserIdAndCreatedAtBetween(userId, aYearAgo, today);
+
+        List<GraphResponse.Point> points = new ArrayList<>();
+        for(ExperienceLog experienceLog : experienceLogs) {
+            points.add(new GraphResponse.Point(experienceLog.getCreatedAt().toLocalDate(), experienceLog.getAfter()));
+        }
+
+        GraphResponse graphResponse = new GraphResponse("경험치", points);
+
+        return List.of(graphResponse);
     }
 
     private Long countDuringPeriod(Integer userId, Integer experienceId, LocalDateTime start, LocalDateTime end) {

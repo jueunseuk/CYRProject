@@ -1,9 +1,11 @@
 package com.junsu.cyr.service.temperature;
 
+import com.junsu.cyr.domain.sand.SandLog;
 import com.junsu.cyr.domain.temperature.Temperature;
 import com.junsu.cyr.domain.temperature.TemperatureLog;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.common.UserAssetDateResponse;
+import com.junsu.cyr.model.user.GraphResponse;
 import com.junsu.cyr.repository.TemperatureLogRepository;
 import com.junsu.cyr.repository.TemperatureRepository;
 import com.junsu.cyr.repository.UserRepository;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -81,6 +84,22 @@ public class TemperatureService {
         response.setIncrementByMonth(monthExp - lastMonthExp);
 
         return response;
+    }
+
+    public List<GraphResponse> getTemperatureHistory(Integer userId) {
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime aYearAgo = today.minusYears(1);
+
+        List<TemperatureLog> temperatureLogs = temperatureLogRepository.findAllByUserIdAndCreatedAtBetween(userId, aYearAgo, today);
+
+        List<GraphResponse.Point> points = new ArrayList<>();
+        for(TemperatureLog temperatureLog : temperatureLogs) {
+            points.add(new GraphResponse.Point(temperatureLog.getCreatedAt().toLocalDate(), Long.valueOf(temperatureLog.getAfter())));
+        }
+
+        GraphResponse graphResponse = new GraphResponse("활동 온도", points);
+
+        return List.of(graphResponse);
     }
 
     private Long countDuringPeriod(Integer userId, Integer temperatureId, LocalDateTime start, LocalDateTime end) {

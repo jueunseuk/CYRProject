@@ -8,6 +8,7 @@ import com.junsu.cyr.model.user.GraphResponse;
 import com.junsu.cyr.repository.SandLogRepository;
 import com.junsu.cyr.repository.SandRepository;
 import com.junsu.cyr.repository.UserRepository;
+import com.junsu.cyr.repository.projection.DailyMaxProjection;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.SandExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -47,40 +47,40 @@ public class SandService {
                 .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
         UserAssetDateResponse response = new UserAssetDateResponse();
-        response.setCurrent(Long.valueOf(user.getSand()));
+        response.setCurrent(Long.valueOf(user.getGlass()));
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime todayMidnight = LocalDate.now().atStartOfDay();
 
-        Long todayExp = countDuringPeriod(userId, null, todayMidnight, now);
-        response.setToday(todayExp);
+        Long today = countDuringPeriod(userId, null, todayMidnight, now);
+        response.setToday(today);
 
         LocalDateTime yesterdayMidnight = LocalDate.now().minusDays(1).atStartOfDay();
-        Long yesterdayExp = countDuringPeriod(userId, null, yesterdayMidnight, todayMidnight);
+        Long yesterday = countDuringPeriod(userId, null, yesterdayMidnight, todayMidnight);
 
-        response.setIncrementByDay(todayExp - yesterdayExp);
+        response.setIncrementByDay(today - yesterday);
 
         LocalDate monday = LocalDate.now().with(java.time.DayOfWeek.MONDAY);
         LocalDateTime thisWeekStart = monday.atStartOfDay();
-        Long weekExp = countDuringPeriod(userId, null, thisWeekStart, now);
-        response.setWeek(weekExp);
+        Long week = countDuringPeriod(userId, null, thisWeekStart, now);
+        response.setWeek(week);
 
         LocalDate lastMonday = monday.minusWeeks(1);
         LocalDateTime lastWeekStart = lastMonday.atStartOfDay();
-        Long lastWeekExp = countDuringPeriod(userId, null, lastWeekStart, thisWeekStart);
+        Long lastWeek = countDuringPeriod(userId, null, lastWeekStart, thisWeekStart);
 
-        response.setIncrementByWeek(weekExp - lastWeekExp);
+        response.setIncrementByWeek(week - lastWeek);
 
         LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
         LocalDateTime thisMonthStart = firstDayOfMonth.atStartOfDay();
-        Long monthExp = countDuringPeriod(userId, null, thisMonthStart, now);
-        response.setMonth(monthExp);
+        Long month = countDuringPeriod(userId, null, thisMonthStart, now);
+        response.setMonth(month);
 
         LocalDate firstDayOfLastMonth = firstDayOfMonth.minusMonths(1);
         LocalDateTime lastMonthStart = firstDayOfLastMonth.atStartOfDay();
-        Long lastMonthExp = countDuringPeriod(userId, null, lastMonthStart, thisMonthStart);
+        Long lastMonth = countDuringPeriod(userId, null, lastMonthStart, thisMonthStart);
 
-        response.setIncrementByMonth(monthExp - lastMonthExp);
+        response.setIncrementByMonth(month - lastMonth);
 
         return response;
     }
@@ -89,16 +89,16 @@ public class SandService {
         LocalDateTime today = LocalDateTime.now();
         LocalDateTime aYearAgo = today.minusYears(1);
 
-        List<SandLog> sandLogs = sandLogRepository.findAllByUserIdAndCreatedAtBetween(userId, aYearAgo, today);
+        List<DailyMaxProjection> rows = sandLogRepository.findDailyMaxByUserId(userId, aYearAgo, today);
 
-        List<GraphResponse.Point> points = new ArrayList<>();
-        for(SandLog sandLog : sandLogs) {
-            points.add(new GraphResponse.Point(sandLog.getCreatedAt().toLocalDate(), Long.valueOf(sandLog.getAfter())));
-        }
+        List<GraphResponse.Point> points = rows.stream()
+                .map(r -> new GraphResponse.Point(
+                        r.getDate(),
+                        r.getAfter()
+                ))
+                .toList();
 
-        GraphResponse graphResponse = new GraphResponse("모래알", points);
-
-        return List.of(graphResponse);
+        return List.of(new GraphResponse("모래알", points));
     }
 
     private Long countDuringPeriod(Integer userId, Integer sandId, LocalDateTime start, LocalDateTime end) {

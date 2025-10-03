@@ -1,9 +1,8 @@
-package com.junsu.cyr.controller.experience;
+package com.junsu.cyr.controller.glass;
 
-import com.junsu.cyr.model.common.ExperienceHistoryResponse;
 import com.junsu.cyr.model.common.UserAssetDateResponse;
 import com.junsu.cyr.model.user.GraphResponse;
-import com.junsu.cyr.service.experience.ExperienceService;
+import com.junsu.cyr.service.glass.GlassService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,20 +14,20 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/experience")
-public class ExperienceController {
+@RequestMapping("/glass")
+public class GlassController {
 
-    private final ExperienceService experienceService;
+    private final GlassService glassService;
 
     @GetMapping("/data/{userId}")
-    public ResponseEntity<UserAssetDateResponse> getExperienceData(@PathVariable Integer userId) {
-        UserAssetDateResponse userAssetDateResponse = experienceService.getAssetData(userId);
+    public ResponseEntity<UserAssetDateResponse> getGlassData(@PathVariable Integer userId) {
+        UserAssetDateResponse userAssetDateResponse = glassService.getAssetData(userId);
         return ResponseEntity.ok(userAssetDateResponse);
     }
 
     @GetMapping("/history/{userId}")
-    public ResponseEntity<List<GraphResponse>> getExperienceHistory(@PathVariable Integer userId) {
-        List<GraphResponse> graphResponses = experienceService.getExperienceHistory(userId);
+    public ResponseEntity<List<GraphResponse>> getGlassHistory(@PathVariable Integer userId) {
+        List<GraphResponse> graphResponses = glassService.getGlassHistory(userId);
         return ResponseEntity.ok(graphResponses);
     }
 }

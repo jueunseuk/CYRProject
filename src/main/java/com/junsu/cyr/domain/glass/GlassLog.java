@@ -21,16 +21,13 @@ public class GlassLog extends BaseTime {
     private Long glassLogId;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "glass")
+    private Glass glass;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user")
     private User user;
 
     @Column(name = "after", nullable = false)
     private Integer after;
-
-    @Column(name = "delta")
-    private Integer delta;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type")
-    private Type type;
 }

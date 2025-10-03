@@ -21,8 +21,8 @@ public class SandController {
 
     @GetMapping("/data/{userId}")
     public ResponseEntity<UserAssetDateResponse> getSandData(@PathVariable Integer userId) {
-        UserAssetDateResponse experienceDataResponse = sandService.getAssetData(userId);
-        return ResponseEntity.ok(experienceDataResponse);
+        UserAssetDateResponse userAssetDateResponse = sandService.getAssetData(userId);
+        return ResponseEntity.ok(userAssetDateResponse);
     }
 
     @GetMapping("/history/{userId}")

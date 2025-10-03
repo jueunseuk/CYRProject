@@ -1,6 +1,5 @@
 package com.junsu.cyr.service.comment;
 
-import com.junsu.cyr.domain.calendar.CalendarRequest;
 import com.junsu.cyr.domain.comments.Comment;
 import com.junsu.cyr.domain.comments.Fixed;
 import com.junsu.cyr.domain.posts.Post;
@@ -71,7 +70,7 @@ public class CommentService {
 
     @Transactional
     public void updateComment(CommentRequest request, Long commentId, Integer userId) {
-        User user = userRepository.findByUserId(userId)
+        userRepository.findByUserId(userId)
                 .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
         if(request.getComment().length() < 5) {
@@ -90,7 +89,7 @@ public class CommentService {
 
     @Transactional
     public void deleteComment(Long commentId, Integer userId) {
-        User user = userRepository.findByUserId(userId)
+        userRepository.findByUserId(userId)
                 .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
         Comment comment = commentRepository.findById(commentId)

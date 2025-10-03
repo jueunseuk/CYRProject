@@ -1,6 +1,5 @@
 package com.junsu.cyr.repository;
 
-import com.junsu.cyr.domain.gallery.Gallery;
 import com.junsu.cyr.domain.gallery.GalleryImage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

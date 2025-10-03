@@ -47,7 +47,7 @@ public class ExperienceService {
                 .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
         UserAssetDateResponse response = new UserAssetDateResponse();
-        response.setCurrent(Long.valueOf(user.getGlass()));
+        response.setCurrent(user.getEpxCnt());
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime todayMidnight = LocalDate.now().atStartOfDay();

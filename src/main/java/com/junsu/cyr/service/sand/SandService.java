@@ -47,7 +47,7 @@ public class SandService {
                 .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
         UserAssetDateResponse response = new UserAssetDateResponse();
-        response.setCurrent(Long.valueOf(user.getGlass()));
+        response.setCurrent(Long.valueOf(user.getSand()));
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime todayMidnight = LocalDate.now().atStartOfDay();

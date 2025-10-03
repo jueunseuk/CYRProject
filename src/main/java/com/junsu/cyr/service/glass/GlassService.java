@@ -1,16 +1,16 @@
-package com.junsu.cyr.service.experience;
+package com.junsu.cyr.service.glass;
 
-import com.junsu.cyr.domain.experiences.Experience;
-import com.junsu.cyr.domain.experiences.ExperienceLog;
+import com.junsu.cyr.domain.glass.Glass;
+import com.junsu.cyr.domain.glass.GlassLog;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.common.UserAssetDateResponse;
 import com.junsu.cyr.model.user.GraphResponse;
-import com.junsu.cyr.repository.ExperienceLogRepository;
-import com.junsu.cyr.repository.ExperienceRepository;
+import com.junsu.cyr.repository.GlassLogRepository;
+import com.junsu.cyr.repository.GlassRepository;
 import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.repository.projection.DailyMaxProjection;
 import com.junsu.cyr.response.exception.BaseException;
-import com.junsu.cyr.response.exception.code.ExperienceExceptionCode;
+import com.junsu.cyr.response.exception.code.GlassExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,25 +21,25 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ExperienceService {
+public class GlassService {
 
-    private final ExperienceRepository experienceRepository;
-    private final ExperienceLogRepository experienceLogRepository;
+    private final GlassRepository glassRepository;
+    private final GlassLogRepository glassLogRepository;
     private final UserRepository userRepository;
 
-    public Experience getExperience(Integer experienceId) {
-        return experienceRepository.findById(experienceId)
-                .orElseThrow(() -> new BaseException(ExperienceExceptionCode.NOT_FOUND_EXPERIENCE));
+    public Glass getGlass(Integer glassLogId) {
+        return glassRepository.findById(glassLogId)
+                .orElseThrow(() -> new BaseException(GlassExceptionCode.NOT_FOUND_GLASS));
     }
 
-    public void createExperienceLog(Experience experience, User user) {
-        ExperienceLog experienceLog = ExperienceLog.builder()
-                .experience(experience)
-                .after(user.getEpxCnt())
+    public void createGlassLog(Glass glass, User user) {
+        GlassLog glassLog = GlassLog.builder()
+                .glass(glass)
+                .after(user.getGlass())
                 .user(user)
                 .build();
 
-        experienceLogRepository.save(experienceLog);
+        glassLogRepository.save(glassLog);
     }
 
     public UserAssetDateResponse getAssetData(Integer userId) {
@@ -85,11 +85,11 @@ public class ExperienceService {
         return response;
     }
 
-    public List<GraphResponse> getExperienceHistory(Integer userId) {
+    public List<GraphResponse> getGlassHistory(Integer userId) {
         LocalDateTime today = LocalDateTime.now();
         LocalDateTime aYearAgo = today.minusYears(1);
 
-        List<DailyMaxProjection> rows = experienceLogRepository.findDailyMaxByUserId(userId, aYearAgo, today);
+        List<DailyMaxProjection> rows = glassLogRepository.findDailyMaxByUserId(userId, aYearAgo, today);
 
         List<GraphResponse.Point> points = rows.stream()
                 .map(r -> new GraphResponse.Point(
@@ -98,24 +98,24 @@ public class ExperienceService {
                 ))
                 .toList();
 
-        return List.of(new GraphResponse("경험치", points));
+        return List.of(new GraphResponse("유리 조각", points));
     }
 
-    private Long countDuringPeriod(Integer userId, Integer experienceId, LocalDateTime start, LocalDateTime end) {
-        List<ExperienceLog> experienceLogs;
-        if(userId != null && experienceId != null) {
-            experienceLogs = experienceLogRepository.findAllByUserIdAndExperienceIdAndCreatedAtBetween(userId, experienceId, start, end);
+    private Long countDuringPeriod(Integer userId, Integer glassLogId, LocalDateTime start, LocalDateTime end) {
+        List<GlassLog> glassLogs;
+        if(userId != null && glassLogId != null) {
+            glassLogs = glassLogRepository.findAllByUserIdAndGlassIdAndCreatedAtBetween(userId, glassLogId, start, end);
         } else if(userId != null) {
-            experienceLogs = experienceLogRepository.findAllByUserIdAndCreatedAtBetween(userId, start, end);
-        } else if(experienceId != null) {
-            experienceLogs = experienceLogRepository.findAllByExperienceIdAndCreatedAtBetween(experienceId, start, end);
+            glassLogs = glassLogRepository.findAllByUserIdAndCreatedAtBetween(userId, start, end);
+        } else if(glassLogId != null) {
+            glassLogs = glassLogRepository.findAllByGlassIdAndCreatedAtBetween(glassLogId, start, end);
         } else {
-            experienceLogs = experienceLogRepository.findAllByCreatedAtBetween(start, end);
+            glassLogs = glassLogRepository.findAllByCreatedAtBetween(start, end);
         }
 
         long count = 0;
-        for (ExperienceLog experienceLog : experienceLogs) {
-            count += experienceLog.getExperience().getAmount();
+        for (GlassLog glassLog : glassLogs) {
+            count += glassLog.getGlass().getAmount();
         }
 
         return count;

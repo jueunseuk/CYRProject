@@ -84,8 +84,8 @@ public class AuthController {
     }
 
     @PostMapping("/secession")
-    public ResponseEntity<?> secession(HttpServletRequest request, HttpServletResponse response) {
-        authService.secede(response, request);
+    public ResponseEntity<?> secession(HttpServletResponse response) {
+        authService.secede(response);
         return ResponseEntity.ok(SuccessResponse.success("Secession successfully"));
     }
 }

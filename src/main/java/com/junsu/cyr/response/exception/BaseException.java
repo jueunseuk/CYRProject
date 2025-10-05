@@ -3,8 +3,6 @@ package com.junsu.cyr.response.exception;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-import java.time.LocalDateTime;
-
 @Getter
 public class BaseException extends RuntimeException {
     private final String code;

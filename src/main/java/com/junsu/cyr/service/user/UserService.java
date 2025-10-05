@@ -1,21 +1,29 @@
 package com.junsu.cyr.service.user;
 
 import com.junsu.cyr.domain.experiences.Experience;
+import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.sand.Sand;
 import com.junsu.cyr.domain.temperature.Temperature;
+import com.junsu.cyr.domain.users.Gender;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.user.OtherProfileResponse;
 import com.junsu.cyr.model.user.UserProfileResponse;
+import com.junsu.cyr.model.user.UserProfileUpdateRequest;
 import com.junsu.cyr.model.user.UserSidebarResponse;
 import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.BaseException;
+import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.service.experience.ExperienceService;
+import com.junsu.cyr.service.image.S3Service;
 import com.junsu.cyr.service.sand.SandService;
 import com.junsu.cyr.service.temperature.TemperatureService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +33,7 @@ public class UserService {
     private final ExperienceService experienceService;
     private final SandService sandService;
     private final TemperatureService temperatureService;
+    private final S3Service s3Service;
 
     public User getUserById(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
@@ -73,5 +82,39 @@ public class UserService {
     public OtherProfileResponse getOtherProfile(Integer otherId) {
         User user = getUserById(otherId);
         return new OtherProfileResponse(user);
+    }
+
+    @Transactional
+    public UserProfileUpdateRequest updateUserInformation(UserProfileUpdateRequest request, Integer userId) {
+        User user = getUserById(userId);
+
+        if(request.getIntroduction() != null && request.getIntroduction().length() < 5) {
+            throw new BaseException(UserExceptionCode.TOO_SHORT_INTRODUCTION);
+        }
+
+        user.updateInformation(request);
+
+        return new UserProfileUpdateRequest(
+                user.getAge(),
+                user.getNickname(),
+                user.getGender(),
+                user.getIntroduction(),
+                user.getName());
+    }
+
+    @Transactional
+    public String updateUserProfileImage(MultipartFile request, Integer userId) {
+        User user = getUserById(userId);
+
+        try {
+            if (request != null) {
+                String profileUrl = s3Service.uploadFile(request, Type.PROFILE);
+                user.updateProfileUrl(profileUrl);
+            }
+        } catch (Exception e) {
+            throw new BaseException(ImageExceptionCode.FAILED_TO_UPLOAD_IMAGE);
+        }
+
+        return user.getProfileUrl();
     }
 }

@@ -1,6 +1,7 @@
 package com.junsu.cyr.domain.users;
 
 import com.junsu.cyr.domain.globals.BaseTime;
+import com.junsu.cyr.model.user.UserProfileUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -95,6 +96,14 @@ public class User extends BaseTime {
 
     public void updateProfileUrl(String profileUrl) {
         this.profileUrl = profileUrl;
+    }
+
+    public void updateInformation(UserProfileUpdateRequest request) {
+        this.age = request.getAge() == null ? this.age : request.getAge();
+        this.gender = request.getGender() == null ? this.gender : request.getGender();
+        this.nickname = request.getNickname() == null ? this.nickname : request.getNickname();
+        this.introduction = request.getIntroduction() == null ? this.introduction : request.getIntroduction();
+        this.name = request.getName() == null ? this.name : request.getName();
     }
 
     public void updateToSecession() {

@@ -192,7 +192,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void secede(HttpServletResponse response, HttpServletRequest request) {
+    public void secede(HttpServletResponse response) {
         CookieUtil.deleteCookie(response, "refreshToken");
         CookieUtil.deleteCookie(response, "accessToken");
     }
@@ -205,7 +205,7 @@ public class AuthService {
         }
 
         String refreshToken = cookie.get().getValue();
-        if (!jwtTokenProvider.validateToken(refreshToken)) {
+        if (jwtTokenProvider.isValidToken(refreshToken)) {
             throw new BaseException(AuthExceptionCode.INVALID_REFRESH_TOKEN);
         }
 

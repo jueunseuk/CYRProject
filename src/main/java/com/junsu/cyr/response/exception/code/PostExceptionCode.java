@@ -12,6 +12,7 @@ public enum PostExceptionCode implements ExceptionCode {
     CONTENT_IS_TOO_SHORT("POST_002", "게시글의 내용이 너무 짧습니다.", HttpStatus.BAD_REQUEST),
     CONTENT_IS_EMPTY("POST_003", "게시글의 내용이 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
     DO_NOT_HAVE_PERMISSION("POST_004", "권한이 없습니다.", HttpStatus.BAD_REQUEST),
+    UNSUPPORTED_SORT_FIELD("POST_005", "정렬할 수 없는 필드입니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String code;

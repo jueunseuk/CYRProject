@@ -1,5 +1,6 @@
 package com.junsu.cyr.config;
 
+import com.junsu.cyr.constant.SecurityConstant;
 import com.junsu.cyr.util.JwtAuthenticationFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

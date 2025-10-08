@@ -4,13 +4,9 @@ import com.junsu.cyr.domain.experiences.Experience;
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.sand.Sand;
 import com.junsu.cyr.domain.temperature.Temperature;
-import com.junsu.cyr.domain.users.Gender;
 import com.junsu.cyr.domain.users.User;
-import com.junsu.cyr.model.user.OtherProfileResponse;
-import com.junsu.cyr.model.user.UserProfileResponse;
-import com.junsu.cyr.model.user.UserProfileUpdateRequest;
-import com.junsu.cyr.model.user.UserSidebarResponse;
-import com.junsu.cyr.repository.UserRepository;
+import com.junsu.cyr.model.user.*;
+import com.junsu.cyr.repository.*;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
@@ -23,8 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Objects;
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -34,6 +28,11 @@ public class UserService {
     private final SandService sandService;
     private final TemperatureService temperatureService;
     private final S3Service s3Service;
+    private final ExperienceLogRepository experienceLogRepository;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
+    private final EmpathyRepository empathyRepository;
+    private final GalleryImageRepository galleryImageRepository;
 
     public User getUserById(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
@@ -116,5 +115,21 @@ public class UserService {
         }
 
         return user.getProfileUrl();
+    }
+
+    @Transactional
+    public UserActivityResponse forceRefresh(Integer userId) {
+        User user = getUserById(userId);
+
+        Long postCnt = postRepository.countByUser(user);
+        Long commentCnt = commentRepository.countByUser(user);
+        Long empathyCnt = empathyRepository.countByUser(user);
+        Long imageCnt = galleryImageRepository.countByUser(user);
+
+        UserActivityResponse userActivityResponse = new UserActivityResponse(postCnt, commentCnt, empathyCnt, imageCnt);
+
+        user.updateActivity(userActivityResponse);
+
+        return userActivityResponse;
     }
 }

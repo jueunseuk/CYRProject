@@ -2,10 +2,14 @@ package com.junsu.cyr.service.comment;
 
 import com.junsu.cyr.domain.comments.Comment;
 import com.junsu.cyr.domain.comments.Fixed;
+import com.junsu.cyr.domain.comments.Locked;
 import com.junsu.cyr.domain.posts.Post;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.comment.CommentRequest;
 import com.junsu.cyr.model.comment.CommentResponse;
+import com.junsu.cyr.model.comment.CommentSearchConditionRequest;
+import com.junsu.cyr.model.comment.UserCommentResponse;
+import com.junsu.cyr.model.post.PostSearchConditionRequest;
 import com.junsu.cyr.repository.CommentRepository;
 import com.junsu.cyr.repository.PostRepository;
 import com.junsu.cyr.repository.UserRepository;
@@ -15,6 +19,10 @@ import com.junsu.cyr.response.exception.code.PostExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,5 +109,22 @@ public class CommentService {
 
         commentRepository.delete(comment);
         comment.getPost().decreaseCommentCnt();
+    }
+
+    public Page<UserCommentResponse> getCommentsByUser(Integer searchId, Integer userId, CommentSearchConditionRequest condition) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
+
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort()));
+
+        Page<Comment> userCommentResponses;
+
+        if(searchId.equals(userId)) {
+            userCommentResponses = commentRepository.findAllByUser(user, pageable);
+        } else {
+            userCommentResponses = commentRepository.findAllByUserAndLocked(user, Locked.PUBLIC, pageable);
+        }
+
+        return userCommentResponses.map(UserCommentResponse::new);
     }
 }

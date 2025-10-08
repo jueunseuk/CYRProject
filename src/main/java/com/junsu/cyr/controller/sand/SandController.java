@@ -1,6 +1,6 @@
 package com.junsu.cyr.controller.sand;
 
-import com.junsu.cyr.model.common.UserAssetDateResponse;
+import com.junsu.cyr.model.common.UserAssetDataResponse;
 import com.junsu.cyr.model.user.GraphResponse;
 import com.junsu.cyr.service.sand.SandService;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +20,9 @@ public class SandController {
     private final SandService sandService;
 
     @GetMapping("/data/{userId}")
-    public ResponseEntity<UserAssetDateResponse> getSandData(@PathVariable Integer userId) {
-        UserAssetDateResponse userAssetDateResponse = sandService.getAssetData(userId);
-        return ResponseEntity.ok(userAssetDateResponse);
+    public ResponseEntity<UserAssetDataResponse> getSandData(@PathVariable Integer userId) {
+        UserAssetDataResponse userAssetDataResponse = sandService.getAssetData(userId);
+        return ResponseEntity.ok(userAssetDataResponse);
     }
 
     @GetMapping("/history/{userId}")

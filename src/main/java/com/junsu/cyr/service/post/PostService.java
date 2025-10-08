@@ -1,7 +1,9 @@
 package com.junsu.cyr.service.post;
 
+import com.junsu.cyr.constant.PostSortFieldConstant;
 import com.junsu.cyr.domain.boards.Board;
 import com.junsu.cyr.domain.empathys.EmpathyId;
+import com.junsu.cyr.domain.posts.Locked;
 import com.junsu.cyr.domain.posts.Post;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.post.*;
@@ -229,5 +231,26 @@ public class PostService {
                 request.getLocked());
 
         return new PostUploadResponse(post.getBoard(), post.getPostId());
+    }
+
+    public Page<PostListResponse> getPostsByUser(Integer searchId, Integer userId, PostSearchConditionRequest condition) {
+        User user = userService.getUserById(searchId);
+
+        String sortField = condition.getSort();
+        if(!PostSortFieldConstant.ALLOWED_FIELDS.contains(sortField)) {
+            throw new BaseException(PostExceptionCode.UNSUPPORTED_SORT_FIELD);
+        }
+
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), Sort.by(Sort.Direction.DESC, sortField));
+
+        Page<Post> posts;
+
+        if (searchId.equals(userId)) {
+            posts = postRepository.findAllByUser(user, pageable);
+        } else {
+            posts = postRepository.findAllByUserAndLocked(user, Locked.PUBLIC, pageable);
+        }
+
+        return posts.map(PostListResponse::new);
     }
 }

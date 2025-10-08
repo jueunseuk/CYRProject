@@ -132,4 +132,10 @@ public class UserService {
 
         return userActivityResponse;
     }
+
+    public UserActivityResponse getUserActivityData(Integer userId) {
+        User user = getUserById(userId);
+
+        return new UserActivityResponse(user.getPostCnt(), user.getCommentCnt(), user.getEmpathyCnt(), user.getImageCnt());
+    }
 }

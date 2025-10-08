@@ -60,6 +60,12 @@ public class UserController {
         return ResponseEntity.ok(userProfileUrl);
     }
 
+    @GetMapping("/{userId}/activity")
+    public ResponseEntity<UserActivityResponse> getUserActivityData(@PathVariable Integer userId) {
+        UserActivityResponse userActivityResponse = userService.getUserActivityData(userId);
+        return ResponseEntity.ok(userActivityResponse);
+    }
+
     @PatchMapping("/profile/refresh")
     public ResponseEntity<UserActivityResponse> refreshUserProfile(@RequestAttribute Integer userId) {
         UserActivityResponse userActivityResponse = userService.forceRefresh(userId);

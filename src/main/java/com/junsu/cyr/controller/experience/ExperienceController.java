@@ -1,7 +1,6 @@
 package com.junsu.cyr.controller.experience;
 
-import com.junsu.cyr.model.common.ExperienceHistoryResponse;
-import com.junsu.cyr.model.common.UserAssetDateResponse;
+import com.junsu.cyr.model.common.UserAssetDataResponse;
 import com.junsu.cyr.model.user.GraphResponse;
 import com.junsu.cyr.service.experience.ExperienceService;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +20,9 @@ public class ExperienceController {
     private final ExperienceService experienceService;
 
     @GetMapping("/data/{userId}")
-    public ResponseEntity<UserAssetDateResponse> getExperienceData(@PathVariable Integer userId) {
-        UserAssetDateResponse userAssetDateResponse = experienceService.getAssetData(userId);
-        return ResponseEntity.ok(userAssetDateResponse);
+    public ResponseEntity<UserAssetDataResponse> getExperienceData(@PathVariable Integer userId) {
+        UserAssetDataResponse userAssetDataResponse = experienceService.getAssetData(userId);
+        return ResponseEntity.ok(userAssetDataResponse);
     }
 
     @GetMapping("/history/{userId}")

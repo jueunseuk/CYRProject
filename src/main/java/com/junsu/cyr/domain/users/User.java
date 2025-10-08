@@ -1,6 +1,7 @@
 package com.junsu.cyr.domain.users;
 
 import com.junsu.cyr.domain.globals.BaseTime;
+import com.junsu.cyr.model.user.UserActivityResponse;
 import com.junsu.cyr.model.user.UserProfileUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -74,6 +75,18 @@ public class User extends BaseTime {
     @Column(name = "role", nullable = false)
     private Role role;
 
+    @Column(name = "post_cnt", nullable = false)
+    private Long postCnt;
+
+    @Column(name = "comment_cnt", nullable = false)
+    private Long commentCnt;
+
+    @Column(name = "image_cnt", nullable = false)
+    private Long imageCnt;
+
+    @Column(name = "empathy_cnt", nullable = false)
+    private Long empathyCnt;
+
     @Column(name = "warn")
     private Integer warn;
 
@@ -104,6 +117,13 @@ public class User extends BaseTime {
         this.nickname = request.getNickname() == null ? this.nickname : request.getNickname();
         this.introduction = request.getIntroduction() == null ? this.introduction : request.getIntroduction();
         this.name = request.getName() == null ? this.name : request.getName();
+    }
+
+    public void updateActivity(UserActivityResponse userActivityResponse) {
+        this.postCnt = userActivityResponse.getPostCnt();
+        this.commentCnt = userActivityResponse.getCommentCnt();
+        this.imageCnt = userActivityResponse.getImageCnt();
+        this.empathyCnt = userActivityResponse.getEmpathyCnt();
     }
 
     public void updateToSecession() {

@@ -1,6 +1,6 @@
 package com.junsu.cyr.controller.glass;
 
-import com.junsu.cyr.model.common.UserAssetDateResponse;
+import com.junsu.cyr.model.common.UserAssetDataResponse;
 import com.junsu.cyr.model.user.GraphResponse;
 import com.junsu.cyr.service.glass.GlassService;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +20,9 @@ public class GlassController {
     private final GlassService glassService;
 
     @GetMapping("/data/{userId}")
-    public ResponseEntity<UserAssetDateResponse> getGlassData(@PathVariable Integer userId) {
-        UserAssetDateResponse userAssetDateResponse = glassService.getAssetData(userId);
-        return ResponseEntity.ok(userAssetDateResponse);
+    public ResponseEntity<UserAssetDataResponse> getGlassData(@PathVariable Integer userId) {
+        UserAssetDataResponse userAssetDataResponse = glassService.getAssetData(userId);
+        return ResponseEntity.ok(userAssetDataResponse);
     }
 
     @GetMapping("/history/{userId}")

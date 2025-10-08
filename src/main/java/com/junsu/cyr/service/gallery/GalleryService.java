@@ -7,8 +7,10 @@ import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.gallery.*;
 import com.junsu.cyr.repository.GalleryImageRepository;
 import com.junsu.cyr.repository.GalleryRepository;
+import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.GalleryExceptionCode;
+import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.service.image.S3Service;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ public class GalleryService {
     private final GalleryImageRepository galleryImageRepository;
     private final S3Service s3Service;
     private final UserService userService;
+    private final UserRepository userRepository;
 
     @Transactional
     public void uploadGallery(GalleryUploadRequest request, Integer userId) {
@@ -149,5 +152,16 @@ public class GalleryService {
         }
 
         galleryImageRepository.saveAll(newImages);
+    }
+
+    public Page<GalleryImageResponse> getImagesByUser(Integer searchId, GallerySearchConditionRequest condition) {
+        User user = userRepository.findByUserId(searchId)
+                .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
+
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), Sort.by(condition.getSort()).descending());
+
+        Page<GalleryImage> galleryImages = galleryImageRepository.findAllByGallery_User(user, pageable);
+
+        return galleryImages.map(GalleryImageResponse::new);
     }
 }

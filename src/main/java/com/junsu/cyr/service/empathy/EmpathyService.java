@@ -5,6 +5,8 @@ import com.junsu.cyr.domain.empathys.EmpathyId;
 import com.junsu.cyr.domain.posts.Post;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.empathy.EmpathyResponse;
+import com.junsu.cyr.model.post.PostListResponse;
+import com.junsu.cyr.model.post.PostSearchConditionRequest;
 import com.junsu.cyr.repository.EmpathyRepository;
 import com.junsu.cyr.repository.PostRepository;
 import com.junsu.cyr.repository.UserRepository;
@@ -14,6 +16,10 @@ import com.junsu.cyr.response.exception.code.PostExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,5 +73,15 @@ public class EmpathyService {
 
         post.decreaseEmpathyCnt();
         empathyRepository.deleteById(empathyId);
+    }
+
+    public Page<PostListResponse> getEmpathizePostByUser(Integer searchId, PostSearchConditionRequest condition) {
+        User user = userRepository.findByUserId(searchId)
+                .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
+
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort()));
+
+        Page<Empathy> empathyList = empathyRepository.findAllByUser(user.getUserId(), pageable);
+        return empathyList.map(e -> new PostListResponse(e.getPost()));
     }
 }

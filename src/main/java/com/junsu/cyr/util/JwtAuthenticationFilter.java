@@ -1,6 +1,6 @@
 package com.junsu.cyr.util;
 
-import com.junsu.cyr.config.SecurityConstant;
+import com.junsu.cyr.constant.SecurityConstant;
 import com.junsu.cyr.domain.users.Status;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.repository.UserRepository;

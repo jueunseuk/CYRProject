@@ -1,4 +1,4 @@
-package com.junsu.cyr.config;
+package com.junsu.cyr.constant;
 
 import java.util.List;
 

@@ -55,5 +55,4 @@ public class PostController {
         postService.deletePosts(postId, userId);
         return ResponseEntity.ok("success to delete post");
     }
-
 }

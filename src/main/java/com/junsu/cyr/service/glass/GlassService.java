@@ -3,7 +3,7 @@ package com.junsu.cyr.service.glass;
 import com.junsu.cyr.domain.glass.Glass;
 import com.junsu.cyr.domain.glass.GlassLog;
 import com.junsu.cyr.domain.users.User;
-import com.junsu.cyr.model.common.UserAssetDateResponse;
+import com.junsu.cyr.model.common.UserAssetDataResponse;
 import com.junsu.cyr.model.user.GraphResponse;
 import com.junsu.cyr.repository.GlassLogRepository;
 import com.junsu.cyr.repository.GlassRepository;
@@ -42,11 +42,11 @@ public class GlassService {
         glassLogRepository.save(glassLog);
     }
 
-    public UserAssetDateResponse getAssetData(Integer userId) {
+    public UserAssetDataResponse getAssetData(Integer userId) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
-        UserAssetDateResponse response = new UserAssetDateResponse();
+        UserAssetDataResponse response = new UserAssetDataResponse();
         response.setCurrent(Long.valueOf(user.getGlass()));
 
         LocalDateTime now = LocalDateTime.now();

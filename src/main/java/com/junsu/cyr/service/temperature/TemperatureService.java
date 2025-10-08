@@ -3,7 +3,7 @@ package com.junsu.cyr.service.temperature;
 import com.junsu.cyr.domain.temperature.Temperature;
 import com.junsu.cyr.domain.temperature.TemperatureLog;
 import com.junsu.cyr.domain.users.User;
-import com.junsu.cyr.model.common.UserAssetDateResponse;
+import com.junsu.cyr.model.common.UserAssetDataResponse;
 import com.junsu.cyr.model.user.GraphResponse;
 import com.junsu.cyr.repository.TemperatureLogRepository;
 import com.junsu.cyr.repository.TemperatureRepository;
@@ -42,11 +42,11 @@ public class TemperatureService {
         temperatureLogRepository.save(temperatureLog);
     }
 
-    public UserAssetDateResponse getAssetData(Integer userId) {
+    public UserAssetDataResponse getAssetData(Integer userId) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
-        UserAssetDateResponse response = new UserAssetDateResponse();
+        UserAssetDataResponse response = new UserAssetDataResponse();
         response.setCurrent(Long.valueOf(user.getTemperature()));
 
         LocalDateTime now = LocalDateTime.now();

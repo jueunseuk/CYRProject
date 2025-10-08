@@ -3,7 +3,7 @@ package com.junsu.cyr.model.common;
 import lombok.Data;
 
 @Data
-public class UserAssetDateResponse {
+public class UserAssetDataResponse {
     private Long current;
     private Long today;
     private Long incrementByDay;

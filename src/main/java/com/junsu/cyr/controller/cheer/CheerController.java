@@ -24,6 +24,7 @@ public class CheerController {
 
     @PostMapping("")
     public ResponseEntity<Long> updateCheer(@RequestAttribute Integer userId) {
+        System.out.println(userId);
         Long response = cheerService.createCheer(userId);
         return ResponseEntity.ok(response);
     }

@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "empathy")
 public class Empathy extends BaseTime {
     @EmbeddedId
-    @Column(name = "empathy_id")
     private EmpathyId empathyId;
 
     @ManyToOne(fetch = FetchType.LAZY)

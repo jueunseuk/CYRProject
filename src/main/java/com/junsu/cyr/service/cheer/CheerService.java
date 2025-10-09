@@ -33,7 +33,7 @@ public class CheerService {
     }
 
     @Transactional
-    public Long createCheer(Integer userId) {
+    public void createCheer(Integer userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
@@ -54,8 +54,6 @@ public class CheerService {
         createCheerLog(user);
         cheerSummary.increase();
         cheerSummaryRepository.save(cheerSummary);
-
-        return getTotalCheer();
     }
 
     @Transactional

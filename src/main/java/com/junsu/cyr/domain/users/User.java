@@ -174,4 +174,8 @@ public class User extends BaseTime {
     public void initTemperature() {
         this.temperature = 0;
     }
+
+    public void increaseCheerCnt() {
+        this.cheerCnt += 1;
+    }
 }

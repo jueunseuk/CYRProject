@@ -29,4 +29,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Attendan
     Integer findAttendanceCnt(LocalDate start, LocalDate end);
 
     Optional<Attendance> findTopByAttendanceIdUserIdOrderByCreatedAtDesc(Integer userId);
+
+    Long countAllByAttendanceId_UserIdAndAttendanceId_AttendedAtBetween(Integer userId, LocalDate start, LocalDate end);
+
+    List<Attendance> findAllByAttendanceId_UserIdAndAttendanceId_AttendedAtBetween(Integer userId, LocalDate start, LocalDate end);
 }

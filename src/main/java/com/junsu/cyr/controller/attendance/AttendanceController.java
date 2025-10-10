@@ -1,8 +1,6 @@
 package com.junsu.cyr.controller.attendance;
 
-import com.junsu.cyr.model.attendance.AttendanceListResponse;
-import com.junsu.cyr.model.attendance.AttendanceRequest;
-import com.junsu.cyr.model.attendance.AttendanceWeekCntResponse;
+import com.junsu.cyr.model.attendance.*;
 import com.junsu.cyr.service.attendance.AttendanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -33,5 +31,17 @@ public class AttendanceController {
     public ResponseEntity<AttendanceWeekCntResponse> getAttendanceCnt() {
         AttendanceWeekCntResponse attendanceWeekCntResponses = attendanceService.getAttendanceCnt();
         return ResponseEntity.ok(attendanceWeekCntResponses);
+    }
+
+    @GetMapping("/data/{userId}")
+    public ResponseEntity<AttendanceDataResponse> getAttendanceData(@PathVariable Integer userId) {
+        AttendanceDataResponse attendanceDataResponse = attendanceService.getAssetData(userId);
+        return ResponseEntity.ok(attendanceDataResponse);
+    }
+
+    @GetMapping("/history/{userId}")
+    public ResponseEntity<List<AttendanceHistoryResponse>> getAttendanceHistory(@PathVariable Integer userId) {
+        List<AttendanceHistoryResponse> attendanceHistoryResponses = attendanceService.getAttendanceHistory(userId);
+        return ResponseEntity.ok(attendanceHistoryResponses);
     }
 }

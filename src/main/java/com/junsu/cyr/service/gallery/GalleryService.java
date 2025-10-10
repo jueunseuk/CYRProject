@@ -158,7 +158,7 @@ public class GalleryService {
         User user = userRepository.findByUserId(searchId)
                 .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
-        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), Sort.by(condition.getSort()).descending());
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort()));
 
         Page<GalleryImage> galleryImages = galleryImageRepository.findAllByGallery_User(user, pageable);
 

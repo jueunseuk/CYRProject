@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/gallery")
@@ -18,6 +20,12 @@ public class GalleryController {
     public ResponseEntity<?> uploadGallery(@ModelAttribute GalleryUploadRequest galleryUploadRequest, @RequestAttribute Integer userId) {
         galleryService.uploadGallery(galleryUploadRequest, userId);
         return ResponseEntity.ok("success to upload gallery");
+    }
+
+    @GetMapping("/random/{amount}")
+    public ResponseEntity<List<GalleryImageResponse>> getRandomGallery(@PathVariable Integer amount) {
+        List<GalleryImageResponse> galleryImageResponses = galleryService.getRandomImages(amount);
+        return ResponseEntity.ok(galleryImageResponses);
     }
 
     @GetMapping("")

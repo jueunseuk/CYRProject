@@ -116,6 +116,10 @@ public class GalleryService {
         );
 
         List<GalleryImage> oldImages = galleryImageRepository.findGalleryImage(galleryId);
+        for(GalleryImage galleryImage : oldImages) {
+            galleryImage.updatePicturedAt();
+        }
+
         List<GalleryImage> toDelete = oldImages.stream()
                 .filter(img -> !request.getOriginalImages().contains(img.getUrl()))
                 .toList();

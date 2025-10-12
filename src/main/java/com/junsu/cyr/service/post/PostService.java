@@ -241,7 +241,7 @@ public class PostService {
             throw new BaseException(PostExceptionCode.UNSUPPORTED_SORT_FIELD);
         }
 
-        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), Sort.by(Sort.Direction.DESC, sortField));
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), Sort.by(Sort.Direction.fromString(condition.getDirection()), sortField));
 
         Page<Post> posts;
 

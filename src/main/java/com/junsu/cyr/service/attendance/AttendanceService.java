@@ -174,7 +174,7 @@ public class AttendanceService {
 
         AttendanceDataResponse response = new AttendanceDataResponse();
         response.setTotal(Long.valueOf(user.getAttendanceCnt()));
-        response.setConsecutiveCnt(Long.valueOf(user.getAttendanceCnt()));
+        response.setConsecutiveCnt(Long.valueOf(user.getConsecutiveAttendanceCnt()));
 
         LocalDate today = LocalDate.now();
 

@@ -33,7 +33,7 @@ public class CheerService {
     }
 
     @Transactional
-    public Long createCheer(Integer userId) {
+    public void createCheer(Integer userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
@@ -49,20 +49,20 @@ public class CheerService {
             throw new BaseException(CheerSummaryExceptionCode.INVALID_REQUEST_PERIOD);
         }
 
+        user.increaseCheerCnt();
+
         createCheerLog(user);
         cheerSummary.increase();
         cheerSummaryRepository.save(cheerSummary);
-
-        return getTotalCheer();
     }
 
     @Transactional
-    public CheerLog createCheerLog(User user) {
+    public void createCheerLog(User user) {
         CheerLog cheerLog = CheerLog.builder()
                 .user(user)
                 .build();
 
-        return cheerLogRepository.save(cheerLog);
+        cheerLogRepository.save(cheerLog);
     }
 
     public UserAssetDataResponse getAssetData(Integer userId) {

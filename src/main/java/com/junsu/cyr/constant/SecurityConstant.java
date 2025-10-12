@@ -29,7 +29,7 @@ public class SecurityConstant {
             "/posts/new",
             "/posts/popular",
             "/posts/list",
-            "/cheer",
+            "/cheer/total",
             "/gallery",
             "/attendance/today",
             "/attendance/statistic",

@@ -23,7 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -163,5 +165,23 @@ public class GalleryService {
         Page<GalleryImage> galleryImages = galleryImageRepository.findAllByGallery_User(user, pageable);
 
         return galleryImages.map(GalleryImageResponse::new);
+    }
+
+    public List<GalleryImageResponse> getRandomImages(Integer amount) {
+        List<GalleryImage> galleryImages = galleryImageRepository.findAll();
+        List<GalleryImageResponse> galleryImageResponses = new ArrayList<>();
+
+        int size = galleryImages.size();
+        Set<Integer> set = new HashSet<>();
+        while(set.size() < amount) {
+            int random = (int) (Math.random() * size);
+
+            if(!set.contains(random)) {
+                set.add(random);
+                galleryImageResponses.add(new GalleryImageResponse(galleryImages.get(random)));
+            }
+        }
+
+        return galleryImageResponses;
     }
 }

@@ -1,5 +1,6 @@
 package com.junsu.cyr.repository;
 
+import com.junsu.cyr.domain.gallery.Gallery;
 import com.junsu.cyr.domain.gallery.GalleryImage;
 import com.junsu.cyr.domain.users.User;
 import org.springframework.data.domain.Page;
@@ -22,4 +23,7 @@ public interface GalleryImageRepository extends JpaRepository<GalleryImage, Inte
     Long countByUser(User user);
 
     Page<GalleryImage> findAllByGallery_User(User user, Pageable pageable);
+
+    @Query("select count(gi) from GalleryImage gi where gi.gallery = :gallery")
+    Long countByGalleryImageId(Gallery gallery);
 }

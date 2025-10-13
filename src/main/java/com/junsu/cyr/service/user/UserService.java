@@ -28,7 +28,6 @@ public class UserService {
     private final SandService sandService;
     private final TemperatureService temperatureService;
     private final S3Service s3Service;
-    private final ExperienceLogRepository experienceLogRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final EmpathyRepository empathyRepository;

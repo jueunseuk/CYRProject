@@ -41,6 +41,10 @@ public class GalleryService {
     public void uploadGallery(GalleryUploadRequest request, Integer userId) {
         User user = userService.getUserById(userId);
 
+        if(request.getImages().isEmpty()) {
+            throw new BaseException(GalleryExceptionCode.NO_EXIST_GALLERY);
+        }
+
         Gallery gallery = Gallery.builder()
                 .user(user)
                 .title(request.getTitle())
@@ -51,6 +55,8 @@ public class GalleryService {
                 .build();
 
         galleryRepository.save(gallery);
+
+        user.updateImageCnt(0L, request.getImages().size());
 
         for(int i = 0; i < request.getImages().size(); i++) {
             userService.addExpAndSand(user, 3, 11);
@@ -114,6 +120,11 @@ public class GalleryService {
             request.getDescription(),
             LocalDateTime.parse(request.getPicturedAt())
         );
+
+        if(request.getImages() != null) {
+            Long originGalleryImageCnt = galleryImageRepository.countByGalleryImageId(gallery);
+            user.updateImageCnt(originGalleryImageCnt, request.getImages().size());
+        }
 
         List<GalleryImage> oldImages = galleryImageRepository.findGalleryImage(galleryId);
         for(GalleryImage galleryImage : oldImages) {

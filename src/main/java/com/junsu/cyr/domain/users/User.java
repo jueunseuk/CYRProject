@@ -178,4 +178,9 @@ public class User extends BaseTime {
     public void increaseCheerCnt() {
         this.cheerCnt += 1;
     }
+
+    public void updateImageCnt(Long originGalleryImageCnt, int size) {
+        this.imageCnt -= originGalleryImageCnt;
+        this.imageCnt += size;
+    }
 }

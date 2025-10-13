@@ -34,7 +34,7 @@ public class GalleryImage extends BaseTime {
     @Column(name = "picturedAt", nullable = false)
     private LocalDateTime picturedAt;
 
-    public void updatePicturedAt() {
-        this.picturedAt = LocalDateTime.now();
+    public void updatePicturedAt(LocalDateTime request) {
+        this.picturedAt = request;
     }
 }

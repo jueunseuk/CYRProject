@@ -117,7 +117,7 @@ public class GalleryService {
 
         List<GalleryImage> oldImages = galleryImageRepository.findGalleryImage(galleryId);
         for(GalleryImage galleryImage : oldImages) {
-            galleryImage.updatePicturedAt();
+            galleryImage.updatePicturedAt(LocalDateTime.parse(request.getPicturedAt()));
         }
 
         List<GalleryImage> toDelete = oldImages.stream()

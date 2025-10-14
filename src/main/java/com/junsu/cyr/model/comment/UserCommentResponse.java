@@ -1,5 +1,6 @@
 package com.junsu.cyr.model.comment;
 
+import com.junsu.cyr.domain.boards.Board;
 import com.junsu.cyr.domain.comments.Comment;
 import com.junsu.cyr.domain.posts.Post;
 import com.junsu.cyr.domain.users.User;
@@ -18,7 +19,9 @@ public class UserCommentResponse {
 
     private Long postId;
     private String title;
+    private String author;
     private Long viewCnt;
+    private String boardName;
 
     public UserCommentResponse(Comment comment) {
         this.commentId = comment.getCommentId();
@@ -27,12 +30,15 @@ public class UserCommentResponse {
 
         User user = comment.getUser();
         Post post = comment.getPost();
+        Board board = post.getBoard();
 
         this.userId = user.getUserId();
         this.userName = user.getNickname();
 
         this.postId = post.getPostId();
         this.title = post.getTitle();
+        this.author = post.getUser().getNickname();
         this.viewCnt = post.getViewCnt();
+        this.boardName = board.getName();
     }
 }

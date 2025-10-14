@@ -28,7 +28,6 @@ public class UserService {
     private final SandService sandService;
     private final TemperatureService temperatureService;
     private final S3Service s3Service;
-    private final ExperienceLogRepository experienceLogRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final EmpathyRepository empathyRepository;
@@ -40,7 +39,7 @@ public class UserService {
 
     public UserSidebarResponse getUserSidebar(Integer userId) {
         User user = getUserById(userId);
-        return new UserSidebarResponse(userId, user.getEpxCnt(), user.getSand(), user.getGlass(), user.getTemperature());
+        return new UserSidebarResponse(userId, user.getEpxCnt(), user.getSand(), user.getGlass(), user.getTemperature(), user.getCreatedAt().toLocalDate(), user.getRole());
     }
 
     public UserProfileResponse getUserProfile(Integer userId) {

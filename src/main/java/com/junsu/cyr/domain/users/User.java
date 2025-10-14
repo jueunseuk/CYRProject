@@ -154,14 +154,6 @@ public class User extends BaseTime {
         }
     }
 
-    public void increaseGlass() {
-        this.glass++;
-    }
-
-    public void decreaseGlass() {
-        this.glass--;
-    }
-
     public void updateTemperature(Integer amount) {
         this.temperature += amount;
         if(temperature > 1800) {
@@ -177,5 +169,16 @@ public class User extends BaseTime {
 
     public void increaseCheerCnt() {
         this.cheerCnt += 1;
+    }
+
+    public void updateImageCnt(Long originGalleryImageCnt, int size) {
+        this.imageCnt -= originGalleryImageCnt;
+        this.imageCnt += size;
+    }
+
+    public void convertGlass(Integer amount) {
+        this.glass += amount;
+        this.temperature = 0;
+        this.sand -= 100;
     }
 }

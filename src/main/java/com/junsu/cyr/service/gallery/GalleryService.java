@@ -23,7 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +41,10 @@ public class GalleryService {
     public void uploadGallery(GalleryUploadRequest request, Integer userId) {
         User user = userService.getUserById(userId);
 
+        if(request.getImages().isEmpty()) {
+            throw new BaseException(GalleryExceptionCode.NO_EXIST_GALLERY);
+        }
+
         Gallery gallery = Gallery.builder()
                 .user(user)
                 .title(request.getTitle())
@@ -49,6 +55,8 @@ public class GalleryService {
                 .build();
 
         galleryRepository.save(gallery);
+
+        user.updateImageCnt(0L, request.getImages().size());
 
         for(int i = 0; i < request.getImages().size(); i++) {
             userService.addExpAndSand(user, 3, 11);
@@ -113,7 +121,16 @@ public class GalleryService {
             LocalDateTime.parse(request.getPicturedAt())
         );
 
+        if(request.getImages() != null) {
+            Long originGalleryImageCnt = galleryImageRepository.countByGalleryImageId(gallery);
+            user.updateImageCnt(originGalleryImageCnt, request.getImages().size());
+        }
+
         List<GalleryImage> oldImages = galleryImageRepository.findGalleryImage(galleryId);
+        for(GalleryImage galleryImage : oldImages) {
+            galleryImage.updatePicturedAt(LocalDateTime.parse(request.getPicturedAt()));
+        }
+
         List<GalleryImage> toDelete = oldImages.stream()
                 .filter(img -> !request.getOriginalImages().contains(img.getUrl()))
                 .toList();
@@ -163,5 +180,23 @@ public class GalleryService {
         Page<GalleryImage> galleryImages = galleryImageRepository.findAllByGallery_User(user, pageable);
 
         return galleryImages.map(GalleryImageResponse::new);
+    }
+
+    public List<GalleryImageResponse> getRandomImages(Integer amount) {
+        List<GalleryImage> galleryImages = galleryImageRepository.findAll();
+        List<GalleryImageResponse> galleryImageResponses = new ArrayList<>();
+
+        int size = galleryImages.size();
+        Set<Integer> set = new HashSet<>();
+        while(set.size() < amount) {
+            int random = (int) (Math.random() * size);
+
+            if(!set.contains(random)) {
+                set.add(random);
+                galleryImageResponses.add(new GalleryImageResponse(galleryImages.get(random)));
+            }
+        }
+
+        return galleryImageResponses;
     }
 }

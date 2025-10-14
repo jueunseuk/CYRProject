@@ -14,6 +14,7 @@ import com.junsu.cyr.response.exception.code.GlassExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -119,5 +120,23 @@ public class GlassService {
         }
 
         return count;
+    }
+
+    @Transactional
+    public void convertSandToGlass(Integer userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
+
+        if(user.getSand() < 100) {
+            throw new BaseException(GlassExceptionCode.NOT_ENOUGH_SAND);
+        } else if(user.getTemperature() != 1800) {
+            throw new BaseException(GlassExceptionCode.NOT_ENOUGH_TEMPERATURE);
+        }
+
+        Glass glass = getGlass(userId);
+
+        user.convertGlass(glass.getAmount());
+
+        createGlassLog(glass, user);
     }
 }

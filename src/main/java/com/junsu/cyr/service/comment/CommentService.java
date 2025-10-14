@@ -9,7 +9,6 @@ import com.junsu.cyr.model.comment.CommentRequest;
 import com.junsu.cyr.model.comment.CommentResponse;
 import com.junsu.cyr.model.comment.CommentSearchConditionRequest;
 import com.junsu.cyr.model.comment.UserCommentResponse;
-import com.junsu.cyr.model.post.PostSearchConditionRequest;
 import com.junsu.cyr.repository.CommentRepository;
 import com.junsu.cyr.repository.PostRepository;
 import com.junsu.cyr.repository.UserRepository;
@@ -112,7 +111,7 @@ public class CommentService {
     }
 
     public Page<UserCommentResponse> getCommentsByUser(Integer searchId, Integer userId, CommentSearchConditionRequest condition) {
-        User user = userRepository.findByUserId(userId)
+        User user = userRepository.findByUserId(searchId)
                 .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort()));

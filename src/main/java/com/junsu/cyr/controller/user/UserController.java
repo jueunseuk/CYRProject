@@ -1,6 +1,5 @@
 package com.junsu.cyr.controller.user;
 
-import com.junsu.cyr.model.comment.CommentResponse;
 import com.junsu.cyr.model.comment.CommentSearchConditionRequest;
 import com.junsu.cyr.model.comment.UserCommentResponse;
 import com.junsu.cyr.model.gallery.GalleryImageResponse;
@@ -11,6 +10,7 @@ import com.junsu.cyr.model.user.*;
 import com.junsu.cyr.service.comment.CommentService;
 import com.junsu.cyr.service.empathy.EmpathyService;
 import com.junsu.cyr.service.gallery.GalleryService;
+import com.junsu.cyr.service.glass.GlassService;
 import com.junsu.cyr.service.post.PostService;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +29,7 @@ public class UserController {
     private final CommentService commentService;
     private final GalleryService galleryService;
     private final EmpathyService empathyService;
+    private final GlassService glassService;
 
     @GetMapping("/sidebar")
     public ResponseEntity<UserSidebarResponse> getUserProfile(@RequestAttribute Integer userId) {
@@ -94,5 +95,11 @@ public class UserController {
     public ResponseEntity<Page<PostListResponse>> getEmpathyPosts(@PathVariable Integer searchId, @ModelAttribute PostSearchConditionRequest condition) {
         Page<PostListResponse> postListResponses = empathyService.getEmpathizePostByUser(searchId, condition);
         return ResponseEntity.ok(postListResponses);
+    }
+
+    @PostMapping("/glass/convert")
+    public ResponseEntity<?> convertSandToGlass(@RequestAttribute Integer userId) {
+        glassService.convertSandToGlass(userId);
+        return ResponseEntity.ok("success to convert glass");
     }
 }

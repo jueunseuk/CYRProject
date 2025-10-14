@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class GlassLogRequest {
-    private String sort = "createdAt";
-    private String direction = "ASC";
-    private Integer size = 0;
-    private Integer page = 0;
+    private String sort;
+    private String direction;
+    private Integer size;
+    private Integer page;
 }

@@ -1,8 +1,8 @@
 package com.junsu.cyr.controller.glass;
 
-import com.junsu.cyr.domain.glass.GlassLog;
 import com.junsu.cyr.model.common.UserAssetDataResponse;
 import com.junsu.cyr.model.glass.GlassLogRequest;
+import com.junsu.cyr.model.glass.GlassLogResponse;
 import com.junsu.cyr.model.user.GraphResponse;
 import com.junsu.cyr.service.glass.GlassService;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +31,8 @@ public class GlassController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<GlassLog>> getAllGlassLog(@ModelAttribute GlassLogRequest condition) {
-        List<GlassLog> glassLogs = glassService.getGlassLogs(condition);
-        return ResponseEntity.ok(glassLogs);
+    public ResponseEntity<List<GlassLogResponse>> getAllGlassLog(@ModelAttribute GlassLogRequest condition) {
+        List<GlassLogResponse> glassLogResponses = glassService.getGlassLogs(condition);
+        return ResponseEntity.ok(glassLogResponses);
     }
 }

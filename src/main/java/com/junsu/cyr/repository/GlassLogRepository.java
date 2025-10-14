@@ -2,6 +2,7 @@ package com.junsu.cyr.repository;
 
 import com.junsu.cyr.domain.glass.GlassLog;
 import com.junsu.cyr.repository.projection.DailyMaxProjection;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -25,4 +26,6 @@ public interface GlassLogRepository extends JpaRepository<GlassLog, Long> {
 
     @Query("select function('date', gl.createdAt) as date, max(gl.after) as after from GlassLog as gl where gl.user.userId = :userId and gl.createdAt between :start and :end group by function('date', gl.createdAt)")
     List<DailyMaxProjection> findDailyMaxByUserId(Integer userId, LocalDateTime start, LocalDateTime end);
+
+    List<GlassLog> findAll(Sort sort);
 }

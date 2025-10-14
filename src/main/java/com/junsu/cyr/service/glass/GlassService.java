@@ -5,6 +5,7 @@ import com.junsu.cyr.domain.glass.GlassLog;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.common.UserAssetDataResponse;
 import com.junsu.cyr.model.glass.GlassLogRequest;
+import com.junsu.cyr.model.glass.GlassLogResponse;
 import com.junsu.cyr.model.user.GraphResponse;
 import com.junsu.cyr.repository.GlassLogRepository;
 import com.junsu.cyr.repository.GlassRepository;
@@ -144,9 +145,12 @@ public class GlassService {
         createGlassLog(glass, user);
     }
 
-    public List<GlassLog> getGlassLogs(GlassLogRequest condition) {
+    public List<GlassLogResponse> getGlassLogs(GlassLogRequest condition) {
         Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
-        return glassLogRepository.findAll(pageable).getContent();
+
+        List<GlassLog> glassLogs = glassLogRepository.findAllGlassLog(pageable);
+
+        return glassLogs.stream().map(GlassLogResponse::new).toList();
     }
 }

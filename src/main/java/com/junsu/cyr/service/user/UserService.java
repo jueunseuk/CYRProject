@@ -39,7 +39,7 @@ public class UserService {
 
     public UserSidebarResponse getUserSidebar(Integer userId) {
         User user = getUserById(userId);
-        return new UserSidebarResponse(userId, user.getEpxCnt(), user.getSand(), user.getGlass(), user.getTemperature());
+        return new UserSidebarResponse(userId, user.getEpxCnt(), user.getSand(), user.getGlass(), user.getTemperature(), user.getCreatedAt().toLocalDate(), user.getRole());
     }
 
     public UserProfileResponse getUserProfile(Integer userId) {

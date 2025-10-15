@@ -4,6 +4,8 @@ import com.junsu.cyr.domain.glass.Glass;
 import com.junsu.cyr.domain.glass.GlassLog;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.common.UserAssetDataResponse;
+import com.junsu.cyr.model.glass.GlassLogRequest;
+import com.junsu.cyr.model.glass.GlassLogResponse;
 import com.junsu.cyr.model.user.GraphResponse;
 import com.junsu.cyr.repository.GlassLogRepository;
 import com.junsu.cyr.repository.GlassRepository;
@@ -13,6 +15,9 @@ import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.GlassExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -138,5 +143,14 @@ public class GlassService {
         user.convertGlass(glass.getAmount());
 
         createGlassLog(glass, user);
+    }
+
+    public List<GlassLogResponse> getGlassLogs(GlassLogRequest condition) {
+        Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
+
+        List<GlassLog> glassLogs = glassLogRepository.findAllGlassLog(pageable);
+
+        return glassLogs.stream().map(GlassLogResponse::new).toList();
     }
 }

@@ -1,7 +1,6 @@
 package com.junsu.cyr.domain.images;
 
 import com.junsu.cyr.domain.globals.BaseTime;
-import com.junsu.cyr.domain.posts.Post;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,10 +18,6 @@ public class Image extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "image_id", nullable = false)
     private Long imageId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post")
-    private Post post;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")

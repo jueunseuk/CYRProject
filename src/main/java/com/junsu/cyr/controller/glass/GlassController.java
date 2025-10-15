@@ -1,14 +1,13 @@
 package com.junsu.cyr.controller.glass;
 
 import com.junsu.cyr.model.common.UserAssetDataResponse;
+import com.junsu.cyr.model.glass.GlassLogRequest;
+import com.junsu.cyr.model.glass.GlassLogResponse;
 import com.junsu.cyr.model.user.GraphResponse;
 import com.junsu.cyr.service.glass.GlassService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,5 +28,11 @@ public class GlassController {
     public ResponseEntity<List<GraphResponse>> getGlassHistory(@PathVariable Integer userId) {
         List<GraphResponse> graphResponses = glassService.getGlassHistory(userId);
         return ResponseEntity.ok(graphResponses);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<GlassLogResponse>> getAllGlassLog(@ModelAttribute GlassLogRequest condition) {
+        List<GlassLogResponse> glassLogResponses = glassService.getGlassLogs(condition);
+        return ResponseEntity.ok(glassLogResponses);
     }
 }

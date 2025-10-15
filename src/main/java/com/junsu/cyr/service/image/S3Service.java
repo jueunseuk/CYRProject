@@ -33,6 +33,7 @@ public class S3Service {
             case COMMENT -> filePurpose = "comment";
             case COMPLAINT -> filePurpose = "complaint";
             case CYR -> filePurpose = "cyr";
+            case SHOP -> filePurpose = "shop";
             default -> filePurpose = "unknown";
         }
 

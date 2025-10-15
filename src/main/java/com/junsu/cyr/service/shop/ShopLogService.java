@@ -1,12 +1,9 @@
-package com.junsu.cyr.service.image;
+package com.junsu.cyr.service.shop;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ImageService {
-
-    private final S3Service s3Service;
-
+public class ShopLogService {
 }

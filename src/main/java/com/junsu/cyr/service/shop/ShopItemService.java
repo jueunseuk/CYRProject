@@ -65,7 +65,7 @@ public class ShopItemService {
         Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
 
-        List<ShopItem> shopItems = shopItemRepository.findAllByShopCategory(shopCategory, pageable);
+        List<ShopItem> shopItems = shopItemRepository.findAllByShopCategoryAndActive(shopCategory, true, pageable);
 
         return shopItems.stream().map(ShopItemResponse::new).toList();
     }

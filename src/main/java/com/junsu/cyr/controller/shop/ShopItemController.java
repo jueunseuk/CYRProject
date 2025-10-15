@@ -20,7 +20,7 @@ public class ShopItemController {
     private final UserService userService;
 
     @PatchMapping("/{itemId}")
-    public ResponseEntity<String> uploadSolidImage(@PathVariable Integer itemId, MultipartFile file, @RequestAttribute Integer userId) {
+    public ResponseEntity<String> uploadImage(@PathVariable Integer itemId, MultipartFile file, @RequestAttribute Integer userId) {
         shopItemService.uploadItemImage(itemId, file, userId);
         return ResponseEntity.ok("success to upload image");
     }

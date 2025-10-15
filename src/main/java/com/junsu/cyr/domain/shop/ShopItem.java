@@ -39,7 +39,14 @@ public class ShopItem extends BaseTime {
     @Column(name = "active")
     private Boolean active;
 
+    @Column(name = "sale_cnt")
+    private Integer saleCnt;
+
     public void updateImageUrl(String imageUrl) {
         this.imageUrl = imageUrl == null ? this.imageUrl : imageUrl;
+    }
+
+    public void saleItem() {
+        this.saleCnt += 1;
     }
 }

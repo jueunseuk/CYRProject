@@ -12,6 +12,8 @@ import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.CheerSummaryExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
+import com.junsu.cyr.service.sand.SandService;
+import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +29,7 @@ public class CheerService {
     private final CheerLogRepository cheerLogRepository;
     private final UserRepository userRepository;
     private final CheerSummaryRepository cheerSummaryRepository;
+    private final UserService userService;
 
     public Long getTotalCheer() {
         return cheerSummaryRepository.sumTotalCheers();
@@ -50,6 +53,7 @@ public class CheerService {
         }
 
         user.increaseCheerCnt();
+        userService.addExpAndSand(user, 5, 13);
 
         createCheerLog(user);
         cheerSummary.increase();

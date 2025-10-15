@@ -11,6 +11,7 @@ public class ShopItemResponse {
     private String description;
     private String imageUrl;
     private Integer price;
+    private Integer saleCnt;
     private Integer shopCategoryId;
 
     public ShopItemResponse(ShopItem shopItem) {
@@ -19,6 +20,7 @@ public class ShopItemResponse {
         this.description = shopItem.getDescription();
         this.imageUrl = shopItem.getImageUrl();
         this.price = shopItem.getPrice();
+        this.saleCnt = shopItem.getSaleCnt();
         ShopCategory shopCategory = shopItem.getShopCategory();
         this.shopCategoryId = shopCategory.getShopCategoryId();
     }

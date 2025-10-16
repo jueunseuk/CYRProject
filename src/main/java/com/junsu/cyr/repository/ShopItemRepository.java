@@ -14,4 +14,6 @@ public interface ShopItemRepository extends JpaRepository<ShopItem, Integer> {
     Optional<ShopItem> findByShopItemId(Integer itemId);
 
     List<ShopItem> findAllByShopCategoryAndActive(ShopCategory shopCategory, Boolean active, Pageable pageable);
+
+    List<ShopItem> findAllByShopItemIdNotInAndShopCategoryAndActive(List<Integer> purchaseLists, ShopCategory shopCategory, boolean b, Pageable pageable);
 }

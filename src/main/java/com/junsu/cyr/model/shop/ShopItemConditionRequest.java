@@ -12,5 +12,5 @@ public class ShopItemConditionRequest {
     private Integer size = 100;
     private String sort = "shopItemId";
     private String direction = "ASC";
-    private Boolean includeBoughtItems = true;
+    private Boolean includeBoughtItems = false;
 }

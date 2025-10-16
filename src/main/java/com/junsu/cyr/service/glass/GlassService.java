@@ -33,16 +33,17 @@ public class GlassService {
     private final GlassLogRepository glassLogRepository;
     private final UserRepository userRepository;
 
-    public Glass getGlass(Integer glassLogId) {
-        return glassRepository.findById(glassLogId)
+    public Glass getGlass(Integer glassId) {
+        return glassRepository.findById(glassId)
                 .orElseThrow(() -> new BaseException(GlassExceptionCode.NOT_FOUND_GLASS));
     }
 
-    public void createGlassLog(Glass glass, User user) {
+    public void createGlassLog(Glass glass, User user, Integer multiply) {
         GlassLog glassLog = GlassLog.builder()
                 .glass(glass)
                 .after(user.getGlass())
                 .user(user)
+                .delta(glass.getAmount()*multiply)
                 .build();
 
         glassLogRepository.save(glassLog);
@@ -138,11 +139,11 @@ public class GlassService {
             throw new BaseException(GlassExceptionCode.NOT_ENOUGH_TEMPERATURE);
         }
 
-        Glass glass = getGlass(userId);
+        Glass glass = getGlass(2);
 
         user.convertGlass(glass.getAmount());
 
-        createGlassLog(glass, user);
+        createGlassLog(glass, user, 1);
     }
 
     public List<GlassLogResponse> getGlassLogs(GlassLogRequest condition) {

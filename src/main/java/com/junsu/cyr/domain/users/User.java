@@ -181,4 +181,8 @@ public class User extends BaseTime {
         this.temperature = 0;
         this.sand -= 100;
     }
+
+    public void useGlass(Integer amount) {
+        this.glass -= amount;
+    }
 }

@@ -30,4 +30,8 @@ public class ShopLog extends BaseTime {
 
     @Column(name = "consume")
     private Integer consume;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "action")
+    private Action action;
 }

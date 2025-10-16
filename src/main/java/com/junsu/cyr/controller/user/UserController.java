@@ -1,23 +1,28 @@
 package com.junsu.cyr.controller.user;
 
+import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.comment.CommentSearchConditionRequest;
 import com.junsu.cyr.model.comment.UserCommentResponse;
 import com.junsu.cyr.model.gallery.GalleryImageResponse;
 import com.junsu.cyr.model.gallery.GallerySearchConditionRequest;
 import com.junsu.cyr.model.post.PostListResponse;
 import com.junsu.cyr.model.post.PostSearchConditionRequest;
+import com.junsu.cyr.model.shop.ShopItemResponse;
 import com.junsu.cyr.model.user.*;
 import com.junsu.cyr.service.comment.CommentService;
 import com.junsu.cyr.service.empathy.EmpathyService;
 import com.junsu.cyr.service.gallery.GalleryService;
 import com.junsu.cyr.service.glass.GlassService;
 import com.junsu.cyr.service.post.PostService;
+import com.junsu.cyr.service.shop.ShopItemService;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,6 +35,7 @@ public class UserController {
     private final GalleryService galleryService;
     private final EmpathyService empathyService;
     private final GlassService glassService;
+    private final ShopItemService shopItemService;
 
     @GetMapping("/sidebar")
     public ResponseEntity<UserSidebarResponse> getUserProfile(@RequestAttribute Integer userId) {
@@ -101,5 +107,12 @@ public class UserController {
     public ResponseEntity<?> convertSandToGlass(@RequestAttribute Integer userId) {
         glassService.convertSandToGlass(userId);
         return ResponseEntity.ok("success to convert glass");
+    }
+
+    @GetMapping("/inventory")
+    public ResponseEntity<List<ShopItemResponse>> getUserInventory(@RequestAttribute Integer userId) {
+        User user = userService.getUserById(userId);
+        List<ShopItemResponse> shopItemResponses = shopItemService.getShopItemsByUser(user);
+        return ResponseEntity.ok(shopItemResponses);
     }
 }

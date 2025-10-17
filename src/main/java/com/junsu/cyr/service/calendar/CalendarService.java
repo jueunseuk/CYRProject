@@ -118,7 +118,7 @@ public class CalendarService {
 
         String itemUrl = null;
         try {
-            if(!request.getFile().isEmpty()) {
+            if(request.getFile() != null) {
                 itemUrl = s3Service.uploadFile(request.getFile(), Type.SCHEDULE);
             }
         } catch (Exception e) {
@@ -129,7 +129,7 @@ public class CalendarService {
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .location(request.getLocation())
-                .date(LocalDate.parse(request.getDate()).plusDays(1))
+                .date(LocalDate.parse(request.getDate()))
                 .type(request.getType())
                 .user(user)
                 .imageUrl(itemUrl)

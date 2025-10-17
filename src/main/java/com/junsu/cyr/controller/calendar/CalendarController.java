@@ -1,7 +1,12 @@
 package com.junsu.cyr.controller.calendar;
 
+import com.junsu.cyr.domain.calendar.Calendar;
+import com.junsu.cyr.domain.images.Type;
+import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.calendar.*;
 import com.junsu.cyr.service.calendar.CalendarService;
+import com.junsu.cyr.service.image.S3Service;
+import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +19,9 @@ import java.util.List;
 public class CalendarController {
 
     private final CalendarService calendarService;
+    private final UserService userService;
 
-    @GetMapping("/request/monthly")
+    @GetMapping("/monthly")
     public ResponseEntity<MonthlyScheduleResponse> getMonthlySchedule(@RequestParam Integer year, @RequestParam Integer month) {
         MonthlyScheduleResponse monthlyScheduleResponse = calendarService.getMonthlySchedule(year, month);
         return ResponseEntity.ok(monthlyScheduleResponse);
@@ -52,14 +58,16 @@ public class CalendarController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> uploadSchedule(@RequestBody CalendarUploadRequest request, @RequestAttribute Integer userId) {
-        calendarService.uploadSchedule(request, userId);
+    public ResponseEntity<?> uploadSchedule(@ModelAttribute CalendarUploadRequest request, @RequestAttribute Integer userId) {
+        User user = userService.getUserById(userId);
+        Calendar calendar = calendarService.uploadSchedule(request, user);
         return ResponseEntity.ok("success to add schedule");
     }
 
     @PutMapping("")
-    public ResponseEntity<?> updateSchedule(@RequestBody CalendarEditRequest request, @RequestAttribute Integer userId) {
-        calendarService.updateSchedule(request, userId);
+    public ResponseEntity<?> updateSchedule(@ModelAttribute CalendarEditRequest request, @RequestAttribute Integer userId) {
+        User user = userService.getUserById(userId);
+        calendarService.updateSchedule(request, user);
         return ResponseEntity.ok("success to update schedule");
     }
 

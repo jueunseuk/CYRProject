@@ -129,7 +129,7 @@ public class CalendarService {
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .location(request.getLocation())
-                .date(LocalDate.parse(request.getDate()))
+                .date(LocalDate.parse(request.getDate()).plusDays(1))
                 .type(request.getType())
                 .user(user)
                 .imageUrl(itemUrl)

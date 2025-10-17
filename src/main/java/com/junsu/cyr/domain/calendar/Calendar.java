@@ -65,7 +65,7 @@ public class Calendar extends BaseTime implements Comparable<Calendar> {
         this.title = newData.getTitle();
         this.description = newData.getDescription();
         this.location = newData.getLocation();
-        this.date = newData.getDate().plusDays(1);
+        this.date = LocalDate.parse(newData.getDate());
         this.link1 = newData.getLink1();
         this.link2 = newData.getLink2();
         this.imageUrl = imageUrl;

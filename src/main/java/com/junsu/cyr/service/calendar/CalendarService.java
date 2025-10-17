@@ -2,6 +2,7 @@ package com.junsu.cyr.service.calendar;
 
 import com.junsu.cyr.domain.calendar.Calendar;
 import com.junsu.cyr.domain.calendar.CalendarRequest;
+import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.users.Role;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.calendar.*;
@@ -9,11 +10,15 @@ import com.junsu.cyr.repository.CalendarRepository;
 import com.junsu.cyr.repository.CalendarRequestRepository;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.CalendarExceptionCode;
+import com.junsu.cyr.response.exception.code.ImageExceptionCode;
+import com.junsu.cyr.service.image.S3Service;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,6 +30,7 @@ public class CalendarService {
     private final UserService userService;
     private final CalendarRepository calendarRepository;
     private final CalendarRequestRepository calendarRequestRepository;
+    private final S3Service s3Service;
 
     public MonthlyScheduleResponse getMonthlySchedule(Integer year, Integer month) {
         LocalDate start = LocalDate.of(year, month, 1);
@@ -107,11 +113,18 @@ public class CalendarService {
     }
 
     @Transactional
-    public void uploadSchedule(CalendarUploadRequest request, Integer userId) {
-        User user = userService.getUserById(userId);
-
+    public Calendar uploadSchedule(CalendarUploadRequest request, User user) {
         if(user.getRole() == Role.GUEST || user.getRole() == Role.MEMBER) {
             throw new BaseException(CalendarExceptionCode.DO_NOT_HAVE_PERMISSION_TO_PROCESS);
+        }
+
+        String itemUrl = null;
+        try {
+            if(!request.getFile().isEmpty()) {
+                itemUrl = s3Service.uploadFile(request.getFile(), Type.SCHEDULE);
+            }
+        } catch (Exception e) {
+            throw new BaseException(ImageExceptionCode.FAILED_TO_UPLOAD_IMAGE);
         }
 
         Calendar calendar = Calendar.builder()
@@ -121,15 +134,16 @@ public class CalendarService {
                 .date(LocalDate.parse(request.getDate()))
                 .type(request.getType())
                 .user(user)
+                .imageUrl(itemUrl)
+                .link1(request.getLink1())
+                .link2(request.getLink2())
                 .build();
 
-        calendarRepository.save(calendar);
+        return calendarRepository.save(calendar);
     }
 
     @Transactional
-    public void updateSchedule(CalendarEditRequest request, Integer userId) {
-        User user = userService.getUserById(userId);
-
+    public void updateSchedule(CalendarEditRequest request, User user) {
         if(user.getRole() == Role.GUEST || user.getRole() == Role.MEMBER) {
             throw new BaseException(CalendarExceptionCode.DO_NOT_HAVE_PERMISSION_TO_PROCESS);
         }
@@ -137,7 +151,20 @@ public class CalendarService {
         Calendar calendar = calendarRepository.findById(request.getCalendarId())
                 .orElseThrow(() -> new BaseException(CalendarExceptionCode.NOT_EXIST_CALENDAR_ID));
 
-        calendar.updateCalendar(request);
+        String newImageUrl = null;
+        try {
+            if (request.getFile() != null && !request.getFile().isEmpty()) {
+                newImageUrl = s3Service.uploadFile(request.getFile(), Type.SCHEDULE);
+            }
+        } catch (Exception e) {
+            throw new BaseException(ImageExceptionCode.FAILED_TO_UPLOAD_IMAGE);
+        }
+
+        if (request.getFile() == null || request.getFile().isEmpty()) {
+            calendar.updateCalendar(request, null);
+        } else {
+            calendar.updateCalendar(request, newImageUrl);
+        }
     }
 
     @Transactional

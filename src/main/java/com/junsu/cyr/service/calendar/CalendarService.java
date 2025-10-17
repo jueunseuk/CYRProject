@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -130,7 +129,7 @@ public class CalendarService {
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .location(request.getLocation())
-                .date(request.getDate())
+                .date(request.getDate().plusDays(1))
                 .type(request.getType())
                 .user(user)
                 .imageUrl(itemUrl)

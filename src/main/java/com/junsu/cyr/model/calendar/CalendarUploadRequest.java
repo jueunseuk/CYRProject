@@ -15,7 +15,7 @@ public class CalendarUploadRequest {
     private String title;
     private String description;
     private String location;
-    private LocalDate date;
+    private String date;
     private String link1;
     private String link2;
     private Type type;

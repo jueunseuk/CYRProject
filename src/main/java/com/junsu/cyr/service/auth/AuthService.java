@@ -92,7 +92,7 @@ public class AuthService {
                 .password(passwordEncoder.encode(signupRequest.getPassword()))
                 .passwordUpdatedAt(LocalDateTime.now())
                 .nickname(signupRequest.getNickname())
-                .role(Role.GUEST)
+                .role(Role.MEMBER)
                 .status(Status.ACTIVE)
                 .method(signupRequest.getMethod())
                 .epxCnt(0L)
@@ -107,6 +107,7 @@ public class AuthService {
                 .warn(0)
                 .attendanceCnt(0)
                 .consecutiveAttendanceCnt(0)
+                .maxConsecutiveAttendanceCnt(0)
                 .build();
 
         return userRepository.save(user);
@@ -117,7 +118,7 @@ public class AuthService {
                 .email(userInfo.getEmail())
                 .name(userInfo.getName())
                 .nickname(userInfo.getName())
-                .role(Role.GUEST)
+                .role(Role.MEMBER)
                 .profileUrl(userInfo.getProfileImageUrl())
                 .status(Status.ACTIVE)
                 .method(userInfo.getMethod())
@@ -133,6 +134,7 @@ public class AuthService {
                 .warn(0)
                 .attendanceCnt(0)
                 .consecutiveAttendanceCnt(0)
+                .maxConsecutiveAttendanceCnt(0)
                 .build();
 
         return userRepository.save(user);

@@ -1,11 +1,9 @@
 package com.junsu.cyr.controller.calendar;
 
 import com.junsu.cyr.domain.calendar.Calendar;
-import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.calendar.*;
 import com.junsu.cyr.service.calendar.CalendarService;
-import com.junsu.cyr.service.image.S3Service;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

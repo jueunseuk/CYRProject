@@ -62,8 +62,8 @@ public class CalendarController {
         return ResponseEntity.ok("success to add schedule");
     }
 
-    @PutMapping("")
-    public ResponseEntity<?> updateSchedule(@ModelAttribute CalendarEditRequest request, @RequestAttribute Integer userId) {
+    @PatchMapping("/{calendarId}")
+    public ResponseEntity<?> updateSchedule(@PathVariable Integer calendarId, @ModelAttribute CalendarEditRequest request, @RequestAttribute Integer userId) {
         User user = userService.getUserById(userId);
         calendarService.updateSchedule(request, user);
         return ResponseEntity.ok("success to update schedule");

@@ -153,16 +153,14 @@ public class CalendarService {
         try {
             if (request.getFile() != null && !request.getFile().isEmpty()) {
                 newImageUrl = s3Service.uploadFile(request.getFile(), Type.SCHEDULE);
+            } else if (request.getImageUrl() != null && !request.getImageUrl().isBlank()) {
+                newImageUrl = request.getImageUrl();
             }
         } catch (Exception e) {
             throw new BaseException(ImageExceptionCode.FAILED_TO_UPLOAD_IMAGE);
         }
 
-        if (request.getFile() == null || request.getFile().isEmpty()) {
-            calendar.updateCalendar(request, null);
-        } else {
-            calendar.updateCalendar(request, newImageUrl);
-        }
+        calendar.updateCalendar(request, newImageUrl);
     }
 
     @Transactional

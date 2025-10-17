@@ -19,4 +19,5 @@ public class CalendarEditRequest {
     private String link2;
     private Type type;
     private MultipartFile file;
+    private String imageUrl;
 }

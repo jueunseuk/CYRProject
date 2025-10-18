@@ -64,7 +64,7 @@ public class ShopItemService {
     }
 
     public List<ShopItemResponse> getShopItemsByCategoryId(Integer categoryId, ShopItemConditionRequest condition, User user) {
-        ShopCategory shopCategory = shopCategoryRepository.findAllByShopCategoryId(categoryId);
+        ShopCategory shopCategory = shopCategoryRepository.findByShopCategoryId(categoryId);
 
         Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
@@ -113,15 +113,11 @@ public class ShopItemService {
         UserInventory userInventory = userInventoryRepository.findByUserAndShopItem(user, shopItem)
                 .orElseThrow(() -> new BaseException(UserInventoryExceptionCode.INSUFFICIENT_NUMBER_OF_ITEMS));
 
-        if(userInventory.getQuantity() < 1) {
+        if(userInventory.getCurrentAmount() < 1) {
             throw new BaseException(UserInventoryExceptionCode.INSUFFICIENT_NUMBER_OF_ITEMS);
         }
 
         userInventory.useItem();
-
-        if(userInventory.getQuantity() == 0) {
-            userInventoryRepository.delete(userInventory);
-        }
     }
 
     public ShopItem getShopItemById(Integer itemId) {

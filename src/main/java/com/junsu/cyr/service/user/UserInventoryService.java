@@ -41,6 +41,7 @@ public class UserInventoryService {
                 .user(user)
                 .shopItem(shopItem)
                 .plus(1)
+                .minus(0)
                 .updatedAt(LocalDateTime.now())
                 .build();
 

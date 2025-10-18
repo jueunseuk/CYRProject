@@ -30,18 +30,26 @@ public class UserInventory extends BaseTime {
     @JoinColumn(name = "shop_item")
     private ShopItem shopItem;
 
-    @Column(name = "quantity", nullable = false)
-    private Integer quantity;
+    @Column(name = "plus", nullable = false)
+    private Integer plus;
+
+    @Column(name = "minus", nullable = false)
+    private Integer minus;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    public Integer getCurrentAmount() {
+        return this.plus - this.minus;
+    }
+
     public void addItem() {
-        this.quantity += 1;
+        this.plus += 1;
         this.updatedAt = LocalDateTime.now();
     }
 
     public void useItem() {
-        this.quantity -= 1;
+        this.minus += 1;
+        this.updatedAt = LocalDateTime.now();
     }
 }

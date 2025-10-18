@@ -28,6 +28,7 @@ public class ShopLogResponse {
         this.userId = user.getUserId();
         this.nickname = user.getNickname();
         ShopItem shopItem = shopLog.getShopItem();
+        this.shopItemId = shopItem.getShopItemId();
         this.name = shopItem.getName();
         this.description = shopItem.getDescription();
         this.imageUrl = shopItem.getImageUrl();

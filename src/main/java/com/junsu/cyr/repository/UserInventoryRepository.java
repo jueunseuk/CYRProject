@@ -20,4 +20,6 @@ public interface UserInventoryRepository extends JpaRepository<UserInventory, Lo
 
     @Query("select ui from UserInventory as ui where ui.user = :user and ui.minus < ui.plus")
     List<UserInventory> findAllByUserWithHave(User user, Pageable pageable);
+
+    UserInventory findByUserInventoryIdAndUser(Long userInventoryId, User user);
 }

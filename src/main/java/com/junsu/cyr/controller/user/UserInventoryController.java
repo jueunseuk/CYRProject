@@ -2,10 +2,13 @@ package com.junsu.cyr.controller.user;
 
 import com.junsu.cyr.constant.MagicNumberConstant;
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.domain.users.UserInventory;
 import com.junsu.cyr.model.shop.ShopLogConditionRequest;
 import com.junsu.cyr.model.shop.ShopLogResponse;
 import com.junsu.cyr.model.userInventory.InventoryConditionRequest;
 import com.junsu.cyr.model.userInventory.InventoryConsumeItemResponse;
+import com.junsu.cyr.model.userInventory.ItemUseResult;
+import com.junsu.cyr.response.exception.code.UserInventoryExceptionCode;
 import com.junsu.cyr.service.shop.ShopLogService;
 import com.junsu.cyr.service.user.UserInventoryService;
 import com.junsu.cyr.service.user.UserService;
@@ -50,5 +53,12 @@ public class UserInventoryController {
         User user = userService.getUserById(userId);
         List<InventoryConsumeItemResponse> inventoryConsumeItemResponses = userInventoryService.getAllInventoryByUserAndUse(condition, user);
         return ResponseEntity.ok(inventoryConsumeItemResponses);
+    }
+
+    @PostMapping("/{userInventoryId}/use")
+    public ResponseEntity<ItemUseResult> useUserInventoryItem(@PathVariable Long userInventoryId, @RequestAttribute Integer userId) {
+        User user = userService.getUserById(userId);
+        ItemUseResult itemUseResult = userInventoryService.useUserInventoryItem(userInventoryId, user);
+        return ResponseEntity.ok(itemUseResult);
     }
 }

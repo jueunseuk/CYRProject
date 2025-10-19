@@ -220,4 +220,18 @@ public class AttendanceService {
                 .map(attend -> new AttendanceHistoryResponse(1L, attend.getAttendanceDate()))
                 .toList();
     }
+
+    @Transactional
+    public Integer increaseConsecutiveAttendanceToForce(User user) {
+        AttendanceId attendanceId = new AttendanceId(user.getUserId(), LocalDate.now());
+
+        Optional<Attendance> attendance = attendanceRepository.findByAttendanceId(attendanceId);
+        if(attendance.isEmpty()) {
+            throw new BaseException(AttendanceExceptionCode.NOT_YET_IN_ATTENDANCE);
+        }
+
+        user.increaseConsecutiveAttendanceCnt();
+
+        return user.getMaxConsecutiveAttendanceCnt();
+    }
 }

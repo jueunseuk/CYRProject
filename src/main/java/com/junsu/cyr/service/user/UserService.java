@@ -5,11 +5,13 @@ import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.sand.Sand;
 import com.junsu.cyr.domain.temperature.Temperature;
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.domain.users.UserInventory;
 import com.junsu.cyr.model.user.*;
 import com.junsu.cyr.repository.*;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
+import com.junsu.cyr.response.exception.code.UserInventoryExceptionCode;
 import com.junsu.cyr.service.experience.ExperienceService;
 import com.junsu.cyr.service.image.S3Service;
 import com.junsu.cyr.service.sand.SandService;
@@ -136,5 +138,15 @@ public class UserService {
         User user = getUserById(userId);
 
         return new UserActivityResponse(user.getPostCnt(), user.getCommentCnt(), user.getEmpathyCnt(), user.getImageCnt());
+    }
+
+    @Transactional
+    public void decreaseWarning(User user) {
+        user.decreaseWarningCnt(1);
+    }
+
+    @Transactional
+    public void giftGlassToOtherUser(User user) {
+        // 구현 예정
     }
 }

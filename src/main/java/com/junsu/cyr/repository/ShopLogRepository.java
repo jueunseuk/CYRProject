@@ -17,6 +17,7 @@ public interface ShopLogRepository extends JpaRepository<ShopLog, Long> {
 
     List<ShopLog> findAllByUser(User user);
 
+    @Query("select sl from ShopLog as sl where sl.user = :user and sl.shopItem.shopCategory.shopCategoryId != 4")
     List<ShopLog> findAllByUser(User user, Pageable pageable);
 
     @Query("select sl.shopItem.shopItemId from ShopLog as sl where sl.user = :user and sl.shopItem.shopCategory = :shopCategory and sl.shopItem.active = :active")

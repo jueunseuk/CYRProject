@@ -8,5 +8,6 @@ import lombok.Getter;
 public class ItemUseResult {
     private final boolean success;
     private final String message;
+    private final String type;
     private final Object data;
 }

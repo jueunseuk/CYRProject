@@ -20,6 +20,7 @@ public class RandomSandBoxUseCase implements UseConsumableItem {
                 .success(true)
                 .message("success to use random sand box")
                 .data(result)
+                .type("RANDOM_SAND_BOX")
                 .build();
     }
 }

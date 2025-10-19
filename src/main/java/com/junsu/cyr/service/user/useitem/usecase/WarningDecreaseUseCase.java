@@ -20,6 +20,7 @@ public class WarningDecreaseUseCase implements UseConsumableItem {
                 .success(true)
                 .message("success to decrease warning cnt")
                 .data(null)
+                .type("WARNING_DECREASE_TICKET")
                 .build();
     }
 }

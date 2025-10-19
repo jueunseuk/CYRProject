@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum UserInventoryExceptionCode implements ExceptionCode {
+    NOT_FOUND_USER_INVENTORY_ITEM("USERi_001", "사용자가 해당 아이템을 보유하지 않았습니다.", HttpStatus.NOT_FOUND),
     INSUFFICIENT_NUMBER_OF_ITEMS("USERI_002", "보유한 아이템의 개수가 부족합니다.", HttpStatus.BAD_REQUEST),
+
     ;
 
     private final String code;

@@ -3,8 +3,10 @@ package com.junsu.cyr.service.sand;
 import com.junsu.cyr.domain.sand.Sand;
 import com.junsu.cyr.domain.sand.SandLog;
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.domain.users.UserInventory;
 import com.junsu.cyr.model.common.UserAssetDataResponse;
 import com.junsu.cyr.model.user.GraphResponse;
+import com.junsu.cyr.model.userInventory.ItemUseResult;
 import com.junsu.cyr.repository.SandLogRepository;
 import com.junsu.cyr.repository.SandRepository;
 import com.junsu.cyr.repository.UserRepository;
@@ -12,8 +14,10 @@ import com.junsu.cyr.repository.projection.DailyMaxProjection;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.SandExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
+import com.junsu.cyr.response.exception.code.UserInventoryExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -119,5 +123,17 @@ public class SandService {
         }
 
         return count;
+    }
+
+    @Transactional
+    public Integer openRandomSandBox(User user) {
+        Integer randomCnt = (int) (Math.random() * 250) + 50;
+
+        user.updateSand(randomCnt);
+
+        Sand sand = getSand(15);
+        createSandLog(sand, user);
+
+        return randomCnt;
     }
 }

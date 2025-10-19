@@ -5,7 +5,12 @@ import com.junsu.cyr.domain.shop.ShopItem;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.userInventory.InventoryConditionRequest;
 import com.junsu.cyr.model.userInventory.InventoryConsumeItemResponse;
+import com.junsu.cyr.model.userInventory.ItemUseResult;
 import com.junsu.cyr.repository.UserInventoryRepository;
+import com.junsu.cyr.response.exception.BaseException;
+import com.junsu.cyr.response.exception.code.UserInventoryExceptionCode;
+import com.junsu.cyr.service.user.useitem.base.UseConsumableItem;
+import com.junsu.cyr.service.user.useitem.factory.UseStrategyFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +26,12 @@ import java.util.List;
 public class UserInventoryService {
 
     private final UserInventoryRepository userInventoryRepository;
+    private final UseStrategyFactory useStrategyFactory;
+
+    public UserInventory getUserInventoryById(Long userInventoryId) {
+        return userInventoryRepository.findById(userInventoryId)
+                .orElseThrow(() -> new BaseException(UserInventoryExceptionCode.NOT_FOUND_USER_INVENTORY_ITEM));
+    }
 
     @Transactional
     public void addToInventory(ShopItem shopItem, User user) {
@@ -60,5 +71,25 @@ public class UserInventoryService {
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
         List<UserInventory> userInventories = userInventoryRepository.findAllByUserWithUse(user, pageable);
         return userInventories.stream().map(InventoryConsumeItemResponse::new).toList();
+    }
+
+    @Transactional
+    public ItemUseResult useUserInventoryItem(Long userInventoryId, User user) {
+        UserInventory userInventory = getUserInventoryById(userInventoryId);
+
+        if (userInventory.getCurrentAmount() < 1) {
+            throw new BaseException(UserInventoryExceptionCode.INSUFFICIENT_NUMBER_OF_ITEMS);
+        }
+
+        String code = userInventory.getShopItem().getCode();
+
+        UseConsumableItem strategy = useStrategyFactory.getStrategy(code);
+
+        ItemUseResult itemUseResult = strategy.use(user);
+
+        userInventory.useItem();
+        userInventoryRepository.save(userInventory);
+
+        return itemUseResult;
     }
 }

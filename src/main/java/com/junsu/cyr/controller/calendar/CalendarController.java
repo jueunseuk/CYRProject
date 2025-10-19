@@ -1,11 +1,9 @@
 package com.junsu.cyr.controller.calendar;
 
 import com.junsu.cyr.domain.calendar.Calendar;
-import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.calendar.*;
 import com.junsu.cyr.service.calendar.CalendarService;
-import com.junsu.cyr.service.image.S3Service;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -64,8 +62,8 @@ public class CalendarController {
         return ResponseEntity.ok("success to add schedule");
     }
 
-    @PutMapping("")
-    public ResponseEntity<?> updateSchedule(@ModelAttribute CalendarEditRequest request, @RequestAttribute Integer userId) {
+    @PatchMapping("/{calendarId}")
+    public ResponseEntity<?> updateSchedule(@PathVariable Integer calendarId, @ModelAttribute CalendarEditRequest request, @RequestAttribute Integer userId) {
         User user = userService.getUserById(userId);
         calendarService.updateSchedule(request, user);
         return ResponseEntity.ok("success to update schedule");

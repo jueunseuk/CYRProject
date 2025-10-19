@@ -27,9 +27,9 @@ public class ShopLogController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ShopLogResponse>> getAllShopLogByUser(@RequestAttribute Integer userId) {
+    public ResponseEntity<List<ShopLogResponse>> getAllShopLogByUser(@ModelAttribute ShopLogConditionRequest condition, @RequestAttribute Integer userId) {
         User user = userService.getUserById(userId);
-        List<ShopLogResponse> shopLogResponses = shopLogService.getAllShopLogByUser(user);
+        List<ShopLogResponse> shopLogResponses = shopLogService.getAllShopLogByConditionWithoutCategory(condition, user);
         return ResponseEntity.ok(shopLogResponses);
     }
 }

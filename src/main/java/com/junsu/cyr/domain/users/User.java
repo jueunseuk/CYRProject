@@ -96,6 +96,9 @@ public class User extends BaseTime {
     @Column(name = "consecutive_attendance_cnt", nullable = false)
     private Integer consecutiveAttendanceCnt;
 
+    @Column(name = "max_consecutive_attendance_cnt", nullable = false)
+    private Integer maxConsecutiveAttendanceCnt;
+
     @Column(name = "cheer_cnt")
     private Long cheerCnt;
 
@@ -137,6 +140,9 @@ public class User extends BaseTime {
 
     public void increaseConsecutiveAttendanceCnt() {
         this.consecutiveAttendanceCnt++;
+        if(this.maxConsecutiveAttendanceCnt < this.consecutiveAttendanceCnt) {
+            this.maxConsecutiveAttendanceCnt = this.consecutiveAttendanceCnt;
+        }
     }
 
     public void initConsecutiveAttendanceCnt() {
@@ -184,5 +190,9 @@ public class User extends BaseTime {
 
     public void useGlass(Integer amount) {
         this.glass -= amount;
+    }
+
+    public void decreaseWarningCnt(int amount) {
+        this.warn -= amount;
     }
 }

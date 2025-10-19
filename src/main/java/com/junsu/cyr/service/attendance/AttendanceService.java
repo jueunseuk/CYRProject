@@ -29,11 +29,8 @@ public class AttendanceService {
     private final UserService userService;
 
     @Transactional
-    public void makeAttendance(Integer userId, AttendanceRequest request) {
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
-
-        AttendanceId attendanceId = new AttendanceId(userId, LocalDate.now());
+    public void makeAttendance(User user, AttendanceRequest request) {
+        AttendanceId attendanceId = new AttendanceId(user.getUserId(), LocalDate.now());
 
         Optional<Attendance> attendance = attendanceRepository.findByAttendanceId(attendanceId);
         if(attendance.isPresent()) {
@@ -175,6 +172,7 @@ public class AttendanceService {
         AttendanceDataResponse response = new AttendanceDataResponse();
         response.setTotal(Long.valueOf(user.getAttendanceCnt()));
         response.setConsecutiveCnt(Long.valueOf(user.getConsecutiveAttendanceCnt()));
+        response.setMaxConsecutiveCnt(Long.valueOf(user.getMaxConsecutiveAttendanceCnt()));
 
         LocalDate today = LocalDate.now();
 
@@ -221,5 +219,19 @@ public class AttendanceService {
         return attendances.stream()
                 .map(attend -> new AttendanceHistoryResponse(1L, attend.getAttendanceDate()))
                 .toList();
+    }
+
+    @Transactional
+    public Integer increaseConsecutiveAttendanceToForce(User user) {
+        AttendanceId attendanceId = new AttendanceId(user.getUserId(), LocalDate.now());
+
+        Optional<Attendance> attendance = attendanceRepository.findByAttendanceId(attendanceId);
+        if(attendance.isEmpty()) {
+            throw new BaseException(AttendanceExceptionCode.NOT_YET_IN_ATTENDANCE);
+        }
+
+        user.increaseConsecutiveAttendanceCnt();
+
+        return user.getMaxConsecutiveAttendanceCnt();
     }
 }

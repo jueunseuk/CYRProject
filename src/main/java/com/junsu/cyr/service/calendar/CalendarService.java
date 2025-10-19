@@ -16,9 +16,7 @@ import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -120,7 +118,7 @@ public class CalendarService {
 
         String itemUrl = null;
         try {
-            if(!request.getFile().isEmpty()) {
+            if(request.getFile() != null) {
                 itemUrl = s3Service.uploadFile(request.getFile(), Type.SCHEDULE);
             }
         } catch (Exception e) {
@@ -155,16 +153,14 @@ public class CalendarService {
         try {
             if (request.getFile() != null && !request.getFile().isEmpty()) {
                 newImageUrl = s3Service.uploadFile(request.getFile(), Type.SCHEDULE);
+            } else if (request.getImageUrl() != null && !request.getImageUrl().isBlank()) {
+                newImageUrl = request.getImageUrl();
             }
         } catch (Exception e) {
             throw new BaseException(ImageExceptionCode.FAILED_TO_UPLOAD_IMAGE);
         }
 
-        if (request.getFile() == null || request.getFile().isEmpty()) {
-            calendar.updateCalendar(request, null);
-        } else {
-            calendar.updateCalendar(request, newImageUrl);
-        }
+        calendar.updateCalendar(request, newImageUrl);
     }
 
     @Transactional

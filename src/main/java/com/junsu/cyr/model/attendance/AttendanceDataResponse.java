@@ -6,6 +6,7 @@ import lombok.Data;
 public class AttendanceDataResponse {
     private Long total;
     private Long consecutiveCnt;
+    private Long maxConsecutiveCnt;
     private Long week;
     private Long incrementByWeek;
     private Long month;

@@ -1,7 +1,9 @@
 package com.junsu.cyr.controller.attendance;
 
+import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.attendance.*;
 import com.junsu.cyr.service.attendance.AttendanceService;
+import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +16,12 @@ import java.util.List;
 public class AttendanceController {
 
     private final AttendanceService attendanceService;
+    private final UserService userService;
 
     @PostMapping("")
     public ResponseEntity<?> makeAttendance(@RequestAttribute Integer userId, @RequestBody AttendanceRequest request) {
-        attendanceService.makeAttendance(userId, request);
+        User user = userService.getUserById(userId);
+        attendanceService.makeAttendance(user, request);
         return ResponseEntity.ok("success to make attendance");
     }
 

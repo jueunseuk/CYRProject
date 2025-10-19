@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ShopCategoryRepository extends JpaRepository<ShopCategory, Integer> {
-    ShopCategory findAllByShopCategoryId(Integer itemId);
+    ShopCategory findByShopCategoryId(Integer categoryId);
 }

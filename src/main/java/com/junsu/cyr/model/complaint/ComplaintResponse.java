@@ -33,9 +33,11 @@ public class ComplaintResponse {
         User user = complaint.getUser();
         this.userId = user.getUserId();
         this.nickname = user.getNickname();
-        User processor = complaint.getProcessorUser();
-        this.processorId = processor.getUserId();
-        this.processorNickname = processor.getNickname();
+        if(complaint.getProcessorUser() != null) {
+            User processor = complaint.getProcessorUser();
+            this.processorId = processor.getUserId();
+            this.processorNickname = processor.getNickname();
+        }
         this.processedAt = complaint.getProcessedAt();
         this.processedMessage = complaint.getProcessMessage();
         this.categoryName = complaint.getComplaintCategory().getName();

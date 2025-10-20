@@ -32,21 +32,21 @@ public class ComplaintController {
     }
 
     @PatchMapping("/{complaintId}/accept")
-    public ResponseEntity<String> acceptComplaint(@RequestBody ComplaintProcessRequest request, @PathVariable Long complaintId, @RequestAttribute Integer userId) {
+    public ResponseEntity<String> acceptComplaint(@ModelAttribute ComplaintProcessRequest request, @PathVariable Long complaintId, @RequestAttribute Integer userId) {
         User user = userService.getUserById(userId);
         complaintService.acceptComplaint(complaintId, request.getMessage(), user);
         return ResponseEntity.ok("success to accepting complaint");
     }
 
     @PatchMapping("/{complaintId}/reject")
-    public ResponseEntity<String> rejectComplaint(@RequestBody ComplaintProcessRequest request, @PathVariable Long complaintId, @RequestAttribute Integer userId) {
+    public ResponseEntity<String> rejectComplaint(@ModelAttribute ComplaintProcessRequest request, @PathVariable Long complaintId, @RequestAttribute Integer userId) {
         User user = userService.getUserById(userId);
         complaintService.rejectComplaint(complaintId, request.getMessage(), user);
         return ResponseEntity.ok("success to rejecting complaint");
     }
 
     @PostMapping
-    public ResponseEntity<String> uploadComplaint(@RequestBody ComplaintRequest request, @RequestAttribute Integer userId) {
+    public ResponseEntity<String> uploadComplaint(@ModelAttribute ComplaintRequest request, @RequestAttribute Integer userId) {
         User user = userService.getUserById(userId);
         complaintService.uploadComplaint(request, user);
         return ResponseEntity.ok("success to upload complaint");

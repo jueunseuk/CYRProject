@@ -88,7 +88,7 @@ public class ComplaintService {
         if(complaint.getStatus() != Status.WAIT) {
             throw new BaseException(ComplaintExceptionCode.ALREADY_PROCESSED_COMPLAINT);
         }
-
+        System.out.println(message);
         if(message == null || message.isEmpty()) {
             throw new BaseException(ComplaintExceptionCode.TOO_SHORT_MESSAGE_LENGTH);
         }

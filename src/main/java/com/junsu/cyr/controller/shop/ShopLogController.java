@@ -1,6 +1,5 @@
 package com.junsu.cyr.controller.shop;
 
-import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.shop.ShopLogConditionRequest;
 import com.junsu.cyr.model.shop.ShopLogResponse;
 import com.junsu.cyr.service.shop.ShopLogService;
@@ -21,15 +20,13 @@ public class ShopLogController {
 
     @GetMapping("/all")
     public ResponseEntity<List<ShopLogResponse>> getAllShopLog(@ModelAttribute ShopLogConditionRequest condition, @RequestAttribute Integer userId) {
-        userService.getUserById(userId);
-        List<ShopLogResponse> shopLogResponses = shopLogService.getAllShopLog(condition);
+        List<ShopLogResponse> shopLogResponses = shopLogService.getAllShopLog(condition, userId);
         return ResponseEntity.ok(shopLogResponses);
     }
 
     @GetMapping
     public ResponseEntity<List<ShopLogResponse>> getAllShopLogByUser(@ModelAttribute ShopLogConditionRequest condition, @RequestAttribute Integer userId) {
-        User user = userService.getUserById(userId);
-        List<ShopLogResponse> shopLogResponses = shopLogService.getAllShopLogByConditionWithoutCategory(condition, user);
+        List<ShopLogResponse> shopLogResponses = shopLogService.getAllShopLogByConditionWithoutCategory(condition, userId);
         return ResponseEntity.ok(shopLogResponses);
     }
 }

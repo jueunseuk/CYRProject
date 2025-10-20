@@ -1,8 +1,8 @@
 package com.junsu.cyr.controller.user;
 
+import com.junsu.cyr.model.userBannerSetting.UserBannerItem;
 import com.junsu.cyr.model.userBannerSetting.UserBannerResponse;
 import com.junsu.cyr.model.userBannerSetting.UserBannerSettingConditionRequest;
-import com.junsu.cyr.model.userBannerSetting.UserBannerUpdateRequest;
 import com.junsu.cyr.service.user.UserBannerSettingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ public class UserBannerSettingController {
     }
 
     @PatchMapping
-    public ResponseEntity<String> updateUserBannerSequence(@RequestBody UserBannerUpdateRequest request, @RequestAttribute Integer userId) {
+    public ResponseEntity<String> updateUserBannerSequence(@RequestBody List<UserBannerItem> request, @RequestAttribute Integer userId) {
         userBannerSettingService.updateUserBannerSequence(request, userId);
         return ResponseEntity.ok("success to update user banner sequence");
     }

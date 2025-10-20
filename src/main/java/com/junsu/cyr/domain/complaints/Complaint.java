@@ -43,6 +43,9 @@ public class Complaint extends BaseTime {
     @Column(name = "capture_url")
     private String captureUrl;
 
+    @Column(name = "link")
+    private String link;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status status;

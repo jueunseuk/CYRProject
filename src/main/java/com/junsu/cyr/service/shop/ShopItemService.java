@@ -1,12 +1,15 @@
 package com.junsu.cyr.service.shop;
 
 import com.junsu.cyr.constant.MagicNumberConstant;
+import com.junsu.cyr.domain.glass.Glass;
 import com.junsu.cyr.domain.images.Type;
+import com.junsu.cyr.domain.shop.Action;
 import com.junsu.cyr.domain.shop.ShopCategory;
 import com.junsu.cyr.domain.shop.ShopItem;
 import com.junsu.cyr.domain.shop.ShopLog;
 import com.junsu.cyr.domain.users.Role;
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.domain.users.UserBannerSetting;
 import com.junsu.cyr.domain.users.UserInventory;
 import com.junsu.cyr.model.shop.ShopItemConditionRequest;
 import com.junsu.cyr.model.shop.ShopItemResponse;
@@ -15,7 +18,11 @@ import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.code.ShopItemExceptionCode;
 import com.junsu.cyr.response.exception.code.UserInventoryExceptionCode;
+import com.junsu.cyr.service.glass.GlassService;
 import com.junsu.cyr.service.image.S3Service;
+import com.junsu.cyr.service.user.UserBannerSettingService;
+import com.junsu.cyr.service.user.UserInventoryService;
+import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +43,12 @@ public class ShopItemService {
     private final ShopCategoryRepository shopCategoryRepository;
     private final ShopLogRepository shopLogRepository;
     private final UserInventoryRepository userInventoryRepository;
+    private final UserService userService;
+    private final UserInventoryService userInventoryService;
+    private final ShopLogService shopLogService;
+    private final GlassService glassService;
+    private final UserBannerSettingService userBannerSettingService;
+    private final UserBannerSettingRepository userBannerSettingRepository;
 
     @Transactional
     public void uploadItemImage(Integer itemId, MultipartFile file, Integer userId) {
@@ -63,7 +76,9 @@ public class ShopItemService {
         shopItem.updateImageUrl(itemUrl);
     }
 
-    public List<ShopItemResponse> getShopItemsByCategoryId(Integer categoryId, ShopItemConditionRequest condition, User user) {
+    public List<ShopItemResponse> getShopItemsByCategoryId(Integer categoryId, ShopItemConditionRequest condition, Integer userId) {
+        User user = userService.getUserById(userId);
+
         ShopCategory shopCategory = shopCategoryRepository.findByShopCategoryId(categoryId);
 
         Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
@@ -92,7 +107,10 @@ public class ShopItemService {
     }
 
     @Transactional
-    public void buyShopItem(ShopItem shopItem, User user) {
+    public void buyShopItem(Integer shopItemId, Integer userId) {
+        User user = userService.getUserById(userId);
+        ShopItem shopItem = getShopItemById(shopItemId);
+
         if(shopLogRepository.existsByUserAndShopItem(user, shopItem)) {
             throw new BaseException(ShopItemExceptionCode.ALREADY_PURCHASED_ITEM);
         }
@@ -102,10 +120,33 @@ public class ShopItemService {
         }
 
         user.useGlass(shopItem.getPrice());
+
+        if(shopItem.getShopCategory().getShopCategoryId() == MagicNumberConstant.SHOP_CATEGORY_CONSUME_TYPE) {
+            userInventoryService.addToInventory(shopItem, user);
+        }
+        shopLogService.createShopLog(shopItem, user, Action.PURCHASE);
+
+        userService.addExperience(user, 7);
+
+        Glass glass = glassService.getGlass(3);
+        glassService.createGlassLog(glass, user, shopItem.getPrice());
+
+        if(shopItem.getShopCategory().getShopCategoryId() == MagicNumberConstant.SHOP_CATEGORY_BANNER_TYPE) {
+            Integer next = userBannerSettingService.findNextSequence(user);
+            UserBannerSetting userBannerSetting = UserBannerSetting.builder()
+                    .user(user)
+                    .shopItem(shopItem)
+                    .sequence(next)
+                    .isActive(true)
+                    .build();
+            userBannerSettingRepository.save(userBannerSetting);
+        }
     }
 
     @Transactional
-    public void useShopItem(ShopItem shopItem, User user) {
+    public void useShopItem(Integer shopItemId, Integer userId) {
+        User user = userService.getUserById(userId);
+        ShopItem shopItem = getShopItemById(shopItemId);
         if(shopItem.getShopCategory().getShopCategoryId() != MagicNumberConstant.SHOP_CATEGORY_CONSUME_TYPE) {
             throw new BaseException(ShopItemExceptionCode.CANNOT_USABLE_ITEM);
         }
@@ -118,6 +159,8 @@ public class ShopItemService {
         }
 
         userInventory.useItem();
+
+        shopLogService.createShopLog(shopItem, user, Action.USE);
     }
 
     public ShopItem getShopItemById(Integer itemId) {

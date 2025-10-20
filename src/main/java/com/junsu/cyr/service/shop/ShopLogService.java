@@ -8,11 +8,11 @@ import com.junsu.cyr.domain.shop.ShopLog;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.shop.ShopLogConditionRequest;
 import com.junsu.cyr.model.shop.ShopLogResponse;
-import com.junsu.cyr.model.userInventory.InventoryConditionRequest;
 import com.junsu.cyr.repository.ShopCategoryRepository;
 import com.junsu.cyr.repository.ShopLogRepository;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.ShopLogExceptionCode;
+import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +28,7 @@ public class ShopLogService {
 
     private final ShopLogRepository shopLogRepository;
     private final ShopCategoryRepository shopCategoryRepository;
+    private final UserService userService;
 
     @Transactional
     public void createShopLog(ShopItem shopItem, User user, Action action) {
@@ -41,14 +42,18 @@ public class ShopLogService {
         shopLogRepository.save(shopLog);
     }
 
-    public List<ShopLogResponse> getAllShopLog(ShopLogConditionRequest condition) {
+    public List<ShopLogResponse> getAllShopLog(ShopLogConditionRequest condition, Integer userId) {
+        userService.getUserById(userId);
+
         Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
         List<ShopLog> shopLogs = shopLogRepository.findAll(pageable).getContent();
         return shopLogs.stream().map(ShopLogResponse::new).toList();
     }
 
-    public List<ShopLogResponse> getAllShopLogByConditionWithCategory(Integer categoryId, ShopLogConditionRequest condition, User user) {
+    public List<ShopLogResponse> getAllShopLogByConditionWithCategory(Integer categoryId, ShopLogConditionRequest condition, Integer userId) {
+        User user = userService.getUserById(userId);
+
         if(categoryId == MagicNumberConstant.SHOP_CATEGORY_CONSUME_TYPE) {
             throw new BaseException(ShopLogExceptionCode.CANNOT_GET_CONSUMABLE_CATEGORY_ITEM);
         }
@@ -62,7 +67,8 @@ public class ShopLogService {
         return shopLogs.stream().map(ShopLogResponse::new).toList();
     }
 
-    public List<ShopLogResponse> getAllShopLogByConditionWithoutCategory(ShopLogConditionRequest condition, User user) {
+    public List<ShopLogResponse> getAllShopLogByConditionWithoutCategory(ShopLogConditionRequest condition, Integer userId) {
+        User user = userService.getUserById(userId);
         Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
         List<ShopLog> shopLogs = shopLogRepository.findAllByUser(user, pageable);

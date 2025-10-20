@@ -20,6 +20,7 @@ public class AttendancePlusUseCase implements UseConsumableItem {
                 .success(true)
                 .message("success to increase consecutive attendance cnt")
                 .data(result)
+                .type("ATTENDANCE_PLUS_TICKET")
                 .build();
     }
 }

@@ -20,23 +20,22 @@ public class Complaint extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "complaint_id", nullable = false, updatable = false)
-    private Long complaint_id;
+    private Long complaintId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "complaint_category")
     private ComplaintCategory complaintCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reporter_user")
-    private User reporterUser;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "target_user")
-    private User targetUser;
+    @JoinColumn(name = "user", nullable = false)
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "processor_user")
     private User processorUser;
+
+    @Column(name = "title")
+    private String title;
 
     @Column(name = "reason", nullable = false, length = 1000)
     private String reason;
@@ -50,4 +49,14 @@ public class Complaint extends BaseTime {
 
     @Column(name = "processed_at")
     private LocalDateTime processedAt;
+
+    @Column(name = "process_message")
+    private String processMessage;
+
+    public void processing(User user, Status status, String message) {
+        this.processorUser = user;
+        this.status = status;
+        this.processMessage = message;
+        this.processedAt = LocalDateTime.now();
+    }
 }

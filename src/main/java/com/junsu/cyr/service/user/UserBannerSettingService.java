@@ -36,10 +36,10 @@ public class UserBannerSettingService {
         return userBannerSettings.stream().map(UserBannerResponse::new).toList();
     }
 
-    public void updateUserBannerSequence(UserBannerUpdateRequest request, Integer userId) {
+    public void updateUserBannerSequence(List<UserBannerItem> request, Integer userId) {
         User user = userService.getUserById(userId);
 
-        for(UserBannerItem item : request.getBanners()) {
+        for(UserBannerItem item : request) {
             UserBannerSetting userBannerSetting = userBannerSettingRepository.findByUserAndShopItem_ShopItemId(user, item.getShopItemId());
             userBannerSetting.updateSequence(item.getSequence());
             userBannerSetting.updateIsActive(item.getIsActive());

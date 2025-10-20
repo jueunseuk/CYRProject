@@ -141,6 +141,8 @@ public class ShopItemService {
                     .build();
             userBannerSettingRepository.save(userBannerSetting);
         }
+
+        shopItem.increaseSaleCnt();
     }
 
     @Transactional

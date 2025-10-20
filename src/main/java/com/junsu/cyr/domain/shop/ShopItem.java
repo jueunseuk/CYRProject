@@ -52,4 +52,8 @@ public class ShopItem extends BaseTime {
     public void saleItem() {
         this.saleCnt += 1;
     }
+
+    public void increaseSaleCnt() {
+        this.saleCnt += 1;
+    }
 }

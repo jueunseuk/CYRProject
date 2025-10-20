@@ -22,6 +22,7 @@ public class ComplaintResponse {
     private LocalDateTime processedAt;
     private String processedMessage;
     private String categoryName;
+    private String categoryKorean;
 
     public ComplaintResponse(Complaint complaint) {
         this.complaintId = complaint.getComplaintId();
@@ -41,5 +42,6 @@ public class ComplaintResponse {
         this.processedAt = complaint.getProcessedAt();
         this.processedMessage = complaint.getProcessMessage();
         this.categoryName = complaint.getComplaintCategory().getName();
+        this.categoryKorean = complaint.getComplaintCategory().getKorean();
     }
 }

@@ -15,6 +15,7 @@ public class ComplaintResponse {
     private String title;
     private String reason;
     private String captureUrl;
+    private String link;
     private Status status;
     private LocalDateTime createdAt;
     private Integer processorId;
@@ -22,12 +23,14 @@ public class ComplaintResponse {
     private LocalDateTime processedAt;
     private String processedMessage;
     private String categoryName;
+    private String categoryKorean;
 
     public ComplaintResponse(Complaint complaint) {
         this.complaintId = complaint.getComplaintId();
         this.title = complaint.getTitle();
         this.reason = complaint.getReason();
         this.captureUrl = complaint.getCaptureUrl();
+        this.link = complaint.getLink();
         this.status = complaint.getStatus();
         this.createdAt = complaint.getCreatedAt();
         User user = complaint.getUser();
@@ -41,5 +44,6 @@ public class ComplaintResponse {
         this.processedAt = complaint.getProcessedAt();
         this.processedMessage = complaint.getProcessMessage();
         this.categoryName = complaint.getComplaintCategory().getName();
+        this.categoryKorean = complaint.getComplaintCategory().getKorean();
     }
 }

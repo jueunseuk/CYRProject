@@ -1,6 +1,5 @@
 package com.junsu.cyr.model.complaint;
 
-import com.junsu.cyr.domain.complaints.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ComplaintConditionRequest {
     private String complaintId;
-    private Status status;
+    private String status;
 
     private Integer page = 0;
     private Integer size = 30;

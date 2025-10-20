@@ -27,6 +27,7 @@ public class UserInventoryService {
 
     private final UserInventoryRepository userInventoryRepository;
     private final UseStrategyFactory useStrategyFactory;
+    private final UserService userService;
 
     public UserInventory getUserInventoryById(Long userInventoryId) {
         return userInventoryRepository.findById(userInventoryId)
@@ -59,14 +60,16 @@ public class UserInventoryService {
         userInventoryRepository.save(userInventory);
     }
 
-    public List<InventoryConsumeItemResponse> getAllInventoryByUser(InventoryConditionRequest condition, User user) {
+    public List<InventoryConsumeItemResponse> getAllInventoryByUser(InventoryConditionRequest condition, Integer userId) {
+        User user = userService.getUserById(userId);
         Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
         List<UserInventory> userInventories = userInventoryRepository.findAllByUserWithHave(user, pageable);
         return userInventories.stream().map(InventoryConsumeItemResponse::new).toList();
     }
 
-    public List<InventoryConsumeItemResponse> getAllInventoryByUserAndUse(InventoryConditionRequest condition, User user) {
+    public List<InventoryConsumeItemResponse> getAllInventoryByUserAndUse(InventoryConditionRequest condition, Integer userId) {
+        User user = userService.getUserById(userId);
         Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
         List<UserInventory> userInventories = userInventoryRepository.findAllByUserWithUse(user, pageable);
@@ -74,7 +77,9 @@ public class UserInventoryService {
     }
 
     @Transactional
-    public ItemUseResult useUserInventoryItem(Long userInventoryId, User user) {
+    public ItemUseResult useUserInventoryItem(Long userInventoryId, Integer userId) {
+        User user = userService.getUserById(userId);
+
         UserInventory userInventory = getUserInventoryById(userInventoryId);
 
         if (userInventory.getCurrentAmount() < 1) {

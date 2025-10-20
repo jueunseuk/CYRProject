@@ -12,5 +12,6 @@ public class ComplaintRequest {
     private String categoryName;
     private String title;
     private String reason;
+    private String link;
     private MultipartFile file;
 }

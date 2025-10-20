@@ -54,10 +54,11 @@ public class ComplaintService {
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
 
         Page<Complaint> complaints;
-        if(condition.getStatus() == null) {
+        if(condition.getStatus().equals("ALL")) {
             complaints = complaintRepository.findAll(pageable);
         } else {
-            complaints = complaintRepository.findAllByStatus(condition.getStatus(), pageable);
+            Status status = Status.valueOf(condition.getStatus());
+            complaints = complaintRepository.findAllByStatus(status, pageable);
         }
 
         return complaints.map(ComplaintListResponse::new);

@@ -1,5 +1,6 @@
 package com.junsu.cyr.service.complaint;
 
+import com.junsu.cyr.constant.MagicNumberConstant;
 import com.junsu.cyr.domain.complaints.Complaint;
 import com.junsu.cyr.domain.complaints.ComplaintCategory;
 import com.junsu.cyr.domain.complaints.Status;
@@ -115,13 +116,15 @@ public class ComplaintService {
             throw new BaseException(ImageExceptionCode.FAILED_TO_UPLOAD_IMAGE);
         }
 
+        String link = request.getLink().equals("/complaint") ? null : MagicNumberConstant.FRONT_DOMAIN+request.getLink();
+
         Complaint complaint = Complaint.builder()
                 .user(user)
                 .complaintCategory(complaintCategory)
                 .captureUrl(uploadUrl)
                 .title(request.getTitle())
                 .reason(request.getReason())
-                .link(request.getLink())
+                .link(link)
                 .status(Status.WAIT)
                 .build();
 

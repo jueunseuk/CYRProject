@@ -15,6 +15,7 @@ public class ComplaintResponse {
     private String title;
     private String reason;
     private String captureUrl;
+    private String link;
     private Status status;
     private LocalDateTime createdAt;
     private Integer processorId;
@@ -29,6 +30,7 @@ public class ComplaintResponse {
         this.title = complaint.getTitle();
         this.reason = complaint.getReason();
         this.captureUrl = complaint.getCaptureUrl();
+        this.link = complaint.getLink();
         this.status = complaint.getStatus();
         this.createdAt = complaint.getCreatedAt();
         User user = complaint.getUser();

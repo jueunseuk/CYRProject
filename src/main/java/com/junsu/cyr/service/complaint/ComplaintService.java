@@ -121,6 +121,7 @@ public class ComplaintService {
                 .captureUrl(uploadUrl)
                 .title(request.getTitle())
                 .reason(request.getReason())
+                .link(request.getLink())
                 .status(Status.WAIT)
                 .build();
 

@@ -4,6 +4,7 @@ import com.junsu.cyr.domain.experiences.Experience;
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.sand.Sand;
 import com.junsu.cyr.domain.temperature.Temperature;
+import com.junsu.cyr.domain.users.Role;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.domain.users.UserInventory;
 import com.junsu.cyr.model.user.*;
@@ -37,6 +38,14 @@ public class UserService {
 
     public User getUserById(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
+    }
+
+    public boolean isLeastManager(User user) {
+        return user.getRole() != Role.MEMBER && user.getRole() != Role.GUEST;
+    }
+
+    public boolean isLeastAdmin(User user) {
+        return user.getRole() == Role.ADMIN;
     }
 
     public UserSidebarResponse getUserSidebar(Integer userId) {

@@ -11,7 +11,8 @@ public enum UserExceptionCode implements ExceptionCode {
     NOT_EXIST_USER("USER_001", "존재하지 않는 사용자입니다.", HttpStatus.BAD_REQUEST),
     DO_NOT_HAVE_PERMISSION("USER_002", "수행할 권한이 없습니다.", HttpStatus.BAD_REQUEST),
     TOO_SHORT_INTRODUCTION("USER_003", "한 줄 소개의 내용이 너무 짧습니다.", HttpStatus.BAD_REQUEST),
-
+    REQUIRES_AT_LEAST_MANAGER("USER_004", "적어도 매니저의 권한이 필요합니다.", HttpStatus.FORBIDDEN),
+    REQUIRES_AT_LEAST_ADMIN("USER_005", "적어도 어드민의 권한이 필요합니다.", HttpStatus.FORBIDDEN),
     ;
 
     private final String code;

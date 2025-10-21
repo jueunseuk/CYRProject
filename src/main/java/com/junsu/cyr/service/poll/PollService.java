@@ -199,6 +199,7 @@ public class PollService {
         }
 
         poll.updateResult(max);
+        poll.updateStatus(Status.FINISHED);
 
         pollLogs.sort((o1, o2) -> {
             if (o1.getVoteCount().equals(o2.getVoteCount())) {

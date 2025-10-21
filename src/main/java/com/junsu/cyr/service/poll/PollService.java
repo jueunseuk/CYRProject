@@ -160,7 +160,7 @@ public class PollService {
             throw new BaseException(PollExceptionCode.NOT_ALLOWED_TO_MAKE_POLL);
         }
 
-        if(poll.getStatus() != Status.CLOSED) {
+        if(poll.getStatus() != Status.CLOSED && poll.getStatus() != Status.IN_PROGRESS) {
             throw new BaseException(PollExceptionCode.UNABLE_TO_AGGREGATE_POLL_STATE);
         }
 

@@ -16,7 +16,16 @@ public interface PollLogRepository extends JpaRepository<PollLog, Long> {
 
     Boolean existsByUserAndPoll(User user, Poll poll);
 
-    @Query("select pl.pollOption.pollOptionId, pl.pollOption.content, count(pl) from PollLog as pl where pl.poll = :poll group by pl.pollOption.pollOptionId")
+    @Query("""
+        select new com.junsu.cyr.model.poll.PollOptionCount(
+            pl.pollOption.pollOptionId,
+            pl.pollOption.content,
+            count(pl)
+        )
+        from PollLog pl
+        where pl.poll = :poll
+        group by pl.pollOption.pollOptionId, pl.pollOption.content
+    """)
     List<PollOptionCount> countByPollOption(Poll poll);
 
     Optional<PollLog> findByUserAndPoll(User user, Poll poll);

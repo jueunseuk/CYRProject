@@ -147,15 +147,6 @@ public class PollService {
             throw new BaseException(PollExceptionCode.INVALID_CLOSED_AT);
         }
 
-        try {
-            if(request.getFile() != null) {
-                String imageUrl = s3Service.uploadFile(request.getFile(), Type.POLL);
-                poll.updateImageUrl(imageUrl);
-            }
-        } catch (Exception e) {
-            throw new BaseException(ImageExceptionCode.FAILED_TO_UPLOAD_IMAGE);
-        }
-
         poll.update(request);
     }
 
@@ -187,7 +178,7 @@ public class PollService {
             throw new BaseException(PollExceptionCode.NOT_ALLOWED_TO_MAKE_POLL);
         }
 
-        if(poll.getStatus() != Status.CLOSED && poll.getStatus() != Status.IN_PROGRESS) {
+        if(poll.getStatus() != Status.CLOSED) {
             throw new BaseException(PollExceptionCode.UNABLE_TO_AGGREGATE_POLL_STATE);
         }
 
@@ -215,6 +206,27 @@ public class PollService {
             }
             return Long.compare(o2.getVoteCount(), o1.getVoteCount());
         });
+
+        return pollLogs;
+    }
+
+    public List<PollOptionCount> aggregatePreviewPoll(Integer pollId, Integer userId) {
+        User user = userService.getUserById(userId);
+        Poll poll = getPollByPollId(pollId);
+
+        if(!userService.isLeastManager(user)) {
+            throw new BaseException(PollExceptionCode.NOT_ALLOWED_TO_MAKE_POLL);
+        }
+
+        if(poll.getStatus() != Status.IN_PROGRESS) {
+            throw new BaseException(PollExceptionCode.UNABLE_TO_AGGREGATE_POLL_STATE);
+        }
+
+        List<PollOptionCount> pollLogs = pollLogService.getPollResult(poll);
+
+        if (pollLogs.isEmpty()) {
+            throw new BaseException(PollExceptionCode.NO_VOTES_TO_AGGREGATE);
+        }
 
         return pollLogs;
     }

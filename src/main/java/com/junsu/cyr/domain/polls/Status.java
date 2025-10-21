@@ -1,5 +1,5 @@
 package com.junsu.cyr.domain.polls;
 
 public enum Status {
-    PROGRESS, STOP, DONE;
+    RESERVED, IN_PROGRESS, STOPPED, CANCELED, CLOSED, FINISHED;
 }

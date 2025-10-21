@@ -52,10 +52,9 @@ public class ShopItemService {
 
     @Transactional
     public void uploadItemImage(Integer itemId, MultipartFile file, Integer userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User Not Found"));
+        User user = userService.getUserById(userId);
 
-        if(user.getRole() != Role.ADMIN) {
+        if(!userService.isLeastAdmin(user)) {
             throw new BaseException(ImageExceptionCode.DO_NOT_HAVE_PERMISSION_TO_UPLOAD);
         }
 

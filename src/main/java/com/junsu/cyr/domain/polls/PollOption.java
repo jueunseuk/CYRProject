@@ -16,7 +16,7 @@ public class PollOption {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "poll_option_id", nullable = false)
-    private Integer PollOptionId;
+    private Long pollOptionId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "poll")
@@ -24,4 +24,11 @@ public class PollOption {
 
     @Column(name = "content", nullable = false, length = 1000)
     private String content;
+
+    @Column(name = "vote_count")
+    private Long voteCount;
+
+    public void updateVoteCount(Long voteCount) {
+        this.voteCount = voteCount;
+    }
 }

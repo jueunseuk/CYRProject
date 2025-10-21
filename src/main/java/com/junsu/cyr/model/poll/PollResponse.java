@@ -63,5 +63,8 @@ public class PollResponse {
         User user = poll.getUser();
         this.userId = user.getUserId();
         this.nickname = user.getNickname();
+
+        this.isJoin = false;
+        this.votePollOptionId = null;
     }
 }

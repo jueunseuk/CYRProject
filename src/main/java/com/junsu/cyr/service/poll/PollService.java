@@ -36,13 +36,21 @@ public class PollService {
     }
 
     public PollResponse getPoll(Integer pollId, Integer userId) {
-        userService.getUserById(userId);
+        User user = userService.getUserById(userId);
         Poll poll = getPollByPollId(pollId);
         
         List<PollOption> pollOptions = pollOptionService.getPollOptionsByPoll(poll);
         List<PollOptionResponse> pollOptionResponses = pollOptions.stream().map(PollOptionResponse::new).toList();
         
-        return new PollResponse(poll, pollOptionResponses);
+        PollResponse pollResponse = new PollResponse(poll, pollOptionResponses);
+
+        PollLog pollLog = pollLogService.getPollLogByUserAndPoll(user, poll);
+        if(pollLog != null) {
+            pollResponse.setIsJoin(true);
+            pollResponse.setVotePollOptionId(pollLog.getPollOption().getPollOptionId());
+        }
+
+        return pollResponse;
     }
 
     public List<PollResponse> getActivePolls(Status status, Integer userId) {

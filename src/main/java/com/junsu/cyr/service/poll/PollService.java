@@ -169,6 +169,10 @@ public class PollService {
             throw new BaseException(PollExceptionCode.ALREADY_PARTICIPATING_VOTE);
         }
 
+        if(!pollOption.getPoll().equals(poll)) {
+            throw new BaseException(PollExceptionCode.POLL_AND_OPTION_MISMATCH);
+        }
+
         userService.addExpAndSand(user, 6, 14);
 
         pollLogService.createPollLog(user, poll, pollOption);

@@ -139,15 +139,7 @@ public class PollService {
             throw new BaseException(PollExceptionCode.NOT_ALLOWED_TO_MAKE_POLL);
         }
 
-        if(request.getTitle().isEmpty() || request.getDescription().isEmpty()) {
-            throw new BaseException(PollExceptionCode.INSUFFICIENT_TO_DESCRIBE);
-        }
-
-        if(request.getClosedAt().isBefore(LocalDateTime.now())) {
-            throw new BaseException(PollExceptionCode.INVALID_CLOSED_AT);
-        }
-
-        poll.update(request);
+        poll.updateStatus(request.getStatus());
     }
 
     @Transactional

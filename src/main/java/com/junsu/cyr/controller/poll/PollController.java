@@ -43,10 +43,10 @@ public class PollController {
         return ResponseEntity.ok("success to upload poll");
     }
 
-    @PatchMapping("/{pollId}")
-    public ResponseEntity<String> updatePoll(@RequestBody PollUpdateRequest request, @PathVariable Integer pollId, @RequestAttribute Integer userId) {
+    @PatchMapping("/{pollId}/status")
+    public ResponseEntity<String> updatePollStatus(@RequestBody PollUpdateRequest request, @PathVariable Integer pollId, @RequestAttribute Integer userId) {
         pollService.updatePoll(request, pollId, userId);
-        return ResponseEntity.ok("success to update poll");
+        return ResponseEntity.ok("success to update poll state");
     }
 
     @PostMapping("/{pollId}/{pollOptionId}")

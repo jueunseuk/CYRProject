@@ -5,10 +5,10 @@ import com.junsu.cyr.domain.users.UserBannerSetting;
 import com.junsu.cyr.model.userBannerSetting.UserBannerItem;
 import com.junsu.cyr.model.userBannerSetting.UserBannerResponse;
 import com.junsu.cyr.model.userBannerSetting.UserBannerSettingConditionRequest;
-import com.junsu.cyr.model.userBannerSetting.UserBannerUpdateRequest;
 import com.junsu.cyr.repository.UserBannerSettingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,10 +36,11 @@ public class UserBannerSettingService {
         return userBannerSettings.stream().map(UserBannerResponse::new).toList();
     }
 
-    public void updateUserBannerSequence(UserBannerUpdateRequest request, Integer userId) {
+    @Transactional
+    public void updateUserBannerSequence(List<UserBannerItem> request, Integer userId) {
         User user = userService.getUserById(userId);
 
-        for(UserBannerItem item : request.getBanners()) {
+        for(UserBannerItem item : request) {
             UserBannerSetting userBannerSetting = userBannerSettingRepository.findByUserAndShopItem_ShopItemId(user, item.getShopItemId());
             userBannerSetting.updateSequence(item.getSequence());
             userBannerSetting.updateIsActive(item.getIsActive());

@@ -41,7 +41,7 @@ public class UserService {
     }
 
     public boolean isLeastManager(User user) {
-        return user.getRole() != Role.MEMBER && user.getRole() != Role.GUEST;
+        return user.getRole() == Role.MANAGER || user.getRole() == Role.ADMIN;
     }
 
     public boolean isLeastAdmin(User user) {

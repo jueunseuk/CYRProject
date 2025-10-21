@@ -1,6 +1,7 @@
 package com.junsu.cyr.domain.polls;
 
 import com.junsu.cyr.domain.globals.BaseTime;
+import com.junsu.cyr.domain.users.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,9 +15,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(name = "poll_log")
 public class PollLog extends BaseTime {
-    @EmbeddedId
-    @Column(name = "poll_log_id", nullable = false)
-    private PollLogId pollLogId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "poll_log_id")
+    private Long pollLogId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "poll")
+    private Poll poll;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user")
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "poll_option")

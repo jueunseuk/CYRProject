@@ -25,6 +25,9 @@ public class PollResponse {
 
     private List<PollOptionResponse> options;
 
+    private Boolean isJoin;
+    private Long votePollOptionId;
+
     public PollResponse(Poll poll, List<PollOptionResponse> options) {
         this.pollId = poll.getPollId();
         this.title = poll.getTitle();
@@ -41,6 +44,9 @@ public class PollResponse {
         this.nickname = user.getNickname();
 
         this.options = options;
+
+        this.isJoin = false;
+        this.votePollOptionId = null;
     }
 
     public PollResponse(Poll poll) {
@@ -57,5 +63,8 @@ public class PollResponse {
         User user = poll.getUser();
         this.userId = user.getUserId();
         this.nickname = user.getNickname();
+
+        this.isJoin = false;
+        this.votePollOptionId = null;
     }
 }

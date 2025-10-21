@@ -2,6 +2,7 @@ package com.junsu.cyr.service.poll;
 
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.polls.Poll;
+import com.junsu.cyr.domain.polls.PollLog;
 import com.junsu.cyr.domain.polls.PollOption;
 import com.junsu.cyr.domain.polls.Status;
 import com.junsu.cyr.domain.users.User;
@@ -35,33 +36,55 @@ public class PollService {
     }
 
     public PollResponse getPoll(Integer pollId, Integer userId) {
-        userService.getUserById(userId);
+        User user = userService.getUserById(userId);
         Poll poll = getPollByPollId(pollId);
         
         List<PollOption> pollOptions = pollOptionService.getPollOptionsByPoll(poll);
         List<PollOptionResponse> pollOptionResponses = pollOptions.stream().map(PollOptionResponse::new).toList();
         
-        return new PollResponse(poll, pollOptionResponses);
+        PollResponse pollResponse = new PollResponse(poll, pollOptionResponses);
+
+        PollLog pollLog = pollLogService.getPollLogByUserAndPoll(user, poll);
+        if(pollLog != null) {
+            pollResponse.setIsJoin(true);
+            pollResponse.setVotePollOptionId(pollLog.getPollOption().getPollOptionId());
+        }
+
+        return pollResponse;
     }
 
     public List<PollResponse> getActivePolls(Status status, Integer userId) {
-        userService.getUserById(userId);
+        User user = userService.getUserById(userId);
 
         List<Poll> polls = pollRepository.findAllByStatus(status);
 
         return polls.stream().map(poll -> {
                     List<PollOption> pollOptions = pollOptionService.getPollOptionsByPoll(poll);
                     List<PollOptionResponse> pollOptionResponses = pollOptions.stream().map(PollOptionResponse::new).toList();
-                    return new PollResponse(poll, pollOptionResponses);
+                    PollResponse pollResponse = new PollResponse(poll, pollOptionResponses);
+                    PollLog pollLog = pollLogService.getPollLogByUserAndPoll(user, poll);
+                    if(pollLog != null) {
+                        pollResponse.setIsJoin(true);
+                        pollResponse.setVotePollOptionId(pollLog.getPollOption().getPollOptionId());
+                    }
+                    return pollResponse;
                 }).toList();
     }
 
     public List<PollResponse> getResultPolls(Status status, Integer userId) {
-        userService.getUserById(userId);
+        User user = userService.getUserById(userId);
 
         List<Poll> polls = pollRepository.findAllByStatus(status);
 
-        return polls.stream().map(PollResponse::new).toList();
+        return polls.stream().map(poll -> {
+                    PollResponse pollResponse = new PollResponse(poll);
+                    PollLog pollLog = pollLogService.getPollLogByUserAndPoll(user, poll);
+                    if(pollLog != null) {
+                        pollResponse.setIsJoin(true);
+                        pollResponse.setVotePollOptionId(pollLog.getPollOption().getPollOptionId());
+                    }
+                    return pollResponse;
+                }).toList();
     }
 
     @Transactional
@@ -142,7 +165,7 @@ public class PollService {
         Poll poll = getPollByPollId(pollId);
         PollOption pollOption = pollOptionService.getPollOptionBYPollOptionId(pollOptionId);
 
-        if(pollLogService.getPollLogByUserAndPoll(user, poll)) {
+        if(pollLogService.checkPollLogByUserAndPoll(user, poll)) {
             throw new BaseException(PollExceptionCode.ALREADY_PARTICIPATING_VOTE);
         }
 

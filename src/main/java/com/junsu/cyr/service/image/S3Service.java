@@ -25,17 +25,7 @@ public class S3Service {
 
     @Transactional
     public String uploadFile(MultipartFile file, Type type) throws IOException {
-        String filePurpose;
-
-        switch (type) {
-            case PROFILE -> filePurpose = "profile";
-            case POST -> filePurpose = "post";
-            case COMMENT -> filePurpose = "comment";
-            case COMPLAINT -> filePurpose = "complaint";
-            case CYR -> filePurpose = "cyr";
-            case SHOP -> filePurpose = "shop";
-            default -> filePurpose = "unknown";
-        }
+        String filePurpose = type.toString().toLowerCase();
 
         String fileName = filePurpose + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
 

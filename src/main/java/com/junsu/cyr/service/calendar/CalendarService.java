@@ -71,7 +71,7 @@ public class CalendarService {
     public void checkScheduleRequest(Long calendarRequestId, Integer userId) {
         User user = userService.getUserById(userId);
 
-        if(user.getRole() == Role.GUEST || user.getRole() == Role.MEMBER) {
+        if(!userService.isLeastManager(user)) {
             throw new BaseException(CalendarExceptionCode.DO_NOT_HAVE_PERMISSION_TO_PROCESS);
         }
 
@@ -112,7 +112,7 @@ public class CalendarService {
 
     @Transactional
     public Calendar uploadSchedule(CalendarUploadRequest request, User user) {
-        if(user.getRole() == Role.GUEST || user.getRole() == Role.MEMBER) {
+        if(!userService.isLeastManager(user)) {
             throw new BaseException(CalendarExceptionCode.DO_NOT_HAVE_PERMISSION_TO_PROCESS);
         }
 
@@ -142,7 +142,7 @@ public class CalendarService {
 
     @Transactional
     public void updateSchedule(CalendarEditRequest request, User user) {
-        if(user.getRole() == Role.GUEST || user.getRole() == Role.MEMBER) {
+        if(!userService.isLeastManager(user)) {
             throw new BaseException(CalendarExceptionCode.DO_NOT_HAVE_PERMISSION_TO_PROCESS);
         }
 
@@ -167,7 +167,7 @@ public class CalendarService {
     public void deleteSchedule(Long calendarId, Integer userId) {
         User user = userService.getUserById(userId);
 
-        if(user.getRole() == Role.GUEST || user.getRole() == Role.MEMBER) {
+        if(!userService.isLeastManager(user)) {
             throw new BaseException(CalendarExceptionCode.DO_NOT_HAVE_PERMISSION_TO_PROCESS);
         }
 

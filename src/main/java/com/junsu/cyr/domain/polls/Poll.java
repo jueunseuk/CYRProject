@@ -2,6 +2,8 @@ package com.junsu.cyr.domain.polls;
 
 import com.junsu.cyr.domain.globals.BaseTime;
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.model.poll.PollOptionCount;
+import com.junsu.cyr.model.poll.PollUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,6 +34,9 @@ public class Poll extends BaseTime {
     @Column(name = "description", nullable = false)
     private String description;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status status;
@@ -39,6 +44,33 @@ public class Poll extends BaseTime {
     @Column(name = "closed_at", nullable = false)
     private LocalDateTime closedAt;
 
-    @Column(name = "result")
-    private Integer result;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "user_cnt")
+    private Long userCnt;
+
+    @Column(name = "winning_option_id")
+    private Long winningOptionId;
+
+    public void update(PollUpdateRequest request) {
+        this.title = request.getTitle();
+        this.description = request.getDescription();
+        this.closedAt = request.getClosedAt();
+        this.status = request.getStatus();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void updateImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public void updateStatus(Status status) {
+        this.status = status;
+    }
+
+    public void updateResult(PollOptionCount max) {
+        this.winningOptionId = max.getPollOptionId();
+        this.userCnt = max.getVoteCount();
+    }
 }

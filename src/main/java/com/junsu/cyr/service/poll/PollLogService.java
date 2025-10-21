@@ -31,11 +31,16 @@ public class PollLogService {
         pollLogRepository.save(pollLog);
     }
 
-    public Boolean getPollLogByUserAndPoll(User user, Poll poll) {
+    public Boolean checkPollLogByUserAndPoll(User user, Poll poll) {
         return pollLogRepository.existsByUserAndPoll(user, poll);
     }
 
     public List<PollOptionCount> getPollResult(Poll poll) {
         return pollLogRepository.countByPollOption(poll);
+    }
+
+    public PollLog getPollLogByUserAndPoll(User user, Poll poll) {
+        return pollLogRepository.findByUserAndPoll(user, poll)
+                .orElse(null);
     }
 }

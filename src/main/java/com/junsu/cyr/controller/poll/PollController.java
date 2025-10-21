@@ -44,7 +44,7 @@ public class PollController {
     }
 
     @PatchMapping("/{pollId}")
-    public ResponseEntity<String> updatePoll(@ModelAttribute PollUpdateRequest request, @PathVariable Integer pollId, @RequestAttribute Integer userId) {
+    public ResponseEntity<String> updatePoll(@RequestBody PollUpdateRequest request, @PathVariable Integer pollId, @RequestAttribute Integer userId) {
         pollService.updatePoll(request, pollId, userId);
         return ResponseEntity.ok("success to update poll");
     }
@@ -58,6 +58,12 @@ public class PollController {
     @PostMapping("/{pollId}/aggregate")
     public ResponseEntity<List<PollOptionCount>> aggregatePoll(@PathVariable Integer pollId, @RequestAttribute Integer userId) {
         List<PollOptionCount> pollOptionCounts = pollService.aggregatePoll(pollId, userId);
+        return ResponseEntity.ok(pollOptionCounts);
+    }
+
+    @PostMapping("/{pollId}/aggregate-preview")
+    public ResponseEntity<List<PollOptionCount>> aggregatePreviewPoll(@PathVariable Integer pollId, @RequestAttribute Integer userId) {
+        List<PollOptionCount> pollOptionCounts = pollService.aggregatePreviewPoll(pollId, userId);
         return ResponseEntity.ok(pollOptionCounts);
     }
 }

@@ -16,6 +16,7 @@ public enum PollExceptionCode implements ExceptionCode {
     ALREADY_PARTICIPATING_VOTE("POLL_006", "이미 참여한 투표입니다.", HttpStatus.CONFLICT),
     UNABLE_TO_AGGREGATE_POLL_STATE("POLL_007", "집계할 수 없는 투표 상태입니다.", HttpStatus.BAD_REQUEST),
     NO_VOTES_TO_AGGREGATE("POLL_008", "집계할 투표 로그가 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
+    POLL_AND_OPTION_MISMATCH("POLL_009", "투표와 투표 옵션이 불일치합니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String code;

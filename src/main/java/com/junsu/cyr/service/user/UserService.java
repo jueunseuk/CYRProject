@@ -6,13 +6,12 @@ import com.junsu.cyr.domain.sand.Sand;
 import com.junsu.cyr.domain.temperature.Temperature;
 import com.junsu.cyr.domain.users.Role;
 import com.junsu.cyr.domain.users.User;
-import com.junsu.cyr.domain.users.UserInventory;
+import com.junsu.cyr.model.auth.SignupResponse;
 import com.junsu.cyr.model.user.*;
 import com.junsu.cyr.repository.*;
 import com.junsu.cyr.response.exception.BaseException;
 import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
-import com.junsu.cyr.response.exception.code.UserInventoryExceptionCode;
 import com.junsu.cyr.service.experience.ExperienceService;
 import com.junsu.cyr.service.image.S3Service;
 import com.junsu.cyr.service.sand.SandService;
@@ -21,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +39,11 @@ public class UserService {
 
     public User getUserById(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
+    }
+
+    public SignupResponse getUserLocalStorageInfo(Integer userId) {
+        User user = getUserById(userId);
+        return new SignupResponse(user);
     }
 
     public boolean isLeastManager(User user) {
@@ -157,5 +163,13 @@ public class UserService {
     @Transactional
     public void giftGlassToOtherUser(User user) {
         // 구현 예정
+    }
+
+    public Long getUserCnt() {
+        return userRepository.count();
+    }
+
+    public Long getUserCnt(LocalDateTime start, LocalDateTime now) {
+        return userRepository.countByCreatedAtBetween(start, now);
     }
 }

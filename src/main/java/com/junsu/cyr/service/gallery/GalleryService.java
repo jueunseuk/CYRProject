@@ -199,4 +199,12 @@ public class GalleryService {
 
         return galleryImageResponses;
     }
+
+    public Long getGalleryImageCnt() {
+        return galleryImageRepository.count();
+    }
+
+    public Long getGalleryImageCnt(LocalDateTime start, LocalDateTime now) {
+        return galleryImageRepository.countByCreatedAtBetween(start, now);
+    }
 }

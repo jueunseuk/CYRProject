@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -22,4 +23,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Page<Comment> findAllByUser(User user, Pageable pageable);
 
     Page<Comment> findAllByUserAndLocked(User user, Locked locked, Pageable pageable);
+
+    Long countByCreatedAtBetween(LocalDateTime start, LocalDateTime now);
 }

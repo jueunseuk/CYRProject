@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -26,4 +27,6 @@ public interface GalleryImageRepository extends JpaRepository<GalleryImage, Inte
 
     @Query("select count(gi) from GalleryImage gi where gi.gallery = :gallery")
     Long countByGalleryImageId(Gallery gallery);
+
+    Long countByCreatedAtBetween(LocalDateTime start, LocalDateTime now);
 }

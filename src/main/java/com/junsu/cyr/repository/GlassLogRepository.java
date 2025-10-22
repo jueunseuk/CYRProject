@@ -1,5 +1,6 @@
 package com.junsu.cyr.repository;
 
+import com.junsu.cyr.domain.glass.Glass;
 import com.junsu.cyr.domain.glass.GlassLog;
 import com.junsu.cyr.repository.projection.DailyMaxProjection;
 import org.springframework.data.domain.Pageable;
@@ -29,4 +30,8 @@ public interface GlassLogRepository extends JpaRepository<GlassLog, Long> {
 
     @Query("select gl from GlassLog as gl")
     List<GlassLog> findAllGlassLog(Pageable pageable);
+
+    Long countByGlass(Glass glass);
+
+    Long countByGlassAndCreatedAtBetween(Glass glass, LocalDateTime start, LocalDateTime now);
 }

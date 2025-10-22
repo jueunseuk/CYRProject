@@ -53,18 +53,6 @@ public class Poll extends BaseTime {
     @Column(name = "winning_option_id")
     private Long winningOptionId;
 
-    public void update(PollUpdateRequest request) {
-        this.title = request.getTitle();
-        this.description = request.getDescription();
-        this.closedAt = request.getClosedAt();
-        this.status = request.getStatus();
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    public void updateImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
     public void updateStatus(Status status) {
         this.status = status;
     }

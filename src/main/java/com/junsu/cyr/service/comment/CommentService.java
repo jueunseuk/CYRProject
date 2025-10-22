@@ -25,6 +25,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -125,5 +126,13 @@ public class CommentService {
         }
 
         return userCommentResponses.map(UserCommentResponse::new);
+    }
+
+    public Long getCommentCnt() {
+        return commentRepository.count();
+    }
+
+    public Long getCommentCnt(LocalDateTime start, LocalDateTime now) {
+        return commentRepository.countByCreatedAtBetween(start, now);
     }
 }

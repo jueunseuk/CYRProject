@@ -253,4 +253,12 @@ public class PostService {
 
         return posts.map(PostListResponse::new);
     }
+
+    public Long getPostCnt() {
+        return postRepository.count();
+    }
+
+    public Long getPostCnt(LocalDateTime start, LocalDateTime now) {
+        return postRepository.countByCreatedAtBetween(start, now);
+    }
 }

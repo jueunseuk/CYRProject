@@ -154,4 +154,14 @@ public class GlassService {
 
         return glassLogs.stream().map(GlassLogResponse::new).toList();
     }
+
+    public Long getGlassConvertCnt() {
+        Glass glass = getGlass(1);
+        return glassLogRepository.countByGlass(glass);
+    }
+
+    public Long getGlassConvertCnt(LocalDateTime start, LocalDateTime now) {
+        Glass glass = getGlass(1);
+        return glassLogRepository.countByGlassAndCreatedAtBetween(glass, start, now);
+    }
 }

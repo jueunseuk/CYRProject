@@ -24,15 +24,33 @@ public class Statistic extends BaseTime {
     @Column(name = "total_member")
     private Long totalMember;
 
-    @Column(name = "today_view")
-    private Long todayView;
-
-    @Column(name = "total_view")
-    private Long totalView;
-
     @Column(name = "today_member")
     private Long todayMember;
 
-    @Column(name = "total_cheer")
-    private Long totalCheer;
+    @Column(name = "total_post")
+    private Long totalPost;
+
+    @Column(name = "today_post")
+    private Long todayPost;
+
+    @Column(name = "total_comment")
+    private Long totalComment;
+
+    @Column(name = "today_comment")
+    private Long todayComment;
+
+    @Column(name = "total_gallery")
+    private Long totalGallery;
+
+    @Column(name = "today_gallery")
+    private Long todayGallery;
+
+    @Column(name = "total_convert")
+    private Long totalConvert;
+
+    @Column(name = "today_convert")
+    private Long todayConvert;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }

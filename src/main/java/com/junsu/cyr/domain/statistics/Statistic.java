@@ -50,7 +50,4 @@ public class Statistic extends BaseTime {
 
     @Column(name = "today_convert")
     private Long todayConvert;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 }

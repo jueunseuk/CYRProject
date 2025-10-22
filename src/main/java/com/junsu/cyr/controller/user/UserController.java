@@ -1,6 +1,7 @@
 package com.junsu.cyr.controller.user;
 
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.model.auth.SignupResponse;
 import com.junsu.cyr.model.comment.CommentSearchConditionRequest;
 import com.junsu.cyr.model.comment.UserCommentResponse;
 import com.junsu.cyr.model.gallery.GalleryImageResponse;
@@ -36,6 +37,12 @@ public class UserController {
     private final EmpathyService empathyService;
     private final GlassService glassService;
     private final ShopItemService shopItemService;
+
+    @GetMapping("/me/basic")
+    public ResponseEntity<SignupResponse> getUserLocalStorageInfo(@RequestAttribute Integer userId) {
+        SignupResponse signupResponse = userService.getUserLocalStorageInfo(userId);
+        return ResponseEntity.ok(signupResponse);
+    }
 
     @GetMapping("/sidebar")
     public ResponseEntity<UserSidebarResponse> getUserProfile(@RequestAttribute Integer userId) {

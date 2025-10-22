@@ -1,6 +1,7 @@
 package com.junsu.cyr.model.auth;
 
 import com.junsu.cyr.domain.users.Role;
+import com.junsu.cyr.domain.users.User;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -21,5 +22,14 @@ public class SignupResponse {
         this.nickname = nickname;
         this.createdAt = createdAt;
         this.role = role;
+    }
+
+    public SignupResponse(User user) {
+        this.userId = user.getUserId();
+        this.profileUrl = user.getProfileUrl();
+        this.name = user.getName();
+        this.nickname = user.getNickname();
+        this.createdAt = user.getCreatedAt();
+        this.role = user.getRole();
     }
 }

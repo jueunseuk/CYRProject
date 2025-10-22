@@ -7,6 +7,7 @@ import com.junsu.cyr.domain.temperature.Temperature;
 import com.junsu.cyr.domain.users.Role;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.domain.users.UserInventory;
+import com.junsu.cyr.model.auth.SignupResponse;
 import com.junsu.cyr.model.user.*;
 import com.junsu.cyr.repository.*;
 import com.junsu.cyr.response.exception.BaseException;
@@ -38,6 +39,11 @@ public class UserService {
 
     public User getUserById(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
+    }
+
+    public SignupResponse getUserLocalStorageInfo(Integer userId) {
+        User user = getUserById(userId);
+        return new SignupResponse(user);
     }
 
     public boolean isLeastManager(User user) {

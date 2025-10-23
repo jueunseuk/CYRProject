@@ -1,5 +1,6 @@
 package com.junsu.cyr.config;
 
+import com.junsu.cyr.constant.SecurityConstant;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -12,15 +13,15 @@ public class WebSocketStompBrokerConfig implements WebSocketMessageBrokerConfigu
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/sub");
-        config.setApplicationDestinationPrefixes("/pub");
+        config.enableSimpleBroker("/topic", "/user");
+        config.setApplicationDestinationPrefixes("/app");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry
-                .addEndpoint("/ws-stomp")
-                .setAllowedOrigins("<http://localhost:3000>")
+                .addEndpoint("/ws/stomp")
+                .setAllowedOrigins(SecurityConstant.ALLOWED_ORIGINS.toArray(String[]::new))
                 .withSockJS();
     }
 }

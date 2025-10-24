@@ -53,10 +53,11 @@ public class ChatRoomService {
     }
 
     @Transactional
-    public ChatRoom createChatRoom(String name) {
+    public ChatRoom createChatRoom(String name, Long maxMember) {
         ChatRoom chatRoom = ChatRoom.builder()
                 .name(name)
                 .memberCount(1L)
+                .maxMember(maxMember)
                 .lastMessagedAt(LocalDateTime.now())
                 .build();
 

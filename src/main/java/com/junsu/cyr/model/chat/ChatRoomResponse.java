@@ -12,6 +12,7 @@ public class ChatRoomResponse {
     private String name;
     private LocalDateTime createdAt;
     private Long totalMember;
+    private Long maxMember;
     private LocalDateTime lastUpdatedAt;
     private String lastContent;
     private Type lastMessgaetType;
@@ -21,6 +22,7 @@ public class ChatRoomResponse {
         this.name = chatRoom.getName();
         this.createdAt = chatRoom.getCreatedAt();
         this.totalMember = chatRoom.getMemberCount();
+        this.maxMember = chatRoom.getMaxMember();
         this.lastUpdatedAt = chatRoom.getLastMessagedAt();
         this.lastContent = chatRoom.getLastMessage();
         this.lastMessgaetType = chatRoom.getLastMessageType();

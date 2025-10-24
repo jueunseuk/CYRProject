@@ -26,7 +26,7 @@ public class ChatService {
     public ChatRoomResponse createChatRoom(ChatRoomRequest request, Integer userId) {
         userService.getUserById(userId);
 
-        ChatRoom chatRoom = chatRoomService.createChatRoom(request.getName() == null ? "새로운 채팅방" : request.getName());
+        ChatRoom chatRoom = chatRoomService.createChatRoom(request.getName() == null ? "새로운 채팅방" : request.getName(), request.getMaxMember());
 
         String content = String.format(ChatSystemMessageConstant.CREATE);
         ChatMessage chatMessage = chatMessageService.createSystemMessage(chatRoom, content);
@@ -59,6 +59,10 @@ public class ChatService {
 
         if(chatRoomUserService.checkUserInChatRoom(user, chatRoom)) {
             throw new BaseException(ChatRoomUserExceptionCode.ALREADY_JOIN_CHAT_ROOM);
+        }
+
+        if(chatRoom.getMaxMember() < chatRoom.getMemberCount() + 1) {
+            throw new BaseException(ChatRoomUserExceptionCode.CHAT_ROOM_CAPACITY_EXCEEDED);
         }
 
         chatRoomUserService.createChatRoomUser(chatRoom, user);

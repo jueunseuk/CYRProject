@@ -37,6 +37,9 @@ public class ChatRoom extends BaseTime {
     @Column(name = "member")
     private Long memberCount;
 
+    @Column(name = "max_member")
+    private Long maxMember;
+
     public void increaseMemberCount() {
         memberCount++;
     }

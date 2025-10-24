@@ -6,7 +6,7 @@ import com.junsu.cyr.domain.users.Status;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.auth.*;
 import com.junsu.cyr.repository.UserRepository;
-import com.junsu.cyr.response.exception.BaseException;
+import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.AuthExceptionCode;
 import com.junsu.cyr.response.exception.code.EmailExceptionCode;
 import com.junsu.cyr.response.exception.code.ImageExceptionCode;

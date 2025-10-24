@@ -9,7 +9,7 @@ import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.post.*;
 import com.junsu.cyr.repository.EmpathyRepository;
 import com.junsu.cyr.repository.PostRepository;
-import com.junsu.cyr.response.exception.BaseException;
+import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.PostExceptionCode;
 import com.junsu.cyr.service.board.BoardService;
 import com.junsu.cyr.service.user.UserService;

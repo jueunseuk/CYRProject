@@ -9,7 +9,7 @@ import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.auth.SignupResponse;
 import com.junsu.cyr.model.user.*;
 import com.junsu.cyr.repository.*;
-import com.junsu.cyr.response.exception.BaseException;
+import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.service.experience.ExperienceService;

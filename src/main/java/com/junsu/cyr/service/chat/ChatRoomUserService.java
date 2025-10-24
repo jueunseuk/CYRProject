@@ -4,11 +4,11 @@ import com.junsu.cyr.domain.chats.ChatRoom;
 import com.junsu.cyr.domain.chats.ChatRoomUser;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.repository.ChatRoomUserRepository;
-import com.junsu.cyr.response.exception.BaseException;
-import com.junsu.cyr.response.exception.code.ChatRoomUserExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -16,17 +16,12 @@ public class ChatRoomUserService {
 
     private final ChatRoomUserRepository chatRoomUserRepository;
 
-    public ChatRoomUser getChatRoomByChatRoomId(Long chatRoomUserId) {
-        return chatRoomUserRepository.findById(chatRoomUserId)
-                .orElseThrow(() -> new BaseException(ChatRoomUserExceptionCode.NOT_FOUND_CHAT_ROOM_USER));
-    }
-
     public Boolean checkUserInChatRoom(User user, ChatRoom chatRoom) {
         return chatRoomUserRepository.existsByUserAndChatRoom(user, chatRoom);
     }
 
     @Transactional
-    public void deleteAllByChatRoom(ChatRoom chatRoom) {
+    public void deleteAllUserByChatRoom(ChatRoom chatRoom) {
         chatRoomUserRepository.deleteAllByChatRoom(chatRoom);
     }
 
@@ -43,5 +38,9 @@ public class ChatRoomUserService {
     @Transactional
     public void deleteChatRoomUser(ChatRoom chatRoom, User user) {
         chatRoomUserRepository.deleteByUserAndChatRoom(user, chatRoom);
+    }
+
+    public List<ChatRoom> getChatRoomByUser(User user) {
+        return chatRoomUserRepository.findALlByUser(user);
     }
 }

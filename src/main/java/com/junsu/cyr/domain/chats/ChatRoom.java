@@ -26,4 +26,28 @@ public class ChatRoom extends BaseTime {
 
     @Column(name = "last_messaged_at")
     private LocalDateTime lastMessagedAt;
+
+    @Column(name = "last_message")
+    private String lastMessage;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private Type lastMessageType;
+
+    @Column(name = "member")
+    private Long memberCount;
+
+    public void increaseMemberCount() {
+        memberCount++;
+    }
+
+    public void decreaseMemberCount() {
+        memberCount--;
+    }
+
+    public void updateLastMessage(ChatMessage chatMessage) {
+        this.lastMessage = chatMessage.getContent();
+        this.lastMessagedAt = LocalDateTime.now();
+        this.lastMessageType = chatMessage.getType();
+    }
 }

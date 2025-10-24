@@ -3,7 +3,7 @@ package com.junsu.cyr.service.auth;
 import com.junsu.cyr.domain.users.Email;
 import com.junsu.cyr.repository.EmailRepository;
 import com.junsu.cyr.repository.UserRepository;
-import com.junsu.cyr.response.exception.BaseException;
+import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.EmailExceptionCode;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum ChatRoomUserExceptionCode implements ExceptionCode {
-    NOT_FOUND_CHAT_ROOM_USER("CRU_001", "채팅방에 입장할 권한이 없습니다.", HttpStatus.NOT_FOUND),
+    NOT_FOUND_CHAT_ROOM_USER("CRU_001", "채팅방에 접근할 권한이 없습니다.", HttpStatus.NOT_FOUND),
     ALREADY_JOIN_CHAT_ROOM("CRU_001", "이미 채팅방에 가입된 상태입니다.", HttpStatus.CONFLICT),
     ;
 

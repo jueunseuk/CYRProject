@@ -9,7 +9,7 @@ import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.auth.SignupResponse;
 import com.junsu.cyr.model.user.*;
 import com.junsu.cyr.repository.*;
-import com.junsu.cyr.response.exception.BaseException;
+import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.service.experience.ExperienceService;
@@ -17,11 +17,15 @@ import com.junsu.cyr.service.image.S3Service;
 import com.junsu.cyr.service.sand.SandService;
 import com.junsu.cyr.service.temperature.TemperatureService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -171,5 +175,16 @@ public class UserService {
 
     public Long getUserCnt(LocalDateTime start, LocalDateTime now) {
         return userRepository.countByCreatedAtBetween(start, now);
+    }
+
+    public List<UserChatResponse> getUserList(UserConditionRequest condition, Integer userId) {
+        User user = getUserById(userId);
+
+        Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
+
+        List<User> users = userRepository.findAllByUserId(userId, pageable);
+
+        return users.stream().map(UserChatResponse::new).toList();
     }
 }

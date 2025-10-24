@@ -9,7 +9,7 @@ import com.junsu.cyr.repository.TemperatureLogRepository;
 import com.junsu.cyr.repository.TemperatureRepository;
 import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.repository.projection.DailyMaxProjection;
-import com.junsu.cyr.response.exception.BaseException;
+import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.TemperatureExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import lombok.RequiredArgsConstructor;

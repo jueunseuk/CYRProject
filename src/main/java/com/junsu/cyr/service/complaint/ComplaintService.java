@@ -12,7 +12,7 @@ import com.junsu.cyr.model.complaint.ComplaintRequest;
 import com.junsu.cyr.model.complaint.ComplaintResponse;
 import com.junsu.cyr.repository.ComplaintCategoryRepository;
 import com.junsu.cyr.repository.ComplaintRepository;
-import com.junsu.cyr.response.exception.BaseException;
+import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.ComplaintExceptionCode;
 import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;

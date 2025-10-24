@@ -122,4 +122,10 @@ public class UserController {
         List<ShopItemResponse> shopItemResponses = shopItemService.getShopItemsByUser(user);
         return ResponseEntity.ok(shopItemResponses);
     }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<UserChatResponse>> getUserList(@ModelAttribute UserConditionRequest condition, @RequestAttribute Integer userId) {
+        List<UserChatResponse> userChatResponses = userService.getUserList(condition, userId);
+        return ResponseEntity.ok(userChatResponses);
+    }
 }

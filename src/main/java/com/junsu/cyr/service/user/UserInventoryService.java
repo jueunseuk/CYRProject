@@ -7,7 +7,7 @@ import com.junsu.cyr.model.userInventory.InventoryConditionRequest;
 import com.junsu.cyr.model.userInventory.InventoryConsumeItemResponse;
 import com.junsu.cyr.model.userInventory.ItemUseResult;
 import com.junsu.cyr.repository.UserInventoryRepository;
-import com.junsu.cyr.response.exception.BaseException;
+import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.UserInventoryExceptionCode;
 import com.junsu.cyr.service.user.useitem.base.UseConsumableItem;
 import com.junsu.cyr.service.user.useitem.factory.UseStrategyFactory;

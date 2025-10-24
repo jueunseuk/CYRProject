@@ -2,7 +2,7 @@ package com.junsu.cyr.service.auth;
 
 import com.junsu.cyr.domain.users.Method;
 import com.junsu.cyr.model.auth.OAuthUserInfoRequest;
-import com.junsu.cyr.response.exception.BaseException;
+import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.AuthExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,5 +1,6 @@
-package com.junsu.cyr.response.exception;
+package com.junsu.cyr.response.exception.http;
 
+import com.junsu.cyr.response.exception.ExceptionResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

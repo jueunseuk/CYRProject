@@ -69,6 +69,7 @@ public class Calendar extends BaseTime implements Comparable<Calendar> {
         this.link1 = newData.getLink1();
         this.link2 = newData.getLink2();
         this.imageUrl = imageUrl;
+        this.type = newData.getType();
         updatedAt = LocalDateTime.now();
     }
 }

@@ -8,7 +8,7 @@ import com.junsu.cyr.domain.polls.Status;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.poll.*;
 import com.junsu.cyr.repository.PollRepository;
-import com.junsu.cyr.response.exception.BaseException;
+import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.code.PollExceptionCode;
 import com.junsu.cyr.service.image.S3Service;

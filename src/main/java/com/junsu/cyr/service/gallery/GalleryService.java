@@ -8,7 +8,7 @@ import com.junsu.cyr.model.gallery.*;
 import com.junsu.cyr.repository.GalleryImageRepository;
 import com.junsu.cyr.repository.GalleryRepository;
 import com.junsu.cyr.repository.UserRepository;
-import com.junsu.cyr.response.exception.BaseException;
+import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.GalleryExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.service.image.S3Service;

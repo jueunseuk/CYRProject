@@ -10,7 +10,7 @@ import com.junsu.cyr.model.shop.ShopLogConditionRequest;
 import com.junsu.cyr.model.shop.ShopLogResponse;
 import com.junsu.cyr.repository.ShopCategoryRepository;
 import com.junsu.cyr.repository.ShopLogRepository;
-import com.junsu.cyr.response.exception.BaseException;
+import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.ShopLogExceptionCode;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;

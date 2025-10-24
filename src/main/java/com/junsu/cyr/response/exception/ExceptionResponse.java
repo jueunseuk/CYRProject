@@ -1,9 +1,8 @@
 package com.junsu.cyr.response.exception;
 
 import com.junsu.cyr.response.ApiResponse;
+import com.junsu.cyr.response.exception.http.BaseException;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
 
 @Getter
 public class ExceptionResponse extends ApiResponse {

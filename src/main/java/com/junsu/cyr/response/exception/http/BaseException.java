@@ -1,5 +1,6 @@
-package com.junsu.cyr.response.exception;
+package com.junsu.cyr.response.exception.http;
 
+import com.junsu.cyr.response.exception.ExceptionCode;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 

@@ -4,7 +4,7 @@ import com.junsu.cyr.constant.SecurityConstant;
 import com.junsu.cyr.domain.users.Status;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.repository.UserRepository;
-import com.junsu.cyr.response.exception.BaseException;
+import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.AuthExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import io.jsonwebtoken.Claims;

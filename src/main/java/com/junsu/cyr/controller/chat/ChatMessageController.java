@@ -17,7 +17,7 @@ public class ChatMessageController {
     private final ChatMessageService chatMessageService;
 
     @GetMapping("/{chatRoomId}")
-    public ResponseEntity<List<ChatMessageResponse>> getChatMessageList(@ModelAttribute ChatMessageConditionRequest request, @PathVariable("chatRoomId") Long chatRoomId, @RequestAttribute Integer userId) {
+    public ResponseEntity<List<ChatMessageResponse>> getChatMessageList(@ModelAttribute ChatMessageConditionRequest request, @PathVariable Long chatRoomId, @RequestAttribute Integer userId) {
         List<ChatMessageResponse> chatMessageResponses = chatMessageService.getMessageList(request, chatRoomId, userId);
         return ResponseEntity.ok(chatMessageResponses);
     }

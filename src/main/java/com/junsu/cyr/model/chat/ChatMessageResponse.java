@@ -19,12 +19,14 @@ public class ChatMessageResponse {
     private LocalDateTime createdAt;
 
     public ChatMessageResponse(ChatMessage chatMessage) {
-        User user = chatMessage.getUser();
-        this.userId = user.getUserId();
-        this.nickname = user.getNickname();
-        this.profileUrl = user.getProfileUrl();
         this.content = chatMessage.getContent();
         this.type = chatMessage.getType();
         this.createdAt = chatMessage.getCreatedAt();
+        if(chatMessage.getUser() != null) {
+            User user = chatMessage.getUser();
+            this.userId = user.getUserId();
+            this.nickname = user.getNickname();
+            this.profileUrl = user.getProfileUrl();
+        }
     }
 }

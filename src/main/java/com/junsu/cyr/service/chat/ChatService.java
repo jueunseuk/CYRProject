@@ -24,12 +24,14 @@ public class ChatService {
 
     @Transactional
     public ChatRoomResponse createChatRoom(ChatRoomRequest request, Integer userId) {
-        userService.getUserById(userId);
+        User user = userService.getUserById(userId);
 
         ChatRoom chatRoom = chatRoomService.createChatRoom(request.getName() == null ? "새로운 채팅방" : request.getName(), request.getMaxMember());
 
         String content = String.format(ChatSystemMessageConstant.CREATE);
         ChatMessage chatMessage = chatMessageService.createSystemMessage(chatRoom, content);
+
+        chatRoomUserService.createChatRoomUser(chatRoom, user);
 
         chatRoom.updateLastMessage(chatMessage);
 

@@ -1,5 +1,5 @@
 package com.junsu.cyr.domain.chats;
 
 public enum Type {
-    TEXT, IMAGE, FILE, SYSTEM;
+    TEXT, IMAGE, EMOTICON, SYSTEM, LINK;
 }

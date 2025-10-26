@@ -16,6 +16,7 @@ import com.junsu.cyr.service.gallery.GalleryService;
 import com.junsu.cyr.service.glass.GlassService;
 import com.junsu.cyr.service.post.PostService;
 import com.junsu.cyr.service.shop.ShopItemService;
+import com.junsu.cyr.service.shop.ShopLogService;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -37,6 +38,7 @@ public class UserController {
     private final EmpathyService empathyService;
     private final GlassService glassService;
     private final ShopItemService shopItemService;
+    private final ShopLogService shopLogService;
 
     @GetMapping("/me/basic")
     public ResponseEntity<SignupResponse> getUserLocalStorageInfo(@RequestAttribute Integer userId) {
@@ -127,5 +129,11 @@ public class UserController {
     public ResponseEntity<List<UserChatResponse>> getUserList(@ModelAttribute UserConditionRequest condition, @RequestAttribute Integer userId) {
         List<UserChatResponse> userChatResponses = userService.getUserList(condition, userId);
         return ResponseEntity.ok(userChatResponses);
+    }
+
+    @GetMapping("/emoticon")
+    public ResponseEntity<List<RetainEmoticonResponse>> getEmoticon(@RequestAttribute Integer userId) {
+        List<RetainEmoticonResponse> retainEmoticonResponses = shopLogService.getEmoticonByUser(userId);
+        return ResponseEntity.ok(retainEmoticonResponses);
     }
 }

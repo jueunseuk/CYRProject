@@ -80,6 +80,7 @@ public class ShopLogService {
     public List<RetainEmoticonResponse> getEmoticonByUser(Integer userId) {
         User user = userService.getUserById(userId);
 
+
         List<ShopItem> shopItems = shopLogRepository.findAllEmoticonByUser(user);
 
         return shopItems.stream().map(RetainEmoticonResponse::new).toList();

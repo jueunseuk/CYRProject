@@ -8,6 +8,7 @@ import com.junsu.cyr.domain.shop.ShopLog;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.shop.ShopLogConditionRequest;
 import com.junsu.cyr.model.shop.ShopLogResponse;
+import com.junsu.cyr.model.user.RetainEmoticonResponse;
 import com.junsu.cyr.repository.ShopCategoryRepository;
 import com.junsu.cyr.repository.ShopLogRepository;
 import com.junsu.cyr.response.exception.http.BaseException;
@@ -74,5 +75,14 @@ public class ShopLogService {
         List<ShopLog> shopLogs = shopLogRepository.findAllByUser(user, pageable);
 
         return shopLogs.stream().map(ShopLogResponse::new).toList();
+    }
+
+    public List<RetainEmoticonResponse> getEmoticonByUser(Integer userId) {
+        User user = userService.getUserById(userId);
+
+
+        List<ShopItem> shopItems = shopLogRepository.findAllEmoticonByUser(user);
+
+        return shopItems.stream().map(RetainEmoticonResponse::new).toList();
     }
 }

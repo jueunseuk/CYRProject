@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class ChatRoomRequest {
     private String name;
     private Long maxMember;
+    private Integer otherId;
 }

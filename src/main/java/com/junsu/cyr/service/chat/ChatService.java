@@ -33,6 +33,11 @@ public class ChatService {
 
         chatRoomUserService.createChatRoomUser(chatRoom, user);
 
+        if(request.getOtherId() != null) {
+            User other = userService.getUserById(request.getOtherId());
+            chatRoomUserService.createChatRoomUser(chatRoom, other);
+        }
+
         chatRoom.updateLastMessage(chatMessage);
 
         return new ChatRoomResponse(chatRoom);

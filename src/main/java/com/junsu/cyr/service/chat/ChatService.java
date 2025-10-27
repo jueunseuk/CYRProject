@@ -84,5 +84,9 @@ public class ChatService {
         chatRoomUserService.deleteChatRoomUser(chatRoom, user);
 
         chatRoom.decreaseMemberCount();
+
+        if(chatRoom.getMemberCount() == 0) {
+            chatRoomService.deleteChatRoom(chatRoom);
+        }
     }
 }

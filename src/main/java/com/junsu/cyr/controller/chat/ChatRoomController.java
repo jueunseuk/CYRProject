@@ -30,6 +30,12 @@ public class ChatRoomController {
         return ResponseEntity.ok(chatRoomResponses);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<ChatRoomResponse>> getOtherChatRoomList(@RequestAttribute Integer userId) {
+        List<ChatRoomResponse> chatRoomResponses = chatRoomService.getOhterChatRoomList(userId);
+        return ResponseEntity.ok(chatRoomResponses);
+    }
+
     @PostMapping
     public ResponseEntity<ChatRoomResponse> createChatRoom(@RequestBody ChatRoomRequest request, @RequestAttribute Integer userId) {
         ChatRoomResponse chatRoomResponse = chatService.createChatRoom(request, userId);

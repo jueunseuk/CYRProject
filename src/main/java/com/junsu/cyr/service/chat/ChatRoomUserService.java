@@ -36,8 +36,8 @@ public class ChatRoomUserService {
     }
 
     @Transactional
-    public void deleteChatRoomUser(ChatRoom chatRoom, User user) {
-        chatRoomUserRepository.deleteByUserAndChatRoom(user, chatRoom);
+    public void deleteChatRoomUser(Integer userId, Long chatRoomId) {
+        chatRoomUserRepository.deleteByUser_UserIdAndChatRoom_ChatRoomId(userId, chatRoomId);
     }
 
     public List<ChatRoom> getChatRoomByUser(User user) {

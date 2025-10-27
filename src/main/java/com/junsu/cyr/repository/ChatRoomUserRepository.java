@@ -18,8 +18,6 @@ public interface ChatRoomUserRepository extends JpaRepository<ChatRoomUser, Long
 
     void deleteAllByChatRoom_ChatRoomId(Long chatRoomId);
 
-    void deleteByUserAndChatRoom(User user, ChatRoom chatRoom);
-
     Long countAllByChatRoom(ChatRoom chatRoom);
 
     @Query("select cru.chatRoom from ChatRoomUser cru where cru.user = :user order by cru.chatRoom.lastMessagedAt desc")
@@ -27,4 +25,6 @@ public interface ChatRoomUserRepository extends JpaRepository<ChatRoomUser, Long
 
     @Query("select cru.chatRoom.chatRoomId from ChatRoomUser cru where cru.user = :user order by cru.chatRoom.lastMessagedAt desc")
     List<Long> findAllIdByUser(User user);
+
+    void deleteByUser_UserIdAndChatRoom_ChatRoomId(Integer userId, Long chatRoomId);
 }

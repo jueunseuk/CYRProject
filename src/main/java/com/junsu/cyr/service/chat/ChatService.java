@@ -92,7 +92,7 @@ public class ChatService {
             throw new BaseException(ChatRoomUserExceptionCode.NOT_FOUND_CHAT_ROOM_USER);
         }
 
-        chatRoomUserService.deleteChatRoomUser(chatRoom, user);
+        chatRoomUserService.deleteChatRoomUser(userId, chatRoomId);
 
         chatRoom.decreaseMemberCount();
 

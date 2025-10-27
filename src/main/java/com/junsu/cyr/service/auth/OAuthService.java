@@ -21,9 +21,18 @@ public class OAuthService {
 
     @Value("${naver.client.id}")
     private String naverClientId;
-
     @Value("${naver.client.secret}")
     private String naverClientSecret;
+
+    @Value("${google.client.id}")
+    private String googleClientId;
+    @Value("${google.client.secret}")
+    private String googleClientSecret;
+
+    @Value("${kakao.client.id}")
+    private String kakaoClientId;
+    @Value("${kakao.client.secret}")
+    private String kakaoClientSecret;
 
     public String getNaverAccessToken(String code, String state) {
         String NAVER_ACCESSTOKEN_URL = "https://nid.naver.com/oauth2.0/token";
@@ -55,17 +64,79 @@ public class OAuthService {
                 }
             } catch (Exception e) {
                 if (i == 1) {
-                    throw new BaseException(AuthExceptionCode.INVALID_NAVER_AUTH_CODE);
+                    throw new BaseException(AuthExceptionCode.INVALID_AUTH_CODE);
                 }
             }
         }
 
-        throw new BaseException(AuthExceptionCode.INVALID_NAVER_AUTH_CODE);
+        throw new BaseException(AuthExceptionCode.INVALID_AUTH_CODE);
     }
 
-    public OAuthUserInfoRequest getUserInfoFromNaver(String accessToken) {
-        String NAVER_USERINFO_URL = "https://openapi.naver.com/v1/nid/me";
+    public String getGoogleAccessToken(String code) {
+        String GOOGLE_ACCESSTOKEN_URL = "https://accounts.google.com/o/oauth2/v2/auth";
 
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id", googleClientId);
+        params.add("client_secret", googleClientSecret);
+        params.add("code", code);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        for (int i = 0; i < 2; i++) {
+            try {
+                ResponseEntity<Map> response = restTemplate.postForEntity(GOOGLE_ACCESSTOKEN_URL, request, Map.class);
+
+                if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                    return (String) response.getBody().get("access_token");
+                }
+            } catch (Exception e) {
+                if (i == 1) {
+                    throw new BaseException(AuthExceptionCode.INVALID_AUTH_CODE);
+                }
+            }
+        }
+
+        throw new BaseException(AuthExceptionCode.INVALID_AUTH_CODE);
+    }
+
+    public String getKakaoAccessToken(String code) {
+        String KAKAO_ACCESSTOKEN_URL = "https://kauth.kakao.com/oauth/token";
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id", kakaoClientId);
+        params.add("client_secret", kakaoClientSecret);
+        params.add("code", code);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        for (int i = 0; i < 2; i++) {
+            try {
+                ResponseEntity<Map> response = restTemplate.postForEntity(KAKAO_ACCESSTOKEN_URL, request, Map.class);
+
+                if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                    return (String) response.getBody().get("access_token");
+                }
+            } catch (Exception e) {
+                if (i == 1) {
+                    throw new BaseException(AuthExceptionCode.INVALID_AUTH_CODE);
+                }
+            }
+        }
+
+        throw new BaseException(AuthExceptionCode.INVALID_AUTH_CODE);
+    }
+
+    public OAuthUserInfoRequest getUserInfo(String accessToken, String url, Method method) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
 
@@ -73,7 +144,7 @@ public class OAuthService {
         RestTemplate restTemplate = new RestTemplate();
 
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
-                NAVER_USERINFO_URL,
+                url,
                 HttpMethod.GET,
                 entity,
                 new ParameterizedTypeReference<>() {}
@@ -89,12 +160,11 @@ public class OAuthService {
                 String profileImage = (String) responseMap.get("profile_image");
 
                 if (email != null && name != null) {
-                    return new OAuthUserInfoRequest(name, email, profileImage, Method.NAVER);
+                    return new OAuthUserInfoRequest(name, email, profileImage, method);
                 }
             }
         }
 
         throw new BaseException(AuthExceptionCode.FAILED_TO_FETCH_USER_INFO);
     }
-
 }

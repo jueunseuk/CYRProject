@@ -98,6 +98,9 @@ public class AnnouncementService {
         Announcement announcement = getAnnouncementByAnnouncementId(announcementId);
         announcement.update(request);
 
+        AnnouncementCategory announcementCategory = announcementCategoryService.getAnnouncementCategoryByAnnouncementCategoryId(request.getAnnouncementCategoryId());
+        announcement.updateCategory(announcementCategory);
+
         return new AnnouncementResponse(announcement);
     }
 

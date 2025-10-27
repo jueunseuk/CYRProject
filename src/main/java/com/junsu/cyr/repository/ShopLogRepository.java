@@ -25,6 +25,6 @@ public interface ShopLogRepository extends JpaRepository<ShopLog, Long> {
 
     List<ShopLog> findAllByUserAndShopItem_ShopCategory(User user, ShopCategory shopCategory, Pageable pageable);
 
-    @Query("select sl.shopItem from ShopLog sl where sl.user = :user order by sl.shopItem.shopItemId")
+    @Query("select sl.shopItem from ShopLog sl where sl.user = :user and sl.shopItem.shopCategory.shopCategoryId = 1 order by sl.shopItem.shopItemId")
     List<ShopItem> findAllEmoticonByUser(User user);
 }

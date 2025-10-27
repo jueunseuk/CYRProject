@@ -28,11 +28,15 @@ public class OAuthService {
     private String googleClientId;
     @Value("${google.client.secret}")
     private String googleClientSecret;
+    @Value("${google.redirect.uri}")
+    private String googleRedirectUri;
 
     @Value("${kakao.client.id}")
     private String kakaoClientId;
     @Value("${kakao.client.secret}")
     private String kakaoClientSecret;
+    @Value("${kakao.redirect.uri}")
+    private String kakaoRedirectUri;
 
     public String getNaverAccessToken(String code, String state) {
         String NAVER_ACCESSTOKEN_URL = "https://nid.naver.com/oauth2.0/token";
@@ -73,13 +77,14 @@ public class OAuthService {
     }
 
     public String getGoogleAccessToken(String code) {
-        String GOOGLE_ACCESSTOKEN_URL = "https://accounts.google.com/o/oauth2/v2/auth";
+        String GOOGLE_ACCESSTOKEN_URL = "https://oauth2.googleapis.com/token";
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", googleClientId);
         params.add("client_secret", googleClientSecret);
         params.add("code", code);
+        params.add("redirect_uri", googleRedirectUri);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -112,6 +117,7 @@ public class OAuthService {
         params.add("client_id", kakaoClientId);
         params.add("client_secret", kakaoClientSecret);
         params.add("code", code);
+        params.add("redirect_uri", kakaoRedirectUri);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);

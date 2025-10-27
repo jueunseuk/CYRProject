@@ -158,16 +158,29 @@ public class OAuthService {
 
         if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
             Map<String, Object> body = response.getBody();
-            Object responseObj = body.get("response");
+            String email = null, name = null, profileImage = null;
 
-            if (responseObj instanceof Map<?, ?> responseMap) {
-                String email = (String) responseMap.get("email");
-                String name = (String) responseMap.get("name");
-                String profileImage = (String) responseMap.get("profile_image");
-
-                if (email != null && name != null) {
-                    return new OAuthUserInfoRequest(name, email, profileImage, method);
+            if (method == Method.NAVER) {
+                Map<String, Object> responseMap = (Map<String, Object>) body.get("response");
+                if (responseMap != null) {
+                    email = (String) responseMap.get("email");
+                    name = (String) responseMap.get("name");
+                    profileImage = (String) responseMap.get("profile_image");
                 }
+            } else if (method == Method.GOOGLE) {
+                email = (String) body.get("email");
+                name = (String) body.get("name");
+                profileImage = (String) body.get("picture");
+            } else if (method == Method.KAKAO) {
+                Map<String, Object> account = (Map<String, Object>) body.get("kakao_account");
+                Map<String, Object> profile = account != null ? (Map<String, Object>) account.get("profile") : null;
+                email = account != null ? (String) account.get("email") : null;
+                name = profile != null ? (String) profile.get("nickname") : null;
+                profileImage = profile != null ? (String) profile.get("profile_image_url") : null;
+            }
+
+            if (email != null && name != null) {
+                return new OAuthUserInfoRequest(name, email, profileImage, method);
             }
         }
 

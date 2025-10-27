@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface AnnouncementRepository extends JpaRepository<Announcement, Long> {
-    List<Announcement> findAllByFixAndLockedOrderByCreatedAt(boolean fix, Locked locked);
+    List<Announcement> findAllByFixAndLockedOrderByCreatedAtDesc(boolean fix, Locked locked);
 
     Page<Announcement> findAllByFixAndLocked(boolean fix, Locked locked, Pageable pageable);
 }

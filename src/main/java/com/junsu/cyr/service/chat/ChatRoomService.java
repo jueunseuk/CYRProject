@@ -47,6 +47,14 @@ public class ChatRoomService {
         return chatRoomUsers.stream().map(ChatRoomResponse::new).toList();
     }
 
+    public List<ChatRoomResponse> getOhterChatRoomList(Integer userId) {
+        User user = userService.getUserById(userId);
+
+        List<ChatRoom> chatRoomUsers = chatRoomUserService.getChatRoomByExceptForMe(user);
+
+        return chatRoomUsers.stream().map(ChatRoomResponse::new).toList();
+    }
+
     @Transactional
     public void deleteChatRoom(ChatRoom chatRoom) {
         chatRoomRepository.delete(chatRoom);

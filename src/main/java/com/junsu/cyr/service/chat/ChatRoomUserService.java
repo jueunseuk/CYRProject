@@ -43,4 +43,8 @@ public class ChatRoomUserService {
     public List<ChatRoom> getChatRoomByUser(User user) {
         return chatRoomUserRepository.findALlByUser(user);
     }
+
+    public List<ChatRoom> getChatRoomByExceptForMe(User user) {
+        return chatRoomUserRepository.findAllByNotUser(user);
+    }
 }

@@ -54,7 +54,7 @@ public class AnnouncementService {
     }
 
     public List<AnnouncementResponse> getAnnouncementsByFixed() {
-        return announcementRepository.findAllByFixAndLockedOrderByCreatedAt(true, Locked.PUBLIC).stream().map(AnnouncementResponse::new).toList();
+        return announcementRepository.findAllByFixAndLockedOrderByCreatedAtDesc(true, Locked.PUBLIC).stream().map(AnnouncementResponse::new).toList();
     }
 
     @Transactional

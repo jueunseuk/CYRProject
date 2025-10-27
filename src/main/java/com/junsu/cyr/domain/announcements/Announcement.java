@@ -54,4 +54,8 @@ public class Announcement extends BaseTime {
         this.locked = request.getLocked() == null ? this.locked : request.getLocked();
         this.updatedAt = LocalDateTime.now();
     }
+
+    public void updateCategory(AnnouncementCategory announcementCategory) {
+        this.announcementCategory = announcementCategory;
+    }
 }

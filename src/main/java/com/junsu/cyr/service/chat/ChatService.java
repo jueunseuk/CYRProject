@@ -33,6 +33,11 @@ public class ChatService {
 
         chatRoomUserService.createChatRoomUser(chatRoom, user);
 
+        if(request.getOtherId() != null) {
+            User other = userService.getUserById(request.getOtherId());
+            chatRoomUserService.createChatRoomUser(chatRoom, other);
+        }
+
         chatRoom.updateLastMessage(chatMessage);
 
         return new ChatRoomResponse(chatRoom);
@@ -67,6 +72,11 @@ public class ChatService {
             throw new BaseException(ChatRoomUserExceptionCode.CHAT_ROOM_CAPACITY_EXCEEDED);
         }
 
+        String content = String.format(ChatSystemMessageConstant.JOIN, user.getNickname());
+        ChatMessage chatMessage = chatMessageService.createSystemMessage(chatRoom, content);
+        chatRoomUserService.createChatRoomUser(chatRoom, user);
+        chatRoom.updateLastMessage(chatMessage);
+
         chatRoomUserService.createChatRoomUser(chatRoom, user);
 
         chatRoom.increaseMemberCount();
@@ -87,6 +97,12 @@ public class ChatService {
 
         if(chatRoom.getMemberCount() == 0) {
             chatRoomService.deleteChatRoom(chatRoom);
+            return;
         }
+
+        String content = String.format(ChatSystemMessageConstant.EXIT, user.getNickname());
+        ChatMessage chatMessage = chatMessageService.createSystemMessage(chatRoom, content);
+        chatRoomUserService.createChatRoomUser(chatRoom, user);
+        chatRoom.updateLastMessage(chatMessage);
     }
 }

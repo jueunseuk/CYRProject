@@ -21,8 +21,8 @@ public class ChatRoomUserService {
     }
 
     @Transactional
-    public void deleteAllUserByChatRoom(ChatRoom chatRoom) {
-        chatRoomUserRepository.deleteAllByChatRoom(chatRoom);
+    public void deleteAllUserByChatRoom(Long chatRoomId) {
+        chatRoomUserRepository.deleteAllByChatRoom_ChatRoomId(chatRoomId);
     }
 
     @Transactional

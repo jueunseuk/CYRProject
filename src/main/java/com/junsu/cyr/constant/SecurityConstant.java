@@ -27,6 +27,8 @@ public class SecurityConstant {
             "/auth/email/check",
             "/auth/password/reset",
             "/auth/naver/callback",
+            "/auth/google/callback",
+            "/auth/kakao/callback",
             "/posts/new",
             "/posts/popular",
             "/posts/list",

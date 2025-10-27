@@ -1,6 +1,7 @@
 package com.junsu.cyr.service.auth;
 
 import com.junsu.cyr.domain.images.Type;
+import com.junsu.cyr.domain.users.Method;
 import com.junsu.cyr.domain.users.Role;
 import com.junsu.cyr.domain.users.Status;
 import com.junsu.cyr.domain.users.User;
@@ -39,7 +40,49 @@ public class AuthService {
     @Transactional
     public SignupResponse naverLoginOrSignUp(NaverUserRequest request, HttpServletResponse response) {
         String accessToken = oAuthService.getNaverAccessToken(request.getCode(), request.getState());
-        OAuthUserInfoRequest userInfo = oAuthService.getUserInfoFromNaver(accessToken);
+        OAuthUserInfoRequest userInfo = oAuthService.getUserInfo(accessToken, "https://openapi.naver.com/v1/nid/me", Method.NAVER);
+
+        Optional<User> userCheck = userRepository.findByEmail(userInfo.getEmail());
+
+        User user;
+        if (userCheck.isPresent()) {
+            user = userCheck.get();
+
+            if (user.getStatus() != Status.ACTIVE) {
+                throw new BaseException(AuthExceptionCode.ACCOUNT_NOT_ACTIVE);
+            }
+        } else {
+            user = createUserWithOAuth(userInfo);
+        }
+
+        return generateTokensAndCreateResponse(user, response);
+    }
+
+    @Transactional
+    public SignupResponse googleLoginOrSignUp(GoogleUserRequest request, HttpServletResponse response) {
+        String accessToken = oAuthService.getGoogleAccessToken(request.getCode());
+        OAuthUserInfoRequest userInfo = oAuthService.getUserInfo(accessToken, "https://www.googleapis.com/oauth2/v2/userinfo", Method.GOOGLE);
+
+        Optional<User> userCheck = userRepository.findByEmail(userInfo.getEmail());
+
+        User user;
+        if (userCheck.isPresent()) {
+            user = userCheck.get();
+
+            if (user.getStatus() != Status.ACTIVE) {
+                throw new BaseException(AuthExceptionCode.ACCOUNT_NOT_ACTIVE);
+            }
+        } else {
+            user = createUserWithOAuth(userInfo);
+        }
+
+        return generateTokensAndCreateResponse(user, response);
+    }
+
+    @Transactional
+    public SignupResponse kakaoLoginOrSignUp(KakaoUserRequest request, HttpServletResponse response) {
+        String accessToken = oAuthService.getKakaoAccessToken(request.getCode());
+        OAuthUserInfoRequest userInfo = oAuthService.getUserInfo(accessToken, "https://kapi.kakao.com/v2/user/me", Method.KAKAO);
 
         Optional<User> userCheck = userRepository.findByEmail(userInfo.getEmail());
 

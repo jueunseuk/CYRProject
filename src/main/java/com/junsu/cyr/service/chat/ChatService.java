@@ -47,9 +47,9 @@ public class ChatService {
             throw new BaseException(ChatRoomUserExceptionCode.NOT_FOUND_CHAT_ROOM_USER);
         }
 
-        chatMessageService.deleteAllByChatRoom(chatRoom);
+        chatMessageService.deleteAllByChatRoom(chatRoomId);
 
-        chatRoomUserService.deleteAllUserByChatRoom(chatRoom);
+        chatRoomUserService.deleteAllUserByChatRoom(chatRoomId);
 
         chatRoomService.deleteChatRoom(chatRoom);
     }

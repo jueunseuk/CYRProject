@@ -51,6 +51,10 @@ public class AuthService {
             if (user.getStatus() != Status.ACTIVE) {
                 throw new BaseException(AuthExceptionCode.ACCOUNT_NOT_ACTIVE);
             }
+
+            if(user.getMethod() != Method.NAVER) {
+                throw new BaseException(AuthExceptionCode.DIFFERENT_LOGIN_METHOD);
+            }
         } else {
             user = createUserWithOAuth(userInfo);
         }
@@ -72,6 +76,10 @@ public class AuthService {
             if (user.getStatus() != Status.ACTIVE) {
                 throw new BaseException(AuthExceptionCode.ACCOUNT_NOT_ACTIVE);
             }
+
+            if(user.getMethod() != Method.GOOGLE) {
+                throw new BaseException(AuthExceptionCode.DIFFERENT_LOGIN_METHOD);
+            }
         } else {
             user = createUserWithOAuth(userInfo);
         }
@@ -92,6 +100,10 @@ public class AuthService {
 
             if (user.getStatus() != Status.ACTIVE) {
                 throw new BaseException(AuthExceptionCode.ACCOUNT_NOT_ACTIVE);
+            }
+
+            if(user.getMethod() != Method.KAKAO) {
+                throw new BaseException(AuthExceptionCode.DIFFERENT_LOGIN_METHOD);
             }
         } else {
             user = createUserWithOAuth(userInfo);

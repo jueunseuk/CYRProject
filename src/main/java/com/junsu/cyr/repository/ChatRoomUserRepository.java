@@ -25,6 +25,6 @@ public interface ChatRoomUserRepository extends JpaRepository<ChatRoomUser, Long
     @Query("select cru.chatRoom from ChatRoomUser cru where cru.user = :user order by cru.chatRoom.lastMessagedAt desc")
     List<ChatRoom> findALlByUser(User user);
 
-    @Query("select cru.chatRoom from ChatRoomUser cru where cru.user != :user order by cru.chatRoom.lastMessagedAt desc")
-    List<ChatRoom> findAllByNotUser(User user);
+    @Query("select cru.chatRoom.chatRoomId from ChatRoomUser cru where cru.user = :user order by cru.chatRoom.lastMessagedAt desc")
+    List<Long> findAllIdByUser(User user);
 }

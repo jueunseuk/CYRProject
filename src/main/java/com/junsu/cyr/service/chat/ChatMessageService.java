@@ -59,8 +59,8 @@ public class ChatMessageService {
     }
 
     @Transactional
-    public void deleteAllByChatRoom(ChatRoom chatRoom) {
-        chatMessageRepository.deleteAllByChatRoom(chatRoom);
+    public void deleteAllByChatRoom(Long chatRoomId) {
+        chatMessageRepository.deleteAllByChatRoom_ChatRoomId(chatRoomId);
     }
 
     public List<ChatMessageResponse> getMessageList(ChatMessageConditionRequest request, Long chatRoomId, Integer userId) {

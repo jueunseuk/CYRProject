@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
 
-    void deleteAllByChatRoom(ChatRoom chatRoom);
+    void deleteAllByChatRoom_ChatRoomId(Long chatRoomId);
 
     List<ChatMessage> findALlByChatRoom(ChatRoom chatRoom, Pageable pageable);
 }

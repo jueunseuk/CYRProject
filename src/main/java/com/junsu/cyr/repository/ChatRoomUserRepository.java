@@ -16,15 +16,15 @@ public interface ChatRoomUserRepository extends JpaRepository<ChatRoomUser, Long
 
     Boolean existsByUserAndChatRoom(User user, ChatRoom chatRoom);
 
-    void deleteAllByChatRoom(ChatRoom chatRoom);
-
-    void deleteByUserAndChatRoom(User user, ChatRoom chatRoom);
+    void deleteAllByChatRoom_ChatRoomId(Long chatRoomId);
 
     Long countAllByChatRoom(ChatRoom chatRoom);
 
     @Query("select cru.chatRoom from ChatRoomUser cru where cru.user = :user order by cru.chatRoom.lastMessagedAt desc")
     List<ChatRoom> findALlByUser(User user);
 
-    @Query("select cru.chatRoom from ChatRoomUser cru where cru.user != :user order by cru.chatRoom.lastMessagedAt desc")
-    List<ChatRoom> findAllByNotUser(User user);
+    @Query("select cru.chatRoom.chatRoomId from ChatRoomUser cru where cru.user = :user order by cru.chatRoom.lastMessagedAt desc")
+    List<Long> findAllIdByUser(User user);
+
+    void deleteByUser_UserIdAndChatRoom_ChatRoomId(Integer userId, Long chatRoomId);
 }

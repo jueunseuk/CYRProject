@@ -21,8 +21,8 @@ public class ChatRoomUserService {
     }
 
     @Transactional
-    public void deleteAllUserByChatRoom(ChatRoom chatRoom) {
-        chatRoomUserRepository.deleteAllByChatRoom(chatRoom);
+    public void deleteAllUserByChatRoom(Long chatRoomId) {
+        chatRoomUserRepository.deleteAllByChatRoom_ChatRoomId(chatRoomId);
     }
 
     @Transactional
@@ -36,15 +36,15 @@ public class ChatRoomUserService {
     }
 
     @Transactional
-    public void deleteChatRoomUser(ChatRoom chatRoom, User user) {
-        chatRoomUserRepository.deleteByUserAndChatRoom(user, chatRoom);
+    public void deleteChatRoomUser(Integer userId, Long chatRoomId) {
+        chatRoomUserRepository.deleteByUser_UserIdAndChatRoom_ChatRoomId(userId, chatRoomId);
     }
 
     public List<ChatRoom> getChatRoomByUser(User user) {
         return chatRoomUserRepository.findALlByUser(user);
     }
 
-    public List<ChatRoom> getChatRoomByExceptForMe(User user) {
-        return chatRoomUserRepository.findAllByNotUser(user);
+    public List<Long> getChatRoomIdByUser(User user) {
+        return chatRoomUserRepository.findAllIdByUser(user);
     }
 }

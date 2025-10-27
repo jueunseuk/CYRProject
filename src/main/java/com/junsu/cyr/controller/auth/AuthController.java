@@ -23,8 +23,20 @@ public class AuthController {
     private final MailService mailService;
 
     @PostMapping("/naver/callback")
-    public ResponseEntity<?> naverLoginOrSignup(@RequestBody NaverUserRequest request, HttpServletResponse response) {
+    public ResponseEntity<SignupResponse> naverLoginOrSignup(@RequestBody NaverUserRequest request, HttpServletResponse response) {
         SignupResponse signupResponse = authService.naverLoginOrSignUp(request, response);
+        return ResponseEntity.ok(signupResponse);
+    }
+
+    @PostMapping("/google/callback")
+    public ResponseEntity<SignupResponse> googleLoginOrSignup(@RequestBody GoogleUserRequest request, HttpServletResponse response) {
+        SignupResponse signupResponse = authService.googleLoginOrSignUp(request, response);
+        return ResponseEntity.ok(signupResponse);
+    }
+
+    @PostMapping("/kakao/callback")
+    public ResponseEntity<SignupResponse> kakaoLoginOrSignup(@RequestBody KakaoUserRequest request, HttpServletResponse response) {
+        SignupResponse signupResponse = authService.kakaoLoginOrSignUp(request, response);
         return ResponseEntity.ok(signupResponse);
     }
 

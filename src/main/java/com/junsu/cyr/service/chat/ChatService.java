@@ -36,6 +36,7 @@ public class ChatService {
         if(request.getOtherId() != null) {
             User other = userService.getUserById(request.getOtherId());
             chatRoomUserService.createChatRoomUser(chatRoom, other);
+            chatRoom.increaseMemberCount();
         }
 
         chatRoom.updateLastMessage(chatMessage);

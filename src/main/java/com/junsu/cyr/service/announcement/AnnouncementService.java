@@ -54,7 +54,7 @@ public class AnnouncementService {
     }
 
     public List<AnnouncementResponse> getAnnouncementsByFixed() {
-        return announcementRepository.findAllByFixAndLockedOrderByCreatedAt(true, Locked.PUBLIC).stream().map(AnnouncementResponse::new).toList();
+        return announcementRepository.findAllByFixAndLockedOrderByCreatedAtDesc(true, Locked.PUBLIC).stream().map(AnnouncementResponse::new).toList();
     }
 
     @Transactional
@@ -97,6 +97,9 @@ public class AnnouncementService {
 
         Announcement announcement = getAnnouncementByAnnouncementId(announcementId);
         announcement.update(request);
+
+        AnnouncementCategory announcementCategory = announcementCategoryService.getAnnouncementCategoryByAnnouncementCategoryId(request.getAnnouncementCategoryId());
+        announcement.updateCategory(announcementCategory);
 
         return new AnnouncementResponse(announcement);
     }

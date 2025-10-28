@@ -83,6 +83,7 @@ public class ApplyService {
                 .preferenceRole(request.getPreferenceRole())
                 .preferenceMethod(request.getPreferenceMethod())
                 .contact(request.getContact())
+                .confirm(Boolean.FALSE)
                 .build();
 
         applyRepository.save(apply);

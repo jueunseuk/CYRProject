@@ -18,6 +18,7 @@ public class ApplyResponse {
     private PreferenceRole preferenceRole;
     private PreferenceMethod preferenceMethod;
     private String contact;
+    private LocalDateTime createdAt;
     private Boolean confirm;
     private LocalDateTime confirmedAt;
     private Integer userId;
@@ -35,6 +36,7 @@ public class ApplyResponse {
         this.preferenceRole = apply.getPreferenceRole();
         this.preferenceMethod = apply.getPreferenceMethod();
         this.contact = apply.getContact();
+        this.createdAt = apply.getCreatedAt();
         this.confirm = apply.getConfirm();
         this.confirmedAt = apply.getConfirmedAt();
 

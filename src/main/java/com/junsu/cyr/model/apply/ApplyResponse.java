@@ -23,6 +23,8 @@ public class ApplyResponse {
     private Integer userId;
     private String nickname;
     private String profileUrl;
+    private Integer confirmUserId;
+    private String confirmUserNickname;
 
     public ApplyResponse(Apply apply) {
         this.applyId = apply.getApplyId();
@@ -40,6 +42,10 @@ public class ApplyResponse {
         this.userId = user.getUserId();
         this.nickname = user.getNickname();
         this.profileUrl = user.getProfileUrl();
+
+        User confirmUser = apply.getConfirmUser();
+        this.confirmUserId = confirmUser.getUserId();
+        this.confirmUserNickname = confirmUser.getNickname();
     }
 
     public ApplyResponse(Long applyId, String title, PreferenceRole preferenceRole, Boolean confirm, LocalDateTime confirmedAt, Integer userId, String nickname) {

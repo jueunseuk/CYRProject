@@ -61,7 +61,8 @@ public class ApplyService {
                 apply.getConfirm(),
                 apply.getConfirmedAt(),
                 apply.getUser().getUserId(),
-                apply.getUser().getNickname()));
+                apply.getUser().getNickname(),
+                apply.getCreatedAt()));
     }
 
     @Transactional

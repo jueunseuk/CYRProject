@@ -45,9 +45,11 @@ public class ApplyResponse {
         this.nickname = user.getNickname();
         this.profileUrl = user.getProfileUrl();
 
-        User confirmUser = apply.getConfirmUser();
-        this.confirmUserId = confirmUser.getUserId();
-        this.confirmUserNickname = confirmUser.getNickname();
+        if(apply.getConfirmUser() != null) {
+            User confirmUser = apply.getConfirmUser();
+            this.confirmUserId = confirmUser.getUserId();
+            this.confirmUserNickname = confirmUser.getNickname();
+        }
     }
 
     public ApplyResponse(Long applyId, String title, PreferenceRole preferenceRole, Boolean confirm, LocalDateTime confirmedAt, Integer userId, String nickname, LocalDateTime createdAt) {

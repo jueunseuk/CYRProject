@@ -18,7 +18,7 @@ public class StatisticScheduler {
     @Scheduled(cron = "0 0 * * * *")
     @Transactional
     public void generateHourlyStatistic() {
-        log.info("{} => 통계 생성 스케줄 시작", LocalDateTime.now());
+        log.info("[StatisticScheduler] {} => 통계 생성 스케줄 시작", LocalDateTime.now());
 
         try {
             statisticService.createStatistic();

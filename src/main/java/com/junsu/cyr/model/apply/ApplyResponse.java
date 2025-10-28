@@ -24,6 +24,7 @@ public class ApplyResponse {
     private Integer userId;
     private String nickname;
     private String profileUrl;
+    private Integer warnCnt;
     private Integer confirmUserId;
     private String confirmUserNickname;
 
@@ -44,6 +45,7 @@ public class ApplyResponse {
         this.userId = user.getUserId();
         this.nickname = user.getNickname();
         this.profileUrl = user.getProfileUrl();
+        this.warnCnt = user.getWarn();
 
         if(apply.getConfirmUser() != null) {
             User confirmUser = apply.getConfirmUser();

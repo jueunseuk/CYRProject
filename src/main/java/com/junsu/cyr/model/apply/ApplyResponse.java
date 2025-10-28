@@ -50,7 +50,7 @@ public class ApplyResponse {
         this.confirmUserNickname = confirmUser.getNickname();
     }
 
-    public ApplyResponse(Long applyId, String title, PreferenceRole preferenceRole, Boolean confirm, LocalDateTime confirmedAt, Integer userId, String nickname) {
+    public ApplyResponse(Long applyId, String title, PreferenceRole preferenceRole, Boolean confirm, LocalDateTime confirmedAt, Integer userId, String nickname, LocalDateTime createdAt) {
         this.applyId = applyId;
         this.title = title;
         this.preferenceRole = preferenceRole;
@@ -58,5 +58,6 @@ public class ApplyResponse {
         this.confirmedAt = confirmedAt;
         this.userId = userId;
         this.nickname = nickname;
+        this.createdAt = createdAt;
     }
 }

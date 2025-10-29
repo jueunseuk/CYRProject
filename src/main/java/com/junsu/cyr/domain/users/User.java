@@ -192,7 +192,11 @@ public class User extends BaseTime {
         this.glass -= amount;
     }
 
-    public void decreaseWarningCnt(int amount) {
-        this.warn -= amount;
+    public void updateWarnCnt(int amount) {
+        this.warn += amount;
+    }
+
+    public void updateStatus(Status status) {
+        this.status = status;
     }
 }

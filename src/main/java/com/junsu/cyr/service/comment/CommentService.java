@@ -152,5 +152,6 @@ public class CommentService {
         Comment comment = getCommentByCommentId(commentId);
 
         commentRepository.delete(comment);
+        comment.getPost().decreaseCommentCnt();
     }
 }

@@ -61,7 +61,8 @@ public class ApplyService {
                 apply.getConfirm(),
                 apply.getConfirmedAt(),
                 apply.getUser().getUserId(),
-                apply.getUser().getNickname()));
+                apply.getUser().getNickname(),
+                apply.getCreatedAt()));
     }
 
     @Transactional
@@ -83,6 +84,7 @@ public class ApplyService {
                 .preferenceRole(request.getPreferenceRole())
                 .preferenceMethod(request.getPreferenceMethod())
                 .contact(request.getContact())
+                .confirm(Boolean.FALSE)
                 .build();
 
         applyRepository.save(apply);

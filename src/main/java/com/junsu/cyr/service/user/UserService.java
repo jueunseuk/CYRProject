@@ -161,7 +161,10 @@ public class UserService {
 
     @Transactional
     public void decreaseWarning(User user) {
-        user.decreaseWarningCnt(1);
+        if(user.getWarn() == 0) {
+            throw new BaseException(UserExceptionCode.WARNING_ALREADY_ZERO);
+        }
+        user.updateWarnCnt(-1);
     }
 
     @Transactional
@@ -183,8 +186,19 @@ public class UserService {
         Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
 
-        List<User> users = userRepository.findAllByUserId(userId, pageable);
+        List<User> users;
+
+        users = userRepository.findAllByUserId(userId, pageable);
 
         return users.stream().map(UserChatResponse::new).toList();
     }
+
+    public List<User> getUserListByRole(Role role, UserConditionRequest condition) {
+        Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
+
+        return userRepository.findAllByRole(role, pageable);
+    }
+
+
 }

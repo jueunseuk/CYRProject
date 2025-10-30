@@ -277,7 +277,7 @@ public class PostService {
     public void deletePostForce(Long postId, Integer userId) {
         User user = userService.getUserById(userId);
 
-        if(userService.isLeastManager(user)) {
+        if(!userService.isLeastManager(user)) {
             throw new BaseException(UserExceptionCode.REQUIRES_AT_LEAST_MANAGER);
         }
 

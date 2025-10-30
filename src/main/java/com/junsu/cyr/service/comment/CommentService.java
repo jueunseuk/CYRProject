@@ -38,6 +38,11 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserService userService;
 
+    private Comment getCommentByCommentId(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new BaseException(CommentExceptionCode.NOT_FOUND_COMMENT));
+    }
+
     @Transactional
     public void uploadComment(CommentRequest request, Integer userId) {
         User user = userRepository.findByUserId(userId)
@@ -134,5 +139,18 @@ public class CommentService {
 
     public Long getCommentCnt(LocalDateTime start, LocalDateTime now) {
         return commentRepository.countByCreatedAtBetween(start, now);
+    }
+
+    @Transactional
+    public void deleteCommentForce(Long commentId, Integer userId) {
+        User user = userService.getUserById(userId);
+
+        if(!userService.isLeastManager(user)) {
+            throw new BaseException(UserExceptionCode.REQUIRES_AT_LEAST_MANAGER);
+        }
+
+        Comment comment = getCommentByCommentId(commentId);
+
+        commentRepository.delete(comment);
     }
 }

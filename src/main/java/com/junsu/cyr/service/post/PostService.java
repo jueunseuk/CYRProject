@@ -2,16 +2,20 @@ package com.junsu.cyr.service.post;
 
 import com.junsu.cyr.constant.PostSortFieldConstant;
 import com.junsu.cyr.domain.boards.Board;
+import com.junsu.cyr.domain.comments.Comment;
 import com.junsu.cyr.domain.empathys.EmpathyId;
 import com.junsu.cyr.domain.posts.Locked;
 import com.junsu.cyr.domain.posts.Post;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.post.*;
+import com.junsu.cyr.repository.CommentRepository;
 import com.junsu.cyr.repository.EmpathyRepository;
 import com.junsu.cyr.repository.PostRepository;
+import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.PostExceptionCode;
 import com.junsu.cyr.service.board.BoardService;
+import com.junsu.cyr.service.comment.CommentService;
 import com.junsu.cyr.service.user.UserService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -32,6 +36,13 @@ public class PostService {
     private final BoardService boardService;
     private final EntityManager entityManager;
     private final EmpathyRepository empathyRepository;
+    private final CommentService commentService;
+    private final CommentRepository commentRepository;
+
+    private Post getPostByPostId(Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
+    }
 
     @Transactional
     public PostResponse getPost(Long postId, Integer userId) {
@@ -260,5 +271,21 @@ public class PostService {
 
     public Long getPostCnt(LocalDateTime start, LocalDateTime now) {
         return postRepository.countByCreatedAtBetween(start, now);
+    }
+
+    @Transactional
+    public void deletePostForce(Long postId, Integer userId) {
+        User user = userService.getUserById(userId);
+
+        if(userService.isLeastManager(user)) {
+            throw new BaseException(UserExceptionCode.REQUIRES_AT_LEAST_MANAGER);
+        }
+
+        Post post = getPostByPostId(postId);
+
+        List<Comment> comments = commentRepository.findByPost(post);
+
+        commentRepository.deleteAll(comments);
+        postRepository.delete(post);
     }
 }

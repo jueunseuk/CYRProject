@@ -108,7 +108,7 @@ public class GalleryService {
     public void deleteGalleryForce(Long galleryId, Integer userId) {
         User user = userService.getUserById(userId);
 
-        if(userService.isLeastManager(user)) {
+        if(!userService.isLeastManager(user)) {
             throw new BaseException(UserExceptionCode.REQUIRES_AT_LEAST_MANAGER);
         }
 

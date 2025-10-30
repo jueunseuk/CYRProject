@@ -105,6 +105,23 @@ public class GalleryService {
     }
 
     @Transactional
+    public void deleteGalleryForce(Long galleryId, Integer userId) {
+        User user = userService.getUserById(userId);
+
+        if(userService.isLeastManager(user)) {
+            throw new BaseException(UserExceptionCode.REQUIRES_AT_LEAST_MANAGER);
+        }
+
+        Gallery gallery = galleryRepository.findByGalleryId(galleryId)
+                .orElseThrow(() -> new BaseException(GalleryExceptionCode.NO_EXIST_GALLERY));
+
+        List<GalleryImage> galleryImages = galleryImageRepository.findGalleryImage(galleryId);
+
+        galleryImageRepository.deleteAll(galleryImages);
+        galleryRepository.delete(gallery);
+    }
+
+    @Transactional
     public void updateGallery(Long galleryId, GalleryUploadRequest request, Integer userId) {
         User user = userService.getUserById(userId);
 

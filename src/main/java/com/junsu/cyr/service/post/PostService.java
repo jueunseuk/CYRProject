@@ -3,6 +3,7 @@ package com.junsu.cyr.service.post;
 import com.junsu.cyr.constant.PostSortFieldConstant;
 import com.junsu.cyr.domain.boards.Board;
 import com.junsu.cyr.domain.comments.Comment;
+import com.junsu.cyr.domain.empathys.Empathy;
 import com.junsu.cyr.domain.empathys.EmpathyId;
 import com.junsu.cyr.domain.posts.Locked;
 import com.junsu.cyr.domain.posts.Post;
@@ -284,8 +285,10 @@ public class PostService {
         Post post = getPostByPostId(postId);
 
         List<Comment> comments = commentRepository.findByPost(post);
+        List<Empathy> empathyList = empathyRepository.findAllByPost(post);
 
         commentRepository.deleteAll(comments);
+        empathyRepository.deleteAll(empathyList);
         postRepository.delete(post);
     }
 }

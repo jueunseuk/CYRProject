@@ -9,6 +9,7 @@ import com.junsu.cyr.domain.posts.Locked;
 import com.junsu.cyr.domain.posts.Post;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.post.*;
+import com.junsu.cyr.model.search.SearchConditionRequest;
 import com.junsu.cyr.repository.CommentRepository;
 import com.junsu.cyr.repository.EmpathyRepository;
 import com.junsu.cyr.repository.PostRepository;
@@ -290,5 +291,19 @@ public class PostService {
         commentRepository.deleteAll(comments);
         empathyRepository.deleteAll(empathyList);
         postRepository.delete(post);
+    }
+
+    public Page<Post> searchByTitle(SearchConditionRequest condition) {
+        Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
+
+        return postRepository.findAllByTitleContaining(condition.getKeyword(), pageable);
+    }
+
+    public Page<Post> searchByContent(SearchConditionRequest condition) {
+        Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
+
+        return postRepository.findAllByContentContaining(condition.getKeyword(), pageable);
     }
 }

@@ -3,10 +3,8 @@ package com.junsu.cyr.model.search;
 import com.junsu.cyr.domain.users.Role;
 import com.junsu.cyr.domain.users.User;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
 
 @Getter
-@SuperBuilder
 public class UserSearchResponse extends SearchResponse {
     public Role role;
     public String highlightNickname;

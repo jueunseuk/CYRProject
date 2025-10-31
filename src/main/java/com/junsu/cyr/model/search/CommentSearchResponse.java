@@ -3,10 +3,8 @@ package com.junsu.cyr.model.search;
 import com.junsu.cyr.domain.comments.Comment;
 import com.junsu.cyr.domain.posts.Post;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
 
 @Getter
-@SuperBuilder
 public class CommentSearchResponse extends SearchResponse {
     public Integer boardId;
     public String korean;

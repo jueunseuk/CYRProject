@@ -3,13 +3,11 @@ package com.junsu.cyr.model.search;
 import com.junsu.cyr.domain.gallery.Gallery;
 import com.junsu.cyr.domain.gallery.GalleryImage;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@SuperBuilder
 public class GallerySearchResponse extends SearchResponse {
     public Long galleryId;
     public String title;

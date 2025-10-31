@@ -23,7 +23,9 @@ public class SearchService {
     private final CommentService commentService;
     private final GalleryService galleryService;
 
-    public Page<? extends SearchResponse> search(SearchConditionRequest condition) {
+    public Page<? extends SearchResponse> search(SearchConditionRequest condition, Integer userId) {
+        userService.getUserById(userId);
+
         if (condition.getKeyword() == null || condition.getKeyword().isEmpty()) {
             throw new BaseException(SearchExceptionCode.NOT_FOUND_KEYWORD);
         }

@@ -6,10 +6,7 @@ import com.junsu.cyr.service.search.SearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,8 +16,8 @@ public class SearchController {
     private final SearchService searchService;
 
     @GetMapping
-    public ResponseEntity<Page<? extends SearchResponse>> getType(@ModelAttribute SearchConditionRequest condition) {
-        Page<? extends SearchResponse> response = searchService.search(condition);
+    public ResponseEntity<Page<? extends SearchResponse>> getType(@ModelAttribute SearchConditionRequest condition, @RequestAttribute Integer userId) {
+        Page<? extends SearchResponse> response = searchService.search(condition, userId);
         return ResponseEntity.ok(response);
     }
 }

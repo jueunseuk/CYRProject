@@ -21,8 +21,8 @@ public class TitleSearchResponse extends SearchResponse {
         this.name = post.getBoard().getName();
         this.korean = post.getBoard().getKorean();
         this.postId = post.getPostId();
-        this.title = post.getTitle();
-        this.content = extractHighlight(post.getContent(), keyword);
+        this.title = extractHighlight(post.getTitle(), keyword);
+        this.content = post.getContent();
         this.viewCnt = post.getViewCnt();
         this.empathyCnt = post.getEmpathyCnt();
         this.commentCnt = post.getCommentCnt();

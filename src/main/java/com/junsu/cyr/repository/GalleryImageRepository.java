@@ -29,4 +29,6 @@ public interface GalleryImageRepository extends JpaRepository<GalleryImage, Inte
     Long countByGalleryImageId(Gallery gallery);
 
     Long countByCreatedAtBetween(LocalDateTime start, LocalDateTime now);
+
+    List<GalleryImage> findAllByGallery(Gallery gallery);
 }

@@ -9,6 +9,7 @@ import com.junsu.cyr.model.comment.CommentRequest;
 import com.junsu.cyr.model.comment.CommentResponse;
 import com.junsu.cyr.model.comment.CommentSearchConditionRequest;
 import com.junsu.cyr.model.comment.UserCommentResponse;
+import com.junsu.cyr.model.search.SearchConditionRequest;
 import com.junsu.cyr.repository.CommentRepository;
 import com.junsu.cyr.repository.PostRepository;
 import com.junsu.cyr.repository.UserRepository;
@@ -153,5 +154,12 @@ public class CommentService {
 
         commentRepository.delete(comment);
         comment.getPost().decreaseCommentCnt();
+    }
+
+    public Page<Comment> searchByContent(SearchConditionRequest condition) {
+        Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
+
+        return commentRepository.findAllByContentContaining(condition.getKeyword(), pageable);
     }
 }

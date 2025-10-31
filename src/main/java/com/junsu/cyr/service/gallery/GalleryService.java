@@ -5,6 +5,7 @@ import com.junsu.cyr.domain.gallery.GalleryImage;
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.gallery.*;
+import com.junsu.cyr.model.search.SearchConditionRequest;
 import com.junsu.cyr.repository.GalleryImageRepository;
 import com.junsu.cyr.repository.GalleryRepository;
 import com.junsu.cyr.repository.UserRepository;
@@ -223,5 +224,16 @@ public class GalleryService {
 
     public Long getGalleryImageCnt(LocalDateTime start, LocalDateTime now) {
         return galleryImageRepository.countByCreatedAtBetween(start, now);
+    }
+
+    public Page<Gallery> searchByTitle(SearchConditionRequest condition) {
+        Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
+
+        return galleryRepository.findAllByTitleContaining(condition.getKeyword(), pageable);
+    }
+
+    public List<GalleryImage> getGalleryImageByGallery(Gallery gallery) {
+        return galleryImageRepository.findAllByGallery(gallery);
     }
 }

@@ -32,8 +32,8 @@ public class SearchService {
             case "user" -> userService.searchByNickname(condition)
                     .map(user -> new UserSearchResponse(user, condition.getKeyword()));
 
-            case "post" -> postService.searchByTitle(condition)
-                    .map(post -> new ContentSearchResponse(post, condition.getKeyword()));
+            case "title" -> postService.searchByTitle(condition)
+                    .map(post -> new TitleSearchResponse(post, condition.getKeyword()));
 
             case "content" -> postService.searchByContent(condition)
                     .map(post -> new ContentSearchResponse(post, condition.getKeyword()));

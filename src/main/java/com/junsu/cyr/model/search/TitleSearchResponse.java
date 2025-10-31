@@ -4,7 +4,7 @@ import com.junsu.cyr.domain.posts.Post;
 import lombok.Getter;
 
 @Getter
-public class PostSearchResponse extends SearchResponse {
+public class TitleSearchResponse extends SearchResponse {
     public Integer boardId;
     public String korean;
     public Long postId;
@@ -14,7 +14,7 @@ public class PostSearchResponse extends SearchResponse {
     public Long empathyCnt;
     public Long commentCnt;
 
-    public PostSearchResponse(Post post, String keyword) {
+    public TitleSearchResponse(Post post, String keyword) {
         super(post.getUser().getUserId(), post.getUser().getNickname(), post.getCreatedAt(), "post");
         this.boardId = post.getBoard().getBoardId();
         this.korean = post.getBoard().getKorean();

@@ -1,4 +1,4 @@
-package com.junsu.cyr.controller;
+package com.junsu.cyr.controller.search;
 
 import com.junsu.cyr.model.search.SearchConditionRequest;
 import com.junsu.cyr.model.search.SearchResponse;

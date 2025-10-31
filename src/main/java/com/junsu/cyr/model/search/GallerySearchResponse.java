@@ -21,7 +21,7 @@ public class GallerySearchResponse extends SearchResponse {
         super(gallery.getUser().getUserId(), gallery.getUser().getNickname(), gallery.getCreatedAt(), "gallery");
         this.galleryId = gallery.getGalleryId();
         this.title = extractHighlight(gallery.getTitle(), keyword);
-        this.content = gallery.getDescription().substring(0, 50);
+        this.content = gallery.getDescription();
         this.viewCnt = gallery.getViewCnt();
         this.picturedAt = gallery.getPicturedAt();
         this.thumbnailUrl = images.getFirst().getUrl();

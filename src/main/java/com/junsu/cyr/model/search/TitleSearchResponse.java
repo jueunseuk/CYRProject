@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 public class TitleSearchResponse extends SearchResponse {
     public Integer boardId;
+    public String name;
     public String korean;
     public Long postId;
     public String title;
@@ -17,6 +18,7 @@ public class TitleSearchResponse extends SearchResponse {
     public TitleSearchResponse(Post post, String keyword) {
         super(post.getUser().getUserId(), post.getUser().getNickname(), post.getCreatedAt(), "post");
         this.boardId = post.getBoard().getBoardId();
+        this.name = post.getBoard().getName();
         this.korean = post.getBoard().getKorean();
         this.postId = post.getPostId();
         this.title = post.getTitle();

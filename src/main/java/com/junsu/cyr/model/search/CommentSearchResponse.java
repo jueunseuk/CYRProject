@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 public class CommentSearchResponse extends SearchResponse {
     public Integer boardId;
+    public String name;
     public String korean;
     public String content;
     public String title;
@@ -19,6 +20,7 @@ public class CommentSearchResponse extends SearchResponse {
         super(comment.getUser().getUserId(), comment.getUser().getNickname(), comment.getCreatedAt(), "comment");
         Post post = comment.getPost();
         this.boardId = post.getBoard().getBoardId();
+        this.name = post.getBoard().getName();
         this.korean = post.getBoard().getKorean();
         this.title = post.getTitle();
         this.content = extractHighlight(comment.getContent(), keyword);

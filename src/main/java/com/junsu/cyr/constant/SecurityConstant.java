@@ -42,7 +42,6 @@ public class SecurityConstant {
             "/calendar/before",
             "/calendar/after",
             "/statistic",
-            "/search",
             "/ws/**"
     );
 }

@@ -29,7 +29,7 @@ public class SearchService {
         }
 
         return switch (condition.getType()) {
-            case "user" -> userService.searchByNickname(condition)
+            case "nickname" -> userService.searchByNickname(condition)
                     .map(user -> new UserSearchResponse(user, condition.getKeyword()));
 
             case "title" -> postService.searchByTitle(condition)

@@ -208,4 +208,10 @@ public class UserService {
 
         return userRepository.findAllByNicknameContaining(condition.getKeyword(), pageable);
     }
+
+    @Transactional
+    public void deleteUserByUserId(Integer userId) {
+        User user = getUserById(userId);
+        userRepository.delete(user);
+    }
 }

@@ -103,7 +103,6 @@ public class ChatService {
 
         String content = String.format(ChatSystemMessageConstant.EXIT, user.getNickname());
         ChatMessage chatMessage = chatMessageService.createSystemMessage(chatRoom, content);
-        chatRoomUserService.createChatRoomUser(chatRoom, user);
         chatRoom.updateLastMessage(chatMessage);
     }
 }

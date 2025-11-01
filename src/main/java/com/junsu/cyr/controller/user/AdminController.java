@@ -29,4 +29,10 @@ public class AdminController {
         adminService.updateStatus(memberId, status, userId);
         return ResponseEntity.ok("success to update status");
     }
+
+    @PatchMapping("/user/{memberId}/role")
+    public ResponseEntity<String> updateRole(@PathVariable Integer memberId, @RequestParam Role role, @RequestAttribute Integer userId) {
+        adminService.updateRole(memberId, role, userId);
+        return ResponseEntity.ok("success to update role");
+    }
 }

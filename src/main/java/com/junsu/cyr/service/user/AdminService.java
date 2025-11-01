@@ -44,4 +44,19 @@ public class AdminService {
 
         member.updateStatus(status);
     }
+
+    @Transactional
+    public void updateRole(Integer memberId, Role role, Integer userId) {
+        User user = userService.getUserById(userId);
+        if(!userService.isLeastAdmin(user)) {
+            throw new BaseException(UserExceptionCode.REQUIRES_AT_LEAST_ADMIN);
+        }
+
+        User member = userService.getUserById(memberId);
+        if(member.getRole().equals(role)) {
+            throw new BaseException(UserExceptionCode.INCORRECT_ROLE_CHANGE_REQUEST);
+        }
+
+        member.updateRole(role);
+    }
 }

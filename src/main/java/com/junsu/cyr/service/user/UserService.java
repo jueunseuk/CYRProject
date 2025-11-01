@@ -7,6 +7,7 @@ import com.junsu.cyr.domain.temperature.Temperature;
 import com.junsu.cyr.domain.users.Role;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.auth.SignupResponse;
+import com.junsu.cyr.model.search.SearchConditionRequest;
 import com.junsu.cyr.model.user.*;
 import com.junsu.cyr.repository.*;
 import com.junsu.cyr.response.exception.http.BaseException;
@@ -17,6 +18,7 @@ import com.junsu.cyr.service.image.S3Service;
 import com.junsu.cyr.service.sand.SandService;
 import com.junsu.cyr.service.temperature.TemperatureService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -200,5 +202,16 @@ public class UserService {
         return userRepository.findAllByRole(role, pageable);
     }
 
+    public Page<User> searchByNickname(SearchConditionRequest condition) {
+        Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
 
+        return userRepository.findAllByNicknameContaining(condition.getKeyword(), pageable);
+    }
+
+    @Transactional
+    public void deleteUserByUserId(Integer userId) {
+        User user = getUserById(userId);
+        userRepository.delete(user);
+    }
 }

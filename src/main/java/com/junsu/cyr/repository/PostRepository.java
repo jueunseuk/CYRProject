@@ -36,4 +36,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByUserAndLocked(User user, Locked locked, Pageable pageable);
 
     Long countByCreatedAtBetween(LocalDateTime start, LocalDateTime now);
+
+    Page<Post> findAllByTitleContaining(String keyword, Pageable pageable);
+
+    Page<Post> findAllByContentContaining(String keyword, Pageable pageable);
 }

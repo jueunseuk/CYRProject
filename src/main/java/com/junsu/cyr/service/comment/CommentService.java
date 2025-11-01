@@ -9,6 +9,7 @@ import com.junsu.cyr.model.comment.CommentRequest;
 import com.junsu.cyr.model.comment.CommentResponse;
 import com.junsu.cyr.model.comment.CommentSearchConditionRequest;
 import com.junsu.cyr.model.comment.UserCommentResponse;
+import com.junsu.cyr.model.search.SearchConditionRequest;
 import com.junsu.cyr.repository.CommentRepository;
 import com.junsu.cyr.repository.PostRepository;
 import com.junsu.cyr.repository.UserRepository;
@@ -37,6 +38,11 @@ public class CommentService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final UserService userService;
+
+    private Comment getCommentByCommentId(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new BaseException(CommentExceptionCode.NOT_FOUND_COMMENT));
+    }
 
     @Transactional
     public void uploadComment(CommentRequest request, Integer userId) {
@@ -134,5 +140,26 @@ public class CommentService {
 
     public Long getCommentCnt(LocalDateTime start, LocalDateTime now) {
         return commentRepository.countByCreatedAtBetween(start, now);
+    }
+
+    @Transactional
+    public void deleteCommentForce(Long commentId, Integer userId) {
+        User user = userService.getUserById(userId);
+
+        if(!userService.isLeastManager(user)) {
+            throw new BaseException(UserExceptionCode.REQUIRES_AT_LEAST_MANAGER);
+        }
+
+        Comment comment = getCommentByCommentId(commentId);
+
+        commentRepository.delete(comment);
+        comment.getPost().decreaseCommentCnt();
+    }
+
+    public Page<Comment> searchByContent(SearchConditionRequest condition) {
+        Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
+
+        return commentRepository.findAllByContentContaining(condition.getKeyword(), pageable);
     }
 }

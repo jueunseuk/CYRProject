@@ -1,7 +1,9 @@
 package com.junsu.cyr.repository;
 
 import com.junsu.cyr.domain.experiences.ExperienceLog;
+import com.junsu.cyr.model.ranking.SumRankingProjection;
 import com.junsu.cyr.repository.projection.DailyMaxProjection;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -25,4 +27,7 @@ public interface ExperienceLogRepository extends JpaRepository<ExperienceLog, Lo
 
     @Query("select function('date', el.createdAt) as date, max(el.after) as after from ExperienceLog as el where el.user.userId = :userId and el.createdAt between :start and :end group by function('date', el.createdAt)")
     List<DailyMaxProjection> findDailyMaxByUserId(Integer userId, LocalDateTime start, LocalDateTime end);
+
+    @Query("select new com.junsu.cyr.model.ranking.SumRankingProjection(el.user.userId, sum(el.delta)) from ExperienceLog as el where el.createdAt between :start and :now group by el.user order by sum(el.delta)")
+    List<SumRankingProjection> sumAllByCreatedAtBetween(LocalDateTime start, LocalDateTime now, Pageable pageable);
 }

@@ -19,5 +19,5 @@ public interface CheerSummaryRepository extends JpaRepository<CheerSummary, Chee
 
     List<CheerSummary> findAllByCheerSummaryId_UserIdAndCheerSummaryId_DateBetween(Integer userId, LocalDate start, LocalDate end);
 
-    List<CheerSummary> findAllByCheerSummaryId_UserId(Integer userId);
+    List<CheerSummary> findTop10ByCheerSummaryId_DateBetweenOrderByCountDesc(LocalDate start, LocalDate localDate);
 }

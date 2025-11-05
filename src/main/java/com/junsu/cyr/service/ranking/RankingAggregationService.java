@@ -7,9 +7,11 @@ import com.junsu.cyr.model.ranking.CountRankingProjection;
 import com.junsu.cyr.model.ranking.SumRankingProjection;
 import com.junsu.cyr.repository.*;
 import com.junsu.cyr.response.exception.code.RankingExceptionCode;
+import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RankingAggregationService {
@@ -38,6 +41,22 @@ public class RankingAggregationService {
             case HOURLY -> updateHourlyRankings();
             case THREE_HOURLY -> updateThreeHourlyRankings();
             case TEN_MINUTES -> updateTenMinutesRankings();
+        }
+    }
+
+    @Transactional
+    public void refreshRanking(Type type, Period period, Integer userId) {
+        User user = userService.getUserById(userId);
+        if(!userService.isLeastAdmin(user)) {
+            throw new BaseException(UserExceptionCode.REQUIRES_AT_LEAST_ADMIN);
+        }
+
+        switch (type) {
+            case CHEER -> updateCheerRanking(period);
+            case ATTENDANCE -> updateAttendanceRanking(period);
+            case EXP -> updateExperienceRanking(period);
+            case GLASS -> updateGlassRanking(period);
+            case POST -> updatePostRanking(period);
         }
     }
 
@@ -112,7 +131,7 @@ public class RankingAggregationService {
         LocalDateTime start;
 
         switch (period) {
-            case DAILY -> start = now;
+            case DAILY -> start = LocalDate.now().atStartOfDay();
             case WEEKLY -> start = now.with(java.time.DayOfWeek.MONDAY);
             case MONTHLY -> start = now.withDayOfMonth(1);
             default -> throw new BaseException(RankingExceptionCode.INVALID_PERIOD);

@@ -34,7 +34,6 @@ public class RankingScheduler {
     }
 
     private void executeRefresh(Refresh refreshType) {
-        log.info("[RankingScheduler] {} 주기 실행 시작 - {}", refreshType.name(), refreshType.getDescription());
         rankingAggregationService.refreshByPeriod(refreshType);
     }
 }

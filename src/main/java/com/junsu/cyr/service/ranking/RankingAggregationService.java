@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 
 @Slf4j
@@ -64,6 +65,7 @@ public class RankingAggregationService {
     public void updateDailyRankings() {
         updateCheerRanking(Period.TOTAL);
         updateAttendanceRanking(Period.TOTAL);
+        updateGlassRanking(Period.TOTAL);
     }
 
     public void updateHourlyRankings() {
@@ -179,7 +181,13 @@ public class RankingAggregationService {
 
     public void updateGlassRanking(Period period) {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime start = LocalDate.now().atStartOfDay();
+        LocalDateTime start;
+
+        switch (period) {
+            case DAILY -> start = LocalDate.now().atStartOfDay();
+            case TOTAL -> start = LocalDateTime.of(2025, Month.JANUARY, 1, 0, 0, 0, 0);
+            default -> throw new BaseException(RankingExceptionCode.INVALID_PERIOD);
+        }
 
         List<SumRankingProjection> glassRankings = glassLogRepository.sumAllByCreatedAtBetween(start, now, PageRequest.of(0, 10));
 

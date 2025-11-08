@@ -6,6 +6,7 @@ import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.ranking.CountRankingProjection;
 import com.junsu.cyr.model.ranking.SumRankingProjection;
 import com.junsu.cyr.repository.*;
+import com.junsu.cyr.repository.projection.TotalCheerProjection;
 import com.junsu.cyr.response.exception.code.RankingExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
@@ -83,11 +84,22 @@ public class RankingAggregationService {
         LocalDate now = LocalDate.now();
         LocalDate start;
 
+        if(period == Period.TOTAL) {
+            List<TotalCheerProjection> cheerSummaries = cheerSummaryRepository.findTotalCheerRanking();
+            RankingCategory rankingCategory = rankingService.deleteRankingByTypeAndPeriod(Type.CHEER, period);
+
+            long rank = 1;
+            for(TotalCheerProjection cheerSummary : cheerSummaries) {
+                User user = userService.getUserById(cheerSummary.getUserId());
+                rankingService.createRanking(rankingCategory, user, rank++, cheerSummary.getSum());
+            }
+            return;
+        }
+
         switch (period) {
             case DAILY -> start = now;
             case WEEKLY -> start = now.with(java.time.DayOfWeek.MONDAY);
             case MONTHLY -> start = now.withDayOfMonth(1);
-            case TOTAL -> start = LocalDate.of(2025, 1, 1);
             default -> throw new BaseException(RankingExceptionCode.INVALID_PERIOD);
         }
 

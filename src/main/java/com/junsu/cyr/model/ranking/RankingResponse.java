@@ -4,6 +4,8 @@ import com.junsu.cyr.domain.rankings.*;
 import com.junsu.cyr.domain.users.User;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class RankingResponse {
     private Integer rankingId;
@@ -19,11 +21,13 @@ public class RankingResponse {
     private String korean;
     private String description;
     private Refresh refresh;
+    private LocalDateTime createdAt;
 
     public RankingResponse(Ranking ranking) {
         this.rankingId = ranking.getRankingId();
         this.score = ranking.getScore();
         this.priority = ranking.getPriority();
+        this.createdAt = ranking.getCreatedAt();
 
         User user = ranking.getUser();
         this.userId = user.getUserId();

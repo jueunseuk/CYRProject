@@ -37,6 +37,4 @@ public class RankingController {
         List<RankingResponse> rankingResponses = rankingService.getSummaryRanking();
         return ResponseEntity.ok(rankingResponses);
     }
-
-
 }

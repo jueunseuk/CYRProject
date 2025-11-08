@@ -7,9 +7,11 @@ import com.junsu.cyr.model.ranking.CountRankingProjection;
 import com.junsu.cyr.model.ranking.SumRankingProjection;
 import com.junsu.cyr.repository.*;
 import com.junsu.cyr.response.exception.code.RankingExceptionCode;
+import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,21 +20,22 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RankingAggregationService {
 
     private final RankingService rankingService;
-    private final RankingCategoryService rankingCategoryService;
     private final CheerSummaryRepository cheerSummaryRepository;
     private final UserService userService;
     private final AttendanceRepository attendanceRepository;
     private final ExperienceLogRepository experienceLogRepository;
     private final GlassLogRepository glassLogRepository;
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
     @Transactional
-    public void refreshByPeriod(Refresh refresh) {
+    public void refreshByPeriodWithScheduler(Refresh refresh) {
         switch (refresh) {
             case MIDNIGHT -> updateDailyRankings();
             case HOURLY -> updateHourlyRankings();
@@ -41,8 +44,25 @@ public class RankingAggregationService {
         }
     }
 
-    public void updateDailyRankings() {
+    @Transactional
+    public void refreshRanking(Type type, Period period, Integer userId) {
+        User user = userService.getUserById(userId);
+        if(!userService.isLeastAdmin(user)) {
+            throw new BaseException(UserExceptionCode.REQUIRES_AT_LEAST_ADMIN);
+        }
 
+        switch (type) {
+            case CHEER -> updateCheerRanking(period);
+            case ATTENDANCE -> updateAttendanceRanking(period);
+            case EXP -> updateExperienceRanking(period);
+            case GLASS -> updateGlassRanking(period);
+            case POST -> updatePostRanking(period);
+        }
+    }
+
+    public void updateDailyRankings() {
+        updateCheerRanking(Period.TOTAL);
+        updateAttendanceRanking(Period.TOTAL);
     }
 
     public void updateHourlyRankings() {
@@ -67,16 +87,14 @@ public class RankingAggregationService {
             case DAILY -> start = now;
             case WEEKLY -> start = now.with(java.time.DayOfWeek.MONDAY);
             case MONTHLY -> start = now.withDayOfMonth(1);
+            case TOTAL -> start = LocalDate.of(2025, 1, 1);
             default -> throw new BaseException(RankingExceptionCode.INVALID_PERIOD);
         }
 
         List<CheerSummary> top10 = cheerSummaryRepository
                 .findTop10ByCheerSummaryId_DateBetweenOrderByCountDesc(start, now);
 
-        RankingCategory rankingCategory = rankingCategoryService
-                .getRankingCategoryByTypeAndPeriod(Type.CHEER, period);
-
-        rankingService.deleteRankingByRankingCategory(rankingCategory);
+        RankingCategory rankingCategory = rankingService.deleteRankingByTypeAndPeriod(Type.CHEER, period);
 
         long rank = 1;
         for (CheerSummary summary : top10) {
@@ -89,21 +107,29 @@ public class RankingAggregationService {
         LocalDate now = LocalDate.now();
         LocalDate start = now.withDayOfMonth(1);
 
-        if(period != Period.MONTHLY) {
+        if(period != Period.MONTHLY && period != Period.TOTAL) {
             throw new BaseException(RankingExceptionCode.INVALID_PERIOD);
         }
 
-        List<CountRankingProjection> attendances = attendanceRepository.findAllByAttendanceId_AttendedAtBetween(start, now);
+        if(period == Period.TOTAL) {
+            List<User> users = userRepository.findTop10ByOrderByConsecutiveAttendanceCntDesc();
 
-        RankingCategory rankingCategory = rankingCategoryService
-                .getRankingCategoryByTypeAndPeriod(Type.ATTENDANCE, period);
+            RankingCategory rankingCategory = rankingService.deleteRankingByTypeAndPeriod(Type.ATTENDANCE, period);
 
-        rankingService.deleteRankingByRankingCategory(rankingCategory);
+            long rank = 1;
+            for (User user : users) {
+                rankingService.createRanking(rankingCategory, user, rank++, Long.valueOf(user.getConsecutiveAttendanceCnt()));
+            }
+        } else {
+            List<CountRankingProjection> attendances = attendanceRepository.findAllByAttendanceId_AttendedAtBetween(start, now);
 
-        long rank = 1;
-        for (CountRankingProjection summary : attendances) {
-            User user = userService.getUserById(summary.getUserId());
-            rankingService.createRanking(rankingCategory, user, rank++, summary.getCount());
+            RankingCategory rankingCategory = rankingService.deleteRankingByTypeAndPeriod(Type.ATTENDANCE, period);
+
+            long rank = 1;
+            for (CountRankingProjection summary : attendances) {
+                User user = userService.getUserById(summary.getUserId());
+                rankingService.createRanking(rankingCategory, user, rank++, summary.getCount());
+            }
         }
     }
 
@@ -111,8 +137,18 @@ public class RankingAggregationService {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime start;
 
+        if(period == Period.TOTAL) {
+            List<User> users = userRepository.findTop10ByOrderByEpxCntDesc();
+            RankingCategory rankingCategory = rankingService.deleteRankingByTypeAndPeriod(Type.EXP, period);
+            long rank = 1;
+            for (User user : users) {
+                rankingService.createRanking(rankingCategory, user, rank++, user.getEpxCnt());
+            }
+            return;
+        }
+
         switch (period) {
-            case DAILY -> start = now;
+            case DAILY -> start = LocalDate.now().atStartOfDay();
             case WEEKLY -> start = now.with(java.time.DayOfWeek.MONDAY);
             case MONTHLY -> start = now.withDayOfMonth(1);
             default -> throw new BaseException(RankingExceptionCode.INVALID_PERIOD);
@@ -120,10 +156,7 @@ public class RankingAggregationService {
 
         List<SumRankingProjection> experienceRankings = experienceLogRepository.sumAllByCreatedAtBetween(start, now, PageRequest.of(0, 10));
 
-        RankingCategory rankingCategory = rankingCategoryService
-                .getRankingCategoryByTypeAndPeriod(Type.EXP, period);
-
-        rankingService.deleteRankingByRankingCategory(rankingCategory);
+        RankingCategory rankingCategory = rankingService.deleteRankingByTypeAndPeriod(Type.EXP, period);
 
         long rank = 1;
         for (SumRankingProjection summary : experienceRankings) {
@@ -138,10 +171,7 @@ public class RankingAggregationService {
 
         List<SumRankingProjection> glassRankings = glassLogRepository.sumAllByCreatedAtBetween(start, now, PageRequest.of(0, 10));
 
-        RankingCategory rankingCategory = rankingCategoryService
-                .getRankingCategoryByTypeAndPeriod(Type.GLASS, period);
-
-        rankingService.deleteRankingByRankingCategory(rankingCategory);
+        RankingCategory rankingCategory = rankingService.deleteRankingByTypeAndPeriod(Type.GLASS, period);
 
         long rank = 1;
         for (SumRankingProjection summary : glassRankings) {
@@ -156,10 +186,7 @@ public class RankingAggregationService {
 
         List<CountRankingProjection> postRankings = postRepository.sumAllByCreatedAtBetween(start, now, PageRequest.of(0, 10));
 
-        RankingCategory rankingCategory = rankingCategoryService
-                .getRankingCategoryByTypeAndPeriod(Type.POST, period);
-
-        rankingService.deleteRankingByRankingCategory(rankingCategory);
+        RankingCategory rankingCategory = rankingService.deleteRankingByTypeAndPeriod(Type.POST, period);
 
         long rank = 1;
         for (CountRankingProjection summary : postRankings) {

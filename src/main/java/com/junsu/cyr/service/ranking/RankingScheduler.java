@@ -34,6 +34,6 @@ public class RankingScheduler {
     }
 
     private void executeRefresh(Refresh refreshType) {
-        rankingAggregationService.refreshByPeriod(refreshType);
+        rankingAggregationService.refreshByPeriodWithScheduler(refreshType);
     }
 }

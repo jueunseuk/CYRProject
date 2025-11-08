@@ -24,4 +24,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<User> findAllByRole(Role role, Pageable pageable);
 
     Page<User> findAllByNicknameContaining(String keyword, Pageable pageable);
+
+    List<User> findTop10ByOrderByConsecutiveAttendanceCntDesc();
+
+    List<User> findTop10ByOrderByEpxCntDesc();
 }

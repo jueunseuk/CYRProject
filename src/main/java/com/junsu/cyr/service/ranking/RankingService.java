@@ -1,5 +1,6 @@
 package com.junsu.cyr.service.ranking;
 
+import com.junsu.cyr.domain.rankings.Period;
 import com.junsu.cyr.domain.rankings.Ranking;
 import com.junsu.cyr.domain.rankings.RankingCategory;
 import com.junsu.cyr.domain.rankings.Type;
@@ -57,8 +58,10 @@ public class RankingService {
     }
 
     @Transactional
-    public void deleteRankingByRankingCategory(RankingCategory rankingCategory) {
+    public RankingCategory deleteRankingByTypeAndPeriod(Type type, Period period) {
+        RankingCategory rankingCategory = rankingCategoryService.getRankingCategoryByTypeAndPeriod(type, period);
         rankingRepository.deleteAllByRankingCategory(rankingCategory);
+        return rankingCategory;
     }
 
     public List<RankingResponse> getRanking(Type type, RankingConditionRequest condition, Integer userId) {
@@ -79,6 +82,7 @@ public class RankingService {
         return rankingResponses.stream().map(RankingResponse::new).toList();
     }
 
+    // implement not yet
     public List<RankingResponse> getSummaryRanking() {
 
         return null;

@@ -2,7 +2,7 @@ package com.junsu.cyr.repository;
 
 import com.junsu.cyr.domain.glass.Glass;
 import com.junsu.cyr.domain.glass.GlassLog;
-import com.junsu.cyr.model.ranking.SumRankingProjection;
+import com.junsu.cyr.model.ranking.CountRankingProjection;
 import com.junsu.cyr.repository.projection.DailyMaxProjection;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -36,6 +36,6 @@ public interface GlassLogRepository extends JpaRepository<GlassLog, Long> {
 
     Long countByGlassAndCreatedAtBetween(Glass glass, LocalDateTime start, LocalDateTime now);
 
-    @Query("select new com.junsu.cyr.model.ranking.SumRankingProjection(gl.user.userId, sum(gl.delta)) from GlassLog as gl where gl.createdAt between :start and :end group by gl.user order by sum(gl.delta)")
-    List<SumRankingProjection> sumAllByCreatedAtBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
+    @Query("select gl.user.userId as userId, count(gl) as count from GlassLog as gl where gl.glass = :glass and gl.createdAt between :start and :end group by gl.user order by count(gl) desc")
+    List<CountRankingProjection> countAllByGlassCreatedAtBetween(Glass glass, LocalDateTime start, LocalDateTime end, Pageable pageable);
 }

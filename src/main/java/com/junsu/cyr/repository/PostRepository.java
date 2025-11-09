@@ -44,6 +44,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findAllByContentContaining(String keyword, Pageable pageable);
 
-    @Query("select p.user.userId, count(*) from Post as p where p.createdAt between :start and :now group by p.user order by count(*) desc")
+    @Query("select p.user.userId as userId, count(*) as count from Post as p where p.createdAt between :start and :now group by p.user order by count(*) desc")
     List<CountRankingProjection> sumAllByCreatedAtBetween(LocalDateTime start, LocalDateTime now, PageRequest of);
 }

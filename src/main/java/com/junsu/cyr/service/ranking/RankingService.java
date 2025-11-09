@@ -82,7 +82,7 @@ public class RankingService {
     }
 
     public List<RankingResponse> getSummaryRanking() {
-        RankingConditionRequest condition = new RankingConditionRequest(0, 3, "period", "ASC", Period.TOTAL);
+        RankingConditionRequest condition = new RankingConditionRequest(0, 3, "priority", "ASC", Period.TOTAL);
         List<RankingResponse> rankingResponses = new ArrayList<>(getRanking(Type.ATTENDANCE, condition));
 
         condition.setPeriod(Period.TOTAL);

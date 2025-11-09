@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -64,9 +65,7 @@ public class RankingService {
         return rankingCategory;
     }
 
-    public List<RankingResponse> getRanking(Type type, RankingConditionRequest condition, Integer userId) {
-        User user = userService.getUserById(userId);
-
+    public List<RankingResponse> getRanking(Type type, RankingConditionRequest condition) {
         if(type == null) {
             throw new BaseException(RankingExceptionCode.INVALID_TYPE);
         } else if(condition.getPeriod() == null) {
@@ -82,9 +81,19 @@ public class RankingService {
         return rankingResponses.stream().map(RankingResponse::new).toList();
     }
 
-    // implement not yet
     public List<RankingResponse> getSummaryRanking() {
+        RankingConditionRequest condition = new RankingConditionRequest(0, 3, "period", "ASC", Period.TOTAL);
+        List<RankingResponse> rankingResponses = new ArrayList<>(getRanking(Type.ATTENDANCE, condition));
 
-        return null;
+        condition.setPeriod(Period.TOTAL);
+        rankingResponses.addAll(getRanking(Type.CHEER, condition));
+
+        condition.setPeriod(Period.DAILY);
+        rankingResponses.addAll(getRanking(Type.CHEER, condition));
+
+        condition.setPeriod(Period.TOTAL);
+        rankingResponses.addAll(getRanking(Type.GLASS, condition));
+
+        return rankingResponses;
     }
 }

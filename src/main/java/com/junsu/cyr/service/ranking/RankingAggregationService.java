@@ -1,6 +1,7 @@
 package com.junsu.cyr.service.ranking;
 
 import com.junsu.cyr.domain.cheers.CheerSummary;
+import com.junsu.cyr.domain.glass.Glass;
 import com.junsu.cyr.domain.rankings.*;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.ranking.CountRankingProjection;
@@ -10,6 +11,7 @@ import com.junsu.cyr.repository.projection.TotalCheerProjection;
 import com.junsu.cyr.response.exception.code.RankingExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
+import com.junsu.cyr.service.glass.GlassService;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +37,7 @@ public class RankingAggregationService {
     private final GlassLogRepository glassLogRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final GlassService glassService;
 
     @Transactional
     public void refreshByPeriodWithScheduler(Refresh refresh) {
@@ -189,14 +192,15 @@ public class RankingAggregationService {
             default -> throw new BaseException(RankingExceptionCode.INVALID_PERIOD);
         }
 
-        List<SumRankingProjection> glassRankings = glassLogRepository.sumAllByCreatedAtBetween(start, now, PageRequest.of(0, 10));
+        Glass glass = glassService.getGlass(1);
+        List<CountRankingProjection> glassRankings = glassLogRepository.countAllByGlassCreatedAtBetween(glass, start, now, PageRequest.of(0, 10));
 
         RankingCategory rankingCategory = rankingService.deleteRankingByTypeAndPeriod(Type.GLASS, period);
 
         long rank = 1;
-        for (SumRankingProjection summary : glassRankings) {
+        for (CountRankingProjection summary : glassRankings) {
             User user = userService.getUserById(summary.getUserId());
-            rankingService.createRanking(rankingCategory, user, rank++, summary.getSum());
+            rankingService.createRanking(rankingCategory, user, rank++, summary.getCount());
         }
     }
 

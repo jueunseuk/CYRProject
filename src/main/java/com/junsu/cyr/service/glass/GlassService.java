@@ -139,7 +139,7 @@ public class GlassService {
             throw new BaseException(GlassExceptionCode.NOT_ENOUGH_TEMPERATURE);
         }
 
-        Glass glass = getGlass(2);
+        Glass glass = getGlass(1);
 
         user.convertGlass(glass.getAmount());
 

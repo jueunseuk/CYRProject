@@ -1,4 +1,4 @@
-package com.junsu.cyr.domain.experiences;
+package com.junsu.cyr.domain.rankings;
 
 import com.junsu.cyr.domain.globals.BaseTime;
 import com.junsu.cyr.domain.users.User;
@@ -13,24 +13,24 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "experience_log")
-public class ExperienceLog extends BaseTime {
+@Table(name = "ranking")
+public class Ranking extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "experience_log_id")
-    private Long experienceLogId;
+    @Column(name = "ranking_id")
+    private Integer rankingId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "experience")
-    private Experience experience;
+    @JoinColumn(name = "category")
+    private RankingCategory rankingCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user")
     private User user;
 
-    @Column(name = "after", nullable = false)
-    private Long after;
+    @Column(name = "score")
+    private Long score;
 
-    @Column(name = "delta", nullable = false)
-    private Long delta;
+    @Column(name = "priority")
+    private Long priority;
 }

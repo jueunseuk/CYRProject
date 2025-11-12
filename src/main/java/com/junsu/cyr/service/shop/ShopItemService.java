@@ -109,7 +109,7 @@ public class ShopItemService {
         User user = userService.getUserById(userId);
         ShopItem shopItem = getShopItemById(shopItemId);
 
-        if(shopLogRepository.existsByUserAndShopItem(user, shopItem)) {
+        if(shopLogRepository.existsByUserAndShopItem(user, shopItem) && !shopItem.getShopCategory().getShopCategoryId().equals(MagicNumberConstant.SHOP_CATEGORY_CONSUME_TYPE)) {
             throw new BaseException(ShopItemExceptionCode.ALREADY_PURCHASED_ITEM);
         }
 

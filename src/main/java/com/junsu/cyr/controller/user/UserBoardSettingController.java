@@ -20,9 +20,15 @@ public class UserBoardSettingController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping
-    public ResponseEntity<String> updateUserBoardSetting(@RequestBody List<Integer> boardIds, @RequestAttribute Integer userId) {
-        userBoardSettingService.updateFavoriteBoard(boardIds, userId);
-        return ResponseEntity.ok("success to update user board setting");
+    @PostMapping("/{boardId}")
+    public ResponseEntity<String> createUserBookmark(@PathVariable Integer boardId, @RequestAttribute Integer userId) {
+        userBoardSettingService.updateFavoriteBoard(boardId, userId);
+        return ResponseEntity.ok("success to add user bookmark");
+    }
+
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<String> deleteUserBookmark(@PathVariable Integer boardId, @RequestAttribute Integer userId) {
+        userBoardSettingService.updateFavoriteBoard(boardId, userId);
+        return ResponseEntity.ok("success to delete user bookmark");
     }
 }

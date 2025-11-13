@@ -22,7 +22,7 @@ public class NotificationController {
     }
 
     @GetMapping("/unread/all")
-    public ResponseEntity<List<NotificationResponse>> getAllNotification(@RequestAttribute Integer userId) {
+    public ResponseEntity<List<NotificationResponse>> getAllUnreadNotification(@RequestAttribute Integer userId) {
         List<NotificationResponse> notificationResponses = notificationService.getUnreadNotificationByUser(userId);
         return ResponseEntity.ok(notificationResponses);
     }

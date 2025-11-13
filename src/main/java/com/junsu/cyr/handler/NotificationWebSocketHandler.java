@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class AlarmWebSocketHandler extends TextWebSocketHandler {
+public class NotificationWebSocketHandler extends TextWebSocketHandler {
     private static final ConcurrentHashMap<String, WebSocketSession> CLIENTS = new ConcurrentHashMap<>();
 
     @Override

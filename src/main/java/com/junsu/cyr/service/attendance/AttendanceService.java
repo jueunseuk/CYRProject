@@ -9,6 +9,7 @@ import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.AttendanceExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
+import com.junsu.cyr.service.notification.usecase.TemperatureNotificationUseCase;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final UserRepository userRepository;
     private final UserService userService;
+    private final TemperatureNotificationUseCase temperatureNotificationUseCase;
 
     @Transactional
     public void makeAttendance(User user, AttendanceRequest request) {
@@ -54,6 +56,14 @@ public class AttendanceService {
                 userService.addTemperature(user, 8);
             } else {
                 user.initTemperature();
+            }
+        }
+
+        if(user.getTemperature() == 1800) {
+            if(user.getSand() < 100) {
+                temperatureNotificationUseCase.temperatureMaximumReached(user);
+            } else {
+                temperatureNotificationUseCase.temperatureMaximumReachAndCraftGlass(user);
             }
         }
 

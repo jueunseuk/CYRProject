@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Builder
 @Getter
@@ -36,4 +38,12 @@ public class Notification extends BaseTime {
 
     @Column(name = "is_read")
     private Boolean isRead;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    public void readNotification() {
+        this.isRead = true;
+        this.updatedAt = LocalDateTime.now();
+    }
 }

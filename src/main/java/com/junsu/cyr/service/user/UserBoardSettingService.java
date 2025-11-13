@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,12 +27,14 @@ public class UserBoardSettingService {
     }
 
     @Transactional
-    public void updateFavoriteBoard(List<Integer> boardIds, Integer userId) {
+    public void updateFavoriteBoard(Integer boardId, Integer userId) {
         User user = userService.getUserById(userId);
-        List<UserBoardSetting> userBoardSettings = userBoardSettingRepository.findAllByUser(user);
-        userBoardSettingRepository.deleteAll(userBoardSettings);
-        for(Integer boardId : boardIds) {
-            Board board = boardService.findBoardByBoardId(boardId);
+        Board board = boardService.findBoardByBoardId(boardId);
+        Optional<UserBoardSetting> userBoardSetting = userBoardSettingRepository.findByUserAndBoard(user, board);
+
+        if(userBoardSetting.isPresent()) {
+            userBoardSettingRepository.delete(userBoardSetting.get());
+        } else {
             createUserBoardSetting(user, board);
         }
     }

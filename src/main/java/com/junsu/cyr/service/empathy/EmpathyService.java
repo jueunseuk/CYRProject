@@ -53,14 +53,14 @@ public class EmpathyService {
 
         empathyRepository.save(empathy);
         post.increaseEmpathyCnt();
+        user.increaseEmpathyCnt();
 
         return new EmpathyResponse(postId, userId);
     }
 
     @Transactional
     public void deleteEmpathy(Long postId, Integer userId) {
-        userRepository.findByUserId(userId)
-                .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
+        User user = userService.getUserById(userId);
 
         Post post = postRepository.findByPostId(postId)
                 .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
@@ -72,6 +72,7 @@ public class EmpathyService {
         }
 
         post.decreaseEmpathyCnt();
+        user.decreaseEmpathyCnt();
         empathyRepository.deleteById(empathyId);
     }
 

@@ -116,7 +116,7 @@ public class ExperienceService {
 
         long count = 0;
         for (ExperienceLog experienceLog : experienceLogs) {
-            count += experienceLog.getExperience().getAmount();
+            count += experienceLog.getDelta();
         }
 
         return count;

@@ -203,4 +203,12 @@ public class User extends BaseTime {
     public void updateRole(Role role) {
         this.role = role;
     }
+
+    public void increaseEmpathyCnt() {
+        this.empathyCnt += 1;
+    }
+
+    public void decreaseEmpathyCnt() {
+        this.empathyCnt -= 1;
+    }
 }

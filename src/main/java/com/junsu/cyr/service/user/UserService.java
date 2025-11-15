@@ -89,7 +89,7 @@ public class UserService {
         Sand sand = sandService.getSand(sandId);
         user.updateSand(sand.getAmount());
 
-        sandService.createSandLog(sand, user);
+        sandService.createSandLog(sand, sand.getAmount(),user);
     }
 
     @Transactional

@@ -33,4 +33,8 @@ public class ExperienceLog extends BaseTime {
 
     @Column(name = "delta", nullable = false)
     private Long delta;
+
+    public void updateDelta(Integer amount) {
+        this.delta = Long.valueOf(amount);
+    }
 }

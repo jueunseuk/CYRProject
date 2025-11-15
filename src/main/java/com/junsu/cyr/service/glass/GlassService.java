@@ -122,7 +122,7 @@ public class GlassService {
 
         long count = 0;
         for (GlassLog glassLog : glassLogs) {
-            count += glassLog.getGlass().getAmount();
+            count += glassLog.getDelta();
         }
 
         return count;

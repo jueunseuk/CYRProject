@@ -48,7 +48,7 @@ public class PostService {
 
     @Transactional
     public PostResponse getPost(Long postId, Integer userId) {
-        User user = userService.getUserById(userId);
+        userService.getUserById(userId);
 
         Post post = postRepository.findByPostId(postId)
                 .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
@@ -63,7 +63,7 @@ public class PostService {
     public Page<PostListResponse> getAllPosts(PostSearchConditionRequest condition) {
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), Sort.by(condition.getSort()).descending());
 
-        Page<Post> posts = postRepository.findAllNew(9, 17, pageable);
+        Page<Post> posts = postRepository.findAllNew(9, 17, Locked.PUBLIC, pageable);
 
         return posts.map(PostListResponse::new);
     }
@@ -76,6 +76,7 @@ public class PostService {
                 17,
                 LocalDateTime.parse(condition.getStart()),
                 LocalDateTime.parse(condition.getEnd()),
+                Locked.PUBLIC,
                 pageable
         );
 
@@ -209,7 +210,7 @@ public class PostService {
 
     @Transactional
     public void deletePosts(Long postId, Integer userId) {
-        User user = userService.getUserById(userId);
+        userService.getUserById(userId);
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
@@ -223,7 +224,7 @@ public class PostService {
 
     @Transactional
     public PostUploadResponse updatePosts(PostUploadRequest request, Long postId, Integer userId) {
-        User user = userService.getUserById(userId);
+        userService.getUserById(userId);
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));

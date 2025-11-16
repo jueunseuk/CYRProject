@@ -1,5 +1,5 @@
 package com.junsu.cyr.domain.achievements;
 
 public enum Type {
-    CUMULATIVE, ONE_TIME;
+    POST, COMMENT, CHEER, ATTENDANCE, EMPATHY, SAND, CRAFTSHOP, EXPERIENCE, SPECIAL;
 }

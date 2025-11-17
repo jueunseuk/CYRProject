@@ -28,7 +28,7 @@ public class Achievement {
     private String imageUrl;
 
     @Column(name = "condition_amount")
-    private Integer conditionAmount;
+    private Long conditionAmount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
@@ -37,4 +37,8 @@ public class Achievement {
     @Enumerated(EnumType.STRING)
     @Column(name = "difficulty", nullable = false)
     private Difficulty difficulty;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "scope", nullable = false)
+    private Scope scope;
 }

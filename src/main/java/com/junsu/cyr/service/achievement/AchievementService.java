@@ -1,6 +1,7 @@
 package com.junsu.cyr.service.achievement;
 
 import com.junsu.cyr.domain.achievements.Achievement;
+import com.junsu.cyr.domain.achievements.Scope;
 import com.junsu.cyr.domain.achievements.Type;
 import com.junsu.cyr.repository.AchievementRepository;
 import com.junsu.cyr.response.exception.code.AchievementExceptionCode;
@@ -19,8 +20,8 @@ public class AchievementService {
                 .orElseThrow(() -> new BaseException(AchievementExceptionCode.NOT_FOUND_ACHIEVEMENT));
     }
 
-    public Achievement getAchievement(Type type, Integer conditionAmount) {
-        return achievementRepository.findByTypeAndConditionAmount(type, conditionAmount)
+    public Achievement getAchievement(Type type, Scope scope, Long conditionAmount) {
+        return achievementRepository.findByTypeAndScopeAndConditionAmount(type, scope, conditionAmount)
                 .orElse(null);
     }
 }

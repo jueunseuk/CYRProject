@@ -2,18 +2,23 @@ package com.junsu.cyr.service.achievement;
 
 import com.junsu.cyr.domain.achievements.Achievement;
 import com.junsu.cyr.domain.achievements.AchievementLog;
+import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.achievement.AchievementLogConditionRequest;
 import com.junsu.cyr.model.achievement.AchievementLogResponse;
 import com.junsu.cyr.repository.AchievementLogRepository;
 import com.junsu.cyr.response.exception.code.AchievementExceptionCode;
+import com.junsu.cyr.response.exception.code.ImageExceptionCode;
+import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
+import com.junsu.cyr.service.image.S3Service;
 import com.junsu.cyr.service.user.UserService;
 import com.junsu.cyr.util.PageableMaker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,6 +28,8 @@ public class AchievementLogService {
 
     private final AchievementLogRepository achievementLogRepository;
     private final UserService userService;
+    private final S3Service s3Service;
+    private final AchievementService achievementService;
 
     public AchievementLog getAchievementLog(Long achievementLogId) {
         return achievementLogRepository.findById(achievementLogId)
@@ -60,5 +67,28 @@ public class AchievementLogService {
         }
 
         return achievementLogResponses.stream().map(AchievementLogResponse::new).toList();
+    }
+
+    @Transactional
+    public void updateImage(Integer achievementId, MultipartFile file, Integer userId) {
+        User user = userService.getUserById(userId);
+        Achievement achievement = achievementService.getAchievement(achievementId);
+
+        if(!userService.isLeastAdmin(user)) {
+            throw new BaseException(UserExceptionCode.REQUIRES_AT_LEAST_ADMIN);
+        }
+
+        if(file.isEmpty()) {
+            throw new BaseException(ImageExceptionCode.NO_PHOTOS_TO_UPLOAD);
+        }
+
+        String imageUrl;
+        try {
+            imageUrl = s3Service.uploadFile(file, Type.ACHIEVEMENT);
+        } catch (Exception e) {
+            throw new BaseException(ImageExceptionCode.FAILED_TO_UPLOAD_IMAGE);
+        }
+
+        achievement.updateImage(imageUrl);
     }
 }

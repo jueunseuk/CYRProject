@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AchievementLogConditionRequest {
     private Integer page = 0;
-    private Integer size = 0;
+    private Integer size = 100;
     private String sort = "createdAt";
     private String direction = "ASC";
     private Type type;

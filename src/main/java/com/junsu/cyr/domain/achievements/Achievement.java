@@ -41,4 +41,8 @@ public class Achievement {
     @Enumerated(EnumType.STRING)
     @Column(name = "scope", nullable = false)
     private Scope scope;
+
+    public void updateImage(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }

@@ -12,6 +12,8 @@ import com.junsu.cyr.response.exception.code.RankingExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.service.glass.GlassService;
+import com.junsu.cyr.service.notification.NotificationService;
+import com.junsu.cyr.service.notification.usecase.RankingNotificationUseCase;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +40,8 @@ public class RankingAggregationService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final GlassService glassService;
+    private final NotificationService notificationService;
+    private final RankingNotificationUseCase rankingNotificationUseCase;
 
     @Transactional
     public void refreshByPeriodWithScheduler(Refresh refresh) {
@@ -117,6 +121,7 @@ public class RankingAggregationService {
         for (CheerSummary summary : top10) {
             User user = userService.getUserById(summary.getCheerSummaryId().getUserId());
             rankingService.createRanking(rankingCategory, user, rank++, summary.getCount());
+            rankingNotificationUseCase.enterRanking(user);
         }
     }
 
@@ -146,6 +151,7 @@ public class RankingAggregationService {
             for (CountRankingProjection summary : attendances) {
                 User user = userService.getUserById(summary.getUserId());
                 rankingService.createRanking(rankingCategory, user, rank++, summary.getCount());
+                rankingNotificationUseCase.enterRanking(user);
             }
         }
     }
@@ -160,6 +166,7 @@ public class RankingAggregationService {
             long rank = 1;
             for (User user : users) {
                 rankingService.createRanking(rankingCategory, user, rank++, user.getEpxCnt());
+                rankingNotificationUseCase.enterRanking(user);
             }
             return;
         }
@@ -179,6 +186,7 @@ public class RankingAggregationService {
         for (SumRankingProjection summary : experienceRankings) {
             User user = userService.getUserById(summary.getUserId());
             rankingService.createRanking(rankingCategory, user, rank++, summary.getSum());
+            rankingNotificationUseCase.enterRanking(user);
         }
     }
 
@@ -201,6 +209,7 @@ public class RankingAggregationService {
         for (CountRankingProjection summary : glassRankings) {
             User user = userService.getUserById(summary.getUserId());
             rankingService.createRanking(rankingCategory, user, rank++, summary.getCount());
+            rankingNotificationUseCase.enterRanking(user);
         }
     }
 
@@ -216,6 +225,7 @@ public class RankingAggregationService {
         for (CountRankingProjection summary : postRankings) {
             User user = userService.getUserById(summary.getUserId());
             rankingService.createRanking(rankingCategory, user, rank++, summary.getCount());
+            rankingNotificationUseCase.enterRanking(user);
         }
     }
 }

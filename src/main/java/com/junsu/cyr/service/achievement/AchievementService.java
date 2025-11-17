@@ -1,6 +1,7 @@
 package com.junsu.cyr.service.achievement;
 
 import com.junsu.cyr.domain.achievements.Achievement;
+import com.junsu.cyr.domain.achievements.AchievementLog;
 import com.junsu.cyr.domain.achievements.Scope;
 import com.junsu.cyr.domain.achievements.Type;
 import com.junsu.cyr.repository.AchievementRepository;

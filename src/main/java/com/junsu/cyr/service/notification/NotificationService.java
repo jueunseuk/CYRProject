@@ -61,7 +61,15 @@ public class NotificationService {
     public List<NotificationResponse> getUnreadNotificationByUser(Integer userId) {
         User user = userService.getUserById(userId);
 
-        List<Notification> notifications = notificationRepository.findAllByUserAndIsRead(user, true);
+        List<Notification> notifications = notificationRepository.findAllByUserAndIsRead(user, false);
+
+        return notifications.stream().map(NotificationResponse::new).toList();
+    }
+
+    public List<NotificationResponse> getNotificationByUser(Integer userId) {
+        User user = userService.getUserById(userId);
+
+        List<Notification> notifications = notificationRepository.findAllByUserOrderByCreatedAtDesc(user);
 
         return notifications.stream().map(NotificationResponse::new).toList();
     }

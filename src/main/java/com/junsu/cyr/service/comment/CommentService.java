@@ -1,5 +1,7 @@
 package com.junsu.cyr.service.comment;
 
+import com.junsu.cyr.domain.achievements.Scope;
+import com.junsu.cyr.domain.achievements.Type;
 import com.junsu.cyr.domain.comments.Comment;
 import com.junsu.cyr.domain.comments.Fixed;
 import com.junsu.cyr.domain.comments.Locked;
@@ -17,6 +19,7 @@ import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.CommentExceptionCode;
 import com.junsu.cyr.response.exception.code.PostExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
+import com.junsu.cyr.service.achievement.AchievementProcessor;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,6 +29,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,6 +42,7 @@ public class CommentService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final UserService userService;
+    private final AchievementProcessor achievementProcessor;
 
     private Comment getCommentByCommentId(Long commentId) {
         return commentRepository.findById(commentId)
@@ -57,6 +62,7 @@ public class CommentService {
         }
 
         post.increaseCommentCnt();
+        user.increaseCommentCnt();
 
         Comment comment = Comment.builder()
                 .user(user)
@@ -69,6 +75,10 @@ public class CommentService {
         userService.addExpAndSand(user, 2, 10);
 
         commentRepository.save(comment);
+
+        achievementProcessor.achievementFlow(user, Type.COMMENT, Scope.TOTAL, user.getCommentCnt());
+        Long todayCommentCnt = commentRepository.countByCreatedAtBetween(LocalDate.now().atStartOfDay(), LocalDateTime.now());
+        achievementProcessor.achievementFlow(user, Type.COMMENT, Scope.DAILY, todayCommentCnt);
     }
 
     public List<CommentResponse> getPostComments(Long postId) {
@@ -103,7 +113,7 @@ public class CommentService {
 
     @Transactional
     public void deleteComment(Long commentId, Integer userId) {
-        userRepository.findByUserId(userId)
+        User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
         Comment comment = commentRepository.findById(commentId)
@@ -115,6 +125,7 @@ public class CommentService {
 
         commentRepository.delete(comment);
         comment.getPost().decreaseCommentCnt();
+        user.decreaseCommentCnt();
     }
 
     public Page<UserCommentResponse> getCommentsByUser(Integer searchId, Integer userId, CommentSearchConditionRequest condition) {

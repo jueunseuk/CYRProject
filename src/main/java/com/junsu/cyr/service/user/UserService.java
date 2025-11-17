@@ -1,6 +1,7 @@
 package com.junsu.cyr.service.user;
 
 import com.junsu.cyr.domain.experiences.Experience;
+import com.junsu.cyr.domain.glass.Glass;
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.sand.Sand;
 import com.junsu.cyr.domain.temperature.Temperature;
@@ -14,6 +15,7 @@ import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.service.experience.ExperienceService;
+import com.junsu.cyr.service.glass.GlassService;
 import com.junsu.cyr.service.image.S3Service;
 import com.junsu.cyr.service.sand.SandService;
 import com.junsu.cyr.service.temperature.TemperatureService;
@@ -42,6 +44,7 @@ public class UserService {
     private final CommentRepository commentRepository;
     private final EmpathyRepository empathyRepository;
     private final GalleryImageRepository galleryImageRepository;
+    private final GlassService glassService;
 
     public User getUserById(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
@@ -89,7 +92,23 @@ public class UserService {
         Sand sand = sandService.getSand(sandId);
         user.updateSand(sand.getAmount());
 
-        sandService.createSandLog(sand, user);
+        sandService.createSandLog(sand, sand.getAmount(), user);
+    }
+
+    @Transactional
+    public void addSand(User user, Integer sandId, Integer amount) {
+        Sand sand = sandService.getSand(sandId);
+        user.updateSand(amount);
+
+        sandService.createSandLog(sand, amount, user);
+    }
+
+    @Transactional
+    public void addGlass(User user, Integer glassId, Integer amount) {
+        Glass glass = glassService.getGlass(glassId);
+        user.updateGlass(amount);
+
+        glassService.createGlassLog(glass, user, amount);
     }
 
     @Transactional

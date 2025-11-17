@@ -14,12 +14,12 @@ public class AchievementNotificationUseCase {
 
     private final NotificationService notificationService;
 
-    public void invitedChatRoom(User user, User other) {
+    public void accomplishAchievement(User user, String name) {
         Notification notification = notificationService.createNotification(
                 user,
                 Type.ACHIEVEMENT,
-                NotificationMessageConstant.format(NotificationMessageConstant.ACCOMPLISH_ACHIEVEMENT, other.getNickname()),
-                Long.valueOf(other.getUserId())
+                NotificationMessageConstant.format(NotificationMessageConstant.ACCOMPLISH_ACHIEVEMENT, name),
+                null
         );
 
         notificationService.pushNotification(user.getUserId(), notification);

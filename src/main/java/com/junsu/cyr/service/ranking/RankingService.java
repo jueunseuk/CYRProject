@@ -76,7 +76,7 @@ public class RankingService {
 
         Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
-        List<Ranking> rankingResponses = rankingRepository.findALlByRankingCategory(rankingCategory, pageable);
+        List<Ranking> rankingResponses = rankingRepository.findAllByRankingCategory(rankingCategory, pageable);
 
         return rankingResponses.stream().map(RankingResponse::new).toList();
     }

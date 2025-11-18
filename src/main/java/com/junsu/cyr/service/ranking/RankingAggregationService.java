@@ -12,7 +12,6 @@ import com.junsu.cyr.response.exception.code.RankingExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.service.glass.GlassService;
-import com.junsu.cyr.service.notification.NotificationService;
 import com.junsu.cyr.service.notification.usecase.RankingNotificationUseCase;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +20,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -40,16 +42,18 @@ public class RankingAggregationService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final GlassService glassService;
-    private final NotificationService notificationService;
     private final RankingNotificationUseCase rankingNotificationUseCase;
+    private final RankingRepository rankingRepository;
 
     @Transactional
     public void refreshByPeriodWithScheduler(Refresh refresh) {
+        Set<Integer> userList = new HashSet<>(rankingRepository.findUser_UserId());
+
         switch (refresh) {
-            case MIDNIGHT -> updateDailyRankings();
-            case HOURLY -> updateHourlyRankings();
-            case THREE_HOURLY -> updateThreeHourlyRankings();
-            case TEN_MINUTES -> updateTenMinutesRankings();
+            case MIDNIGHT -> updateDailyRankings(userList);
+            case HOURLY -> updateHourlyRankings(userList);
+            case THREE_HOURLY -> updateThreeHourlyRankings(userList);
+            case TEN_MINUTES -> updateTenMinutesRankings(userList);
         }
     }
 
@@ -60,36 +64,38 @@ public class RankingAggregationService {
             throw new BaseException(UserExceptionCode.REQUIRES_AT_LEAST_ADMIN);
         }
 
+        Set<Integer> userList = new HashSet<>(rankingRepository.findUser_UserId());
+
         switch (type) {
-            case CHEER -> updateCheerRanking(period);
-            case ATTENDANCE -> updateAttendanceRanking(period);
-            case EXP -> updateExperienceRanking(period);
-            case GLASS -> updateGlassRanking(period);
-            case POST -> updatePostRanking(period);
+            case CHEER -> updateCheerRanking(period, userList);
+            case ATTENDANCE -> updateAttendanceRanking(period, userList);
+            case EXP -> updateExperienceRanking(period, userList);
+            case GLASS -> updateGlassRanking(period, userList);
+            case POST -> updatePostRanking(period, userList);
         }
     }
 
-    public void updateDailyRankings() {
-        updateCheerRanking(Period.TOTAL);
-        updateAttendanceRanking(Period.TOTAL);
-        updateGlassRanking(Period.TOTAL);
+    public void updateDailyRankings(Set<Integer> userList) {
+        updateCheerRanking(Period.TOTAL, userList);
+        updateAttendanceRanking(Period.TOTAL, userList);
+        updateGlassRanking(Period.TOTAL, userList);
     }
 
-    public void updateHourlyRankings() {
-        updateAttendanceRanking(Period.MONTHLY);
-        updateGlassRanking(Period.DAILY);
-        updatePostRanking(Period.DAILY);
+    public void updateHourlyRankings(Set<Integer> userList) {
+        updateAttendanceRanking(Period.MONTHLY, userList);
+        updateGlassRanking(Period.DAILY, userList);
+        updatePostRanking(Period.DAILY, userList);
     }
 
-    public void updateThreeHourlyRankings() {
-        updateExperienceRanking(Period.DAILY);
+    public void updateThreeHourlyRankings(Set<Integer> userList) {
+        updateExperienceRanking(Period.DAILY, userList);
     }
 
-    public void updateTenMinutesRankings() {
-        updateCheerRanking(Period.DAILY);
+    public void updateTenMinutesRankings(Set<Integer> userList) {
+        updateCheerRanking(Period.DAILY, userList);
     }
 
-    public void updateCheerRanking(Period period) {
+    public void updateCheerRanking(Period period, Set<Integer> userList) {
         LocalDate now = LocalDate.now();
         LocalDate start;
 
@@ -107,7 +113,7 @@ public class RankingAggregationService {
 
         switch (period) {
             case DAILY -> start = now;
-            case WEEKLY -> start = now.with(java.time.DayOfWeek.MONDAY);
+            case WEEKLY -> start = now.with(DayOfWeek.MONDAY);
             case MONTHLY -> start = now.withDayOfMonth(1);
             default -> throw new BaseException(RankingExceptionCode.INVALID_PERIOD);
         }
@@ -121,11 +127,13 @@ public class RankingAggregationService {
         for (CheerSummary summary : top10) {
             User user = userService.getUserById(summary.getCheerSummaryId().getUserId());
             rankingService.createRanking(rankingCategory, user, rank++, summary.getCount());
-            rankingNotificationUseCase.enterRanking(user);
+            if(!userList.contains(user.getUserId())) {
+                rankingNotificationUseCase.enterRanking(user);
+            }
         }
     }
 
-    public void updateAttendanceRanking(Period period) {
+    public void updateAttendanceRanking(Period period, Set<Integer> userList) {
         LocalDate now = LocalDate.now();
         LocalDate start = now.withDayOfMonth(1);
 
@@ -151,12 +159,14 @@ public class RankingAggregationService {
             for (CountRankingProjection summary : attendances) {
                 User user = userService.getUserById(summary.getUserId());
                 rankingService.createRanking(rankingCategory, user, rank++, summary.getCount());
-                rankingNotificationUseCase.enterRanking(user);
+                if(!userList.contains(user.getUserId())) {
+                    rankingNotificationUseCase.enterRanking(user);
+                }
             }
         }
     }
 
-    public void updateExperienceRanking(Period period) {
+    public void updateExperienceRanking(Period period, Set<Integer> userList) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime start;
 
@@ -166,7 +176,9 @@ public class RankingAggregationService {
             long rank = 1;
             for (User user : users) {
                 rankingService.createRanking(rankingCategory, user, rank++, user.getEpxCnt());
-                rankingNotificationUseCase.enterRanking(user);
+                if(!userList.contains(user.getUserId())) {
+                    rankingNotificationUseCase.enterRanking(user);
+                }
             }
             return;
         }
@@ -186,11 +198,13 @@ public class RankingAggregationService {
         for (SumRankingProjection summary : experienceRankings) {
             User user = userService.getUserById(summary.getUserId());
             rankingService.createRanking(rankingCategory, user, rank++, summary.getSum());
-            rankingNotificationUseCase.enterRanking(user);
+            if(!userList.contains(user.getUserId())) {
+                rankingNotificationUseCase.enterRanking(user);
+            }
         }
     }
 
-    public void updateGlassRanking(Period period) {
+    public void updateGlassRanking(Period period, Set<Integer> userList) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime start;
 
@@ -209,11 +223,13 @@ public class RankingAggregationService {
         for (CountRankingProjection summary : glassRankings) {
             User user = userService.getUserById(summary.getUserId());
             rankingService.createRanking(rankingCategory, user, rank++, summary.getCount());
-            rankingNotificationUseCase.enterRanking(user);
+            if(!userList.contains(user.getUserId())) {
+                rankingNotificationUseCase.enterRanking(user);
+            }
         }
     }
 
-    public void updatePostRanking(Period period) {
+    public void updatePostRanking(Period period, Set<Integer> userList) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime start = LocalDate.now().atStartOfDay();
 
@@ -225,7 +241,9 @@ public class RankingAggregationService {
         for (CountRankingProjection summary : postRankings) {
             User user = userService.getUserById(summary.getUserId());
             rankingService.createRanking(rankingCategory, user, rank++, summary.getCount());
-            rankingNotificationUseCase.enterRanking(user);
+            if(!userList.contains(user.getUserId())) {
+                rankingNotificationUseCase.enterRanking(user);
+            }
         }
     }
 }

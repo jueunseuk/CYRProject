@@ -19,7 +19,7 @@ public class PollSchedulerService {
 
     private final PollRepository pollRepository;
 
-    @Scheduled(cron = "0 */5 * * * *")
+    @Scheduled(cron = "0 */10 * * * *")
     @Transactional
     public void closeExpiredPolls() {
         log.info("[PollScheduler] {} : 만료된 투표 검색 시작", LocalDateTime.now());

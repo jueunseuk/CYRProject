@@ -122,7 +122,7 @@ public class GlassService {
 
         long count = 0;
         for (GlassLog glassLog : glassLogs) {
-            count += glassLog.getGlass().getAmount();
+            count += glassLog.getDelta();
         }
 
         return count;
@@ -139,7 +139,7 @@ public class GlassService {
             throw new BaseException(GlassExceptionCode.NOT_ENOUGH_TEMPERATURE);
         }
 
-        Glass glass = getGlass(2);
+        Glass glass = getGlass(1);
 
         user.convertGlass(glass.getAmount());
 

@@ -192,7 +192,49 @@ public class User extends BaseTime {
         this.glass -= amount;
     }
 
-    public void decreaseWarningCnt(int amount) {
-        this.warn -= amount;
+    public void updateWarnCnt(int amount) {
+        this.warn += amount;
+    }
+
+    public void updateStatus(Status status) {
+        this.status = status;
+    }
+
+    public void updateRole(Role role) {
+        this.role = role;
+    }
+
+    public void increaseEmpathyCnt() {
+        this.empathyCnt += 1;
+    }
+
+    public void decreaseEmpathyCnt() {
+        this.empathyCnt -= 1;
+    }
+
+    public void increasePostCnt() {
+        this.postCnt += 1;
+    }
+
+    public void decreasePostCnt() {
+        this.postCnt -= 1;
+        if(this.postCnt < 0) {
+            this.postCnt = 0L;
+        }
+    }
+
+    public void increaseCommentCnt() {
+        this.commentCnt += 1;
+    }
+
+    public void decreaseCommentCnt() {
+        this.commentCnt -= 1;
+        if(this.commentCnt < 0) {
+            this.commentCnt = 0L;
+        }
+    }
+
+    public void updateGlass(Integer amount) {
+        this.glass += amount;
     }
 }

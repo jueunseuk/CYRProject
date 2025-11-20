@@ -1,17 +1,28 @@
 package com.junsu.cyr.service.post;
 
 import com.junsu.cyr.constant.PostSortFieldConstant;
+import com.junsu.cyr.domain.achievements.Achievement;
+import com.junsu.cyr.domain.achievements.Scope;
+import com.junsu.cyr.domain.achievements.Type;
 import com.junsu.cyr.domain.boards.Board;
+import com.junsu.cyr.domain.comments.Comment;
+import com.junsu.cyr.domain.empathys.Empathy;
 import com.junsu.cyr.domain.empathys.EmpathyId;
 import com.junsu.cyr.domain.posts.Locked;
 import com.junsu.cyr.domain.posts.Post;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.post.*;
+import com.junsu.cyr.model.search.SearchConditionRequest;
+import com.junsu.cyr.repository.CommentRepository;
 import com.junsu.cyr.repository.EmpathyRepository;
 import com.junsu.cyr.repository.PostRepository;
+import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.PostExceptionCode;
+import com.junsu.cyr.service.achievement.AchievementProcessor;
+import com.junsu.cyr.service.achievement.AchievementService;
 import com.junsu.cyr.service.board.BoardService;
+import com.junsu.cyr.service.comment.CommentService;
 import com.junsu.cyr.service.user.UserService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -20,6 +31,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -32,10 +44,17 @@ public class PostService {
     private final BoardService boardService;
     private final EntityManager entityManager;
     private final EmpathyRepository empathyRepository;
+    private final CommentRepository commentRepository;
+    private final AchievementProcessor achievementProcessor;
+
+    private Post getPostByPostId(Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
+    }
 
     @Transactional
     public PostResponse getPost(Long postId, Integer userId) {
-        User user = userService.getUserById(userId);
+        userService.getUserById(userId);
 
         Post post = postRepository.findByPostId(postId)
                 .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
@@ -50,7 +69,7 @@ public class PostService {
     public Page<PostListResponse> getAllPosts(PostSearchConditionRequest condition) {
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), Sort.by(condition.getSort()).descending());
 
-        Page<Post> posts = postRepository.findAllNew(9, 17, pageable);
+        Page<Post> posts = postRepository.findAllNew(9, 17, Locked.PUBLIC, pageable);
 
         return posts.map(PostListResponse::new);
     }
@@ -63,6 +82,7 @@ public class PostService {
                 17,
                 LocalDateTime.parse(condition.getStart()),
                 LocalDateTime.parse(condition.getEnd()),
+                Locked.PUBLIC,
                 pageable
         );
 
@@ -176,6 +196,11 @@ public class PostService {
                 .build();
 
         postRepository.save(post);
+        user.increasePostCnt();
+
+        achievementProcessor.achievementFlow(user, Type.POST, Scope.TOTAL, user.getPostCnt());
+        Long todayPostCnt = postRepository.countByCreatedAtBetween(LocalDate.now().atStartOfDay(), LocalDateTime.now());
+        achievementProcessor.achievementFlow(user, Type.POST, Scope.DAILY, todayPostCnt);
 
         switch(board.getBoardId()) {
             case 9 -> userService.addSand(user, 1);
@@ -206,11 +231,12 @@ public class PostService {
         }
 
         postRepository.delete(post);
+        user.decreasePostCnt();
     }
 
     @Transactional
     public PostUploadResponse updatePosts(PostUploadRequest request, Long postId, Integer userId) {
-        User user = userService.getUserById(userId);
+        userService.getUserById(userId);
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
@@ -260,5 +286,37 @@ public class PostService {
 
     public Long getPostCnt(LocalDateTime start, LocalDateTime now) {
         return postRepository.countByCreatedAtBetween(start, now);
+    }
+
+    @Transactional
+    public void deletePostForce(Long postId, Integer userId) {
+        User user = userService.getUserById(userId);
+
+        if(!userService.isLeastManager(user)) {
+            throw new BaseException(UserExceptionCode.REQUIRES_AT_LEAST_MANAGER);
+        }
+
+        Post post = getPostByPostId(postId);
+
+        List<Comment> comments = commentRepository.findByPost(post);
+        List<Empathy> empathyList = empathyRepository.findAllByPost(post);
+
+        commentRepository.deleteAll(comments);
+        empathyRepository.deleteAll(empathyList);
+        postRepository.delete(post);
+    }
+
+    public Page<Post> searchByTitle(SearchConditionRequest condition) {
+        Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
+
+        return postRepository.findAllByTitleContaining(condition.getKeyword(), pageable);
+    }
+
+    public Page<Post> searchByContent(SearchConditionRequest condition) {
+        Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
+
+        return postRepository.findAllByContentContaining(condition.getKeyword(), pageable);
     }
 }

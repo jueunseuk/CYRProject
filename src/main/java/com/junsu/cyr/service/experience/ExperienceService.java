@@ -35,6 +35,7 @@ public class ExperienceService {
     public void createExperienceLog(Experience experience, User user) {
         ExperienceLog experienceLog = ExperienceLog.builder()
                 .experience(experience)
+                .delta(Long.valueOf(experience.getAmount()))
                 .after(user.getEpxCnt())
                 .user(user)
                 .build();
@@ -115,7 +116,7 @@ public class ExperienceService {
 
         long count = 0;
         for (ExperienceLog experienceLog : experienceLogs) {
-            count += experienceLog.getExperience().getAmount();
+            count += experienceLog.getDelta();
         }
 
         return count;

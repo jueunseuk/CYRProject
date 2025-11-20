@@ -1,22 +1,26 @@
 package com.junsu.cyr.service.user;
 
 import com.junsu.cyr.domain.experiences.Experience;
+import com.junsu.cyr.domain.glass.Glass;
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.sand.Sand;
 import com.junsu.cyr.domain.temperature.Temperature;
 import com.junsu.cyr.domain.users.Role;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.auth.SignupResponse;
+import com.junsu.cyr.model.search.SearchConditionRequest;
 import com.junsu.cyr.model.user.*;
 import com.junsu.cyr.repository.*;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.service.experience.ExperienceService;
+import com.junsu.cyr.service.glass.GlassService;
 import com.junsu.cyr.service.image.S3Service;
 import com.junsu.cyr.service.sand.SandService;
 import com.junsu.cyr.service.temperature.TemperatureService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -40,6 +44,7 @@ public class UserService {
     private final CommentRepository commentRepository;
     private final EmpathyRepository empathyRepository;
     private final GalleryImageRepository galleryImageRepository;
+    private final GlassService glassService;
 
     public User getUserById(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
@@ -87,7 +92,23 @@ public class UserService {
         Sand sand = sandService.getSand(sandId);
         user.updateSand(sand.getAmount());
 
-        sandService.createSandLog(sand, user);
+        sandService.createSandLog(sand, sand.getAmount(), user);
+    }
+
+    @Transactional
+    public void addSand(User user, Integer sandId, Integer amount) {
+        Sand sand = sandService.getSand(sandId);
+        user.updateSand(amount);
+
+        sandService.createSandLog(sand, amount, user);
+    }
+
+    @Transactional
+    public void addGlass(User user, Integer glassId, Integer amount) {
+        Glass glass = glassService.getGlass(glassId);
+        user.updateGlass(amount);
+
+        glassService.createGlassLog(glass, user, amount);
     }
 
     @Transactional
@@ -161,7 +182,10 @@ public class UserService {
 
     @Transactional
     public void decreaseWarning(User user) {
-        user.decreaseWarningCnt(1);
+        if(user.getWarn() == 0) {
+            throw new BaseException(UserExceptionCode.WARNING_ALREADY_ZERO);
+        }
+        user.updateWarnCnt(-1);
     }
 
     @Transactional
@@ -183,8 +207,30 @@ public class UserService {
         Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
 
-        List<User> users = userRepository.findAllByUserId(userId, pageable);
+        List<User> users;
+
+        users = userRepository.findAllByUserId(userId, pageable);
 
         return users.stream().map(UserChatResponse::new).toList();
+    }
+
+    public List<User> getUserListByRole(Role role, UserConditionRequest condition) {
+        Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
+
+        return userRepository.findAllByRole(role, pageable);
+    }
+
+    public Page<User> searchByNickname(SearchConditionRequest condition) {
+        Sort sort = Sort.by(Sort.Direction.fromString(condition.getDirection()), condition.getSort());
+        Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
+
+        return userRepository.findAllByNicknameContaining(condition.getKeyword(), pageable);
+    }
+
+    @Transactional
+    public void deleteUserByUserId(Integer userId) {
+        User user = getUserById(userId);
+        userRepository.delete(user);
     }
 }

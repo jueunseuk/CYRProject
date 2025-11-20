@@ -1,5 +1,7 @@
 package com.junsu.cyr.service.cheer;
 
+import com.junsu.cyr.domain.achievements.Scope;
+import com.junsu.cyr.domain.achievements.Type;
 import com.junsu.cyr.domain.cheers.CheerLog;
 import com.junsu.cyr.domain.cheers.CheerSummary;
 import com.junsu.cyr.domain.cheers.CheerSummaryId;
@@ -12,6 +14,7 @@ import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.CheerSummaryExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
+import com.junsu.cyr.service.achievement.AchievementProcessor;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,7 @@ public class CheerService {
     private final UserRepository userRepository;
     private final CheerSummaryRepository cheerSummaryRepository;
     private final UserService userService;
+    private final AchievementProcessor achievementProcessor;
 
     public Long getTotalCheer() {
         return cheerSummaryRepository.sumTotalCheers();
@@ -57,6 +61,9 @@ public class CheerService {
         createCheerLog(user);
         cheerSummary.increase();
         cheerSummaryRepository.save(cheerSummary);
+
+        achievementProcessor.achievementFlow(user, Type.CHEER, Scope.TOTAL, user.getCheerCnt());
+        achievementProcessor.achievementFlow(user, Type.CHEER, Scope.DAILY, cheerSummary.getCount());
     }
 
     @Transactional

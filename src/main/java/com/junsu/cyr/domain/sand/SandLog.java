@@ -30,4 +30,7 @@ public class SandLog extends BaseTime {
 
     @Column(name = "after", nullable = false)
     private Integer after;
+
+    @Column(name = "delta")
+    private Integer delta;
 }

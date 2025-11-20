@@ -3,6 +3,7 @@ package com.junsu.cyr.repository;
 import com.junsu.cyr.domain.attendances.Attendance;
 import com.junsu.cyr.domain.attendances.AttendanceId;
 import com.junsu.cyr.model.attendance.AttendanceDailyCount;
+import com.junsu.cyr.model.ranking.CountRankingProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -33,4 +34,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Attendan
     Long countAllByAttendanceId_UserIdAndAttendanceId_AttendedAtBetween(Integer userId, LocalDate start, LocalDate end);
 
     List<Attendance> findAllByAttendanceId_UserIdAndAttendanceId_AttendedAtBetween(Integer userId, LocalDate start, LocalDate end);
+
+    @Query("select a.attendanceId.userId as userId, count(a) as count from Attendance a where a.attendanceId.attendedAt between :start and :now group by a.attendanceId.userId order by count(a) desc")
+    List<CountRankingProjection> findAllByAttendanceId_AttendedAtBetween(LocalDate start, LocalDate now);
 }

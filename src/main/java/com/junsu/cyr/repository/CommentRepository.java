@@ -25,4 +25,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Page<Comment> findAllByUserAndLocked(User user, Locked locked, Pageable pageable);
 
     Long countByCreatedAtBetween(LocalDateTime start, LocalDateTime now);
+
+    Page<Comment> findAllByContentContaining(String keyword, Pageable pageable);
 }

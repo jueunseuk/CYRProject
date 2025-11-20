@@ -8,6 +8,7 @@ import com.junsu.cyr.model.chat.ChatRoomRequest;
 import com.junsu.cyr.model.chat.ChatRoomResponse;
 import com.junsu.cyr.response.exception.code.ChatRoomUserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
+import com.junsu.cyr.service.notification.usecase.ChatNotificationUseCase;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class ChatService {
     private final ChatRoomUserService chatRoomUserService;
     private final ChatMessageService chatMessageService;
     private final UserService userService;
+    private final ChatNotificationUseCase chatNotificationUseCase;
 
     @Transactional
     public ChatRoomResponse createChatRoom(ChatRoomRequest request, Integer userId) {
@@ -37,6 +39,8 @@ public class ChatService {
             User other = userService.getUserById(request.getOtherId());
             chatRoomUserService.createChatRoomUser(chatRoom, other);
             chatRoom.increaseMemberCount();
+
+            chatNotificationUseCase.invitedChatRoom(other, user);
         }
 
         chatRoom.updateLastMessage(chatMessage);
@@ -103,7 +107,6 @@ public class ChatService {
 
         String content = String.format(ChatSystemMessageConstant.EXIT, user.getNickname());
         ChatMessage chatMessage = chatMessageService.createSystemMessage(chatRoom, content);
-        chatRoomUserService.createChatRoomUser(chatRoom, user);
         chatRoom.updateLastMessage(chatMessage);
     }
 }

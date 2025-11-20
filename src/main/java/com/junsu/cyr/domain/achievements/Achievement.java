@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Builder
 @Getter
@@ -20,34 +18,31 @@ public class Achievement {
     @Column(name = "achievement_id", nullable = false)
     private Integer achievementId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "achievement_next")
-    private Achievement achievementNext;
-
     @Column(name = "name", nullable = false, length = 1000)
     private String name;
 
-    @Column(name = "badge_url")
-    private String badgeUrl;
+    @Column(name = "description", nullable = false, length = 1000)
+    private String description;
 
-    @Column(name = "reward_sand")
-    private Integer rewardSand;
+    @Column(name = "image_url")
+    private String imageUrl;
 
-    @Column(name = "condition_number")
-    private Integer conditionNumber;
-
-    @Column(name = "condition_date")
-    private LocalDateTime conditionDate;
+    @Column(name = "condition_amount")
+    private Long conditionAmount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private Type type;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "category", nullable = false)
-    private Category category;
+    @Column(name = "difficulty", nullable = false)
+    private Difficulty difficulty;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "condition_type", nullable = false)
-    private ConditionType conditionType;
+    @Column(name = "scope", nullable = false)
+    private Scope scope;
+
+    public void updateImage(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }

@@ -31,6 +31,7 @@ public class SecurityConstant {
             "/auth/kakao/callback",
             "/posts/new",
             "/posts/popular",
+            "/announcement/fixed",
             "/posts/list",
             "/cheer/total",
             "/gallery/random/*",
@@ -41,6 +42,7 @@ public class SecurityConstant {
             "/calendar/before",
             "/calendar/after",
             "/statistic",
+            "/ranking/summary",
             "/ws/**"
     );
 }

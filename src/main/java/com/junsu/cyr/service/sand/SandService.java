@@ -33,11 +33,12 @@ public class SandService {
                 .orElseThrow(() -> new BaseException(SandExceptionCode.NOT_FOUND_SAND));
     }
 
-    public void createSandLog(Sand sand, User user) {
+    public void createSandLog(Sand sand, Integer delta, User user) {
         SandLog sandLog = SandLog.builder()
                 .sand(sand)
                 .user(user)
                 .after(user.getSand())
+                .delta(delta)
                 .build();
 
         sandLogRepository.save(sandLog);
@@ -116,7 +117,7 @@ public class SandService {
 
         long count = 0;
         for (SandLog sandLog : sandLogs) {
-            count += sandLog.getSand().getAmount();
+            count += sandLog.getDelta();
         }
 
         return count;
@@ -129,7 +130,7 @@ public class SandService {
         user.updateSand(randomCnt);
 
         Sand sand = getSand(15);
-        createSandLog(sand, user);
+        createSandLog(sand, randomCnt, user);
 
         return randomCnt;
     }

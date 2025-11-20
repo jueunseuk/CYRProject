@@ -6,6 +6,7 @@ import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.sand.Sand;
 import com.junsu.cyr.domain.temperature.Temperature;
 import com.junsu.cyr.domain.users.Role;
+import com.junsu.cyr.domain.users.Status;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.auth.SignupResponse;
 import com.junsu.cyr.model.search.SearchConditionRequest;
@@ -209,7 +210,7 @@ public class UserService {
 
         List<User> users;
 
-        users = userRepository.findAllByUserId(userId, pageable);
+        users = userRepository.findAllByUserId(userId, Status.DELETED, pageable);
 
         return users.stream().map(UserChatResponse::new).toList();
     }
@@ -229,8 +230,16 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUserByUserId(Integer userId) {
-        User user = getUserById(userId);
-        userRepository.delete(user);
+    public Integer userCleaning() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime aMonthAgo = now.minusMonths(1);
+
+        List<User> users = userRepository.findAllByStatusAndDeletedAtBefore(Status.SECESSION, aMonthAgo);
+
+        for(User user : users) {
+            user.delete();
+        }
+
+        return users.size();
     }
 }

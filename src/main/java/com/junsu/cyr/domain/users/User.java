@@ -64,7 +64,7 @@ public class User extends BaseTime {
     private Integer temperature;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "method", nullable = false)
+    @Column(name = "method")
     private Method method;
 
     @Enumerated(EnumType.STRING)
@@ -102,7 +102,7 @@ public class User extends BaseTime {
     @Column(name = "cheer_cnt")
     private Long cheerCnt;
 
-    @Column(name = "user_deleted_at")
+    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     public void updatePassword(String password) {
@@ -236,5 +236,33 @@ public class User extends BaseTime {
 
     public void updateGlass(Integer amount) {
         this.glass += amount;
+    }
+
+    public void delete() {
+        this.name = "탈퇴한 사용자";
+        this.nickname = "탈퇴한 사용자";
+        this.email = "";
+        this.password = "";
+        this.profileUrl = "";
+        this.passwordUpdatedAt = null;
+        this.introduction = "";
+        this.method = null;
+        this.gender = null;
+        this.age = 0;
+        this.status = Status.DELETED;
+        this.glass = 0;
+        this.epxCnt = 0L;
+        this.sand = 0;
+        this.temperature = 0;
+        this.cheerCnt = 0L;
+        this.empathyCnt = 0L;
+        this.warn = 0;
+        this.role = null;
+        this.imageCnt = 0L;
+        this.commentCnt = 0L;
+        this.attendanceCnt = 0;
+        this.postCnt = 0L;
+        this.consecutiveAttendanceCnt = 0;
+        this.maxConsecutiveAttendanceCnt = 0;
     }
 }

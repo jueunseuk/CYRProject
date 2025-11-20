@@ -136,10 +136,4 @@ public class UserController {
         List<RetainEmoticonResponse> retainEmoticonResponses = shopLogService.getEmoticonByUser(userId);
         return ResponseEntity.ok(retainEmoticonResponses);
     }
-
-    @DeleteMapping("/me")
-    public ResponseEntity<String> secession(@RequestAttribute Integer userId) {
-        userService.deleteUserByUserId(userId);
-        return ResponseEntity.ok("success to secession");
-    }
 }

@@ -31,8 +31,7 @@ public class StatisticService {
 
     @Transactional
     public void createStatistic() {
-        LocalDate today = LocalDate.now();
-        LocalDateTime start = today.atStartOfDay();
+        LocalDateTime start = LocalDate.now().atStartOfDay();
         LocalDateTime now = LocalDateTime.now();
 
         Long totalMember = userService.getUserCnt();

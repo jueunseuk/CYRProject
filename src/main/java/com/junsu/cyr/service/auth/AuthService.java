@@ -13,6 +13,7 @@ import com.junsu.cyr.response.exception.code.EmailExceptionCode;
 import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.service.image.S3Service;
+import com.junsu.cyr.service.user.UserService;
 import com.junsu.cyr.util.CookieUtil;
 import com.junsu.cyr.util.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
@@ -36,6 +37,7 @@ public class AuthService {
     private final OAuthService oAuthService;
     private final JwtTokenProvider jwtTokenProvider;
     private final S3Service s3Service;
+    private final UserService userService;
 
     @Transactional
     public SignupResponse naverLoginOrSignUp(NaverUserRequest request, HttpServletResponse response) {
@@ -50,6 +52,10 @@ public class AuthService {
 
             if (user.getStatus() != Status.ACTIVE) {
                 throw new BaseException(AuthExceptionCode.ACCOUNT_NOT_ACTIVE);
+            }
+
+            if(user.getMethod() != Method.NAVER) {
+                throw new BaseException(AuthExceptionCode.DIFFERENT_LOGIN_METHOD);
             }
         } else {
             user = createUserWithOAuth(userInfo);
@@ -72,6 +78,10 @@ public class AuthService {
             if (user.getStatus() != Status.ACTIVE) {
                 throw new BaseException(AuthExceptionCode.ACCOUNT_NOT_ACTIVE);
             }
+
+            if(user.getMethod() != Method.GOOGLE) {
+                throw new BaseException(AuthExceptionCode.DIFFERENT_LOGIN_METHOD);
+            }
         } else {
             user = createUserWithOAuth(userInfo);
         }
@@ -92,6 +102,10 @@ public class AuthService {
 
             if (user.getStatus() != Status.ACTIVE) {
                 throw new BaseException(AuthExceptionCode.ACCOUNT_NOT_ACTIVE);
+            }
+
+            if(user.getMethod() != Method.KAKAO) {
+                throw new BaseException(AuthExceptionCode.DIFFERENT_LOGIN_METHOD);
             }
         } else {
             user = createUserWithOAuth(userInfo);
@@ -245,9 +259,17 @@ public class AuthService {
     }
 
     @Transactional
-    public void secede(HttpServletResponse response) {
+    public void secede(Integer userId, HttpServletResponse response) {
         CookieUtil.deleteCookie(response, "refreshToken");
         CookieUtil.deleteCookie(response, "accessToken");
+
+        User user = userService.getUserById(userId);
+
+        if(!user.getStatus().equals(Status.ACTIVE)) {
+            throw new BaseException(AuthExceptionCode.ACCOUNT_NOT_ACTIVE);
+        }
+
+        user.updateToSecession();
     }
 
     private User getUserFromRefreshToken(HttpServletRequest request) {

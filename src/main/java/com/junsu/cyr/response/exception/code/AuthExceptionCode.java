@@ -21,6 +21,7 @@ public enum AuthExceptionCode implements ExceptionCode {
     FAILED_TO_FETCH_USER_INFO("AUTH_011", "OAuth 2.0 서비스로부터 사용자 정보를 불러오는 데 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     NO_CORRESPONDING_NAVER_STATE("AUTH_012", "네이버 State 값이 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
     NOT_EXISTS_ACCESS_TOKEN("AUTH_013", "액세스 토큰이 존재하지 않습니다.", HttpStatus.UNAUTHORIZED),
+    DIFFERENT_LOGIN_METHOD("AUTH_014", "다른 로그인 방식으로 가입된 계정입니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String code;

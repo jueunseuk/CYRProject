@@ -1,6 +1,5 @@
 package com.junsu.cyr.domain.users;
 
-import com.junsu.cyr.domain.globals.BaseTime;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +26,10 @@ public class Email {
     @Column(name = "code", nullable = false)
     private String code;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "purpose")
+    private Purpose purpose;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -36,5 +39,9 @@ public class Email {
 
     public void updateCreatedAt() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    public void updatePurpose(Purpose purpose) {
+        this.purpose = purpose;
     }
 }

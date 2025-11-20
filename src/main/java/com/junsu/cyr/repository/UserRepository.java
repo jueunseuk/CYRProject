@@ -1,6 +1,7 @@
 package com.junsu.cyr.repository;
 
 import com.junsu.cyr.domain.users.Role;
+import com.junsu.cyr.domain.users.Status;
 import com.junsu.cyr.domain.users.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,8 +19,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByUserId(Integer userId);
     Long countByCreatedAtBetween(LocalDateTime start, LocalDateTime now);
 
-    @Query("select u from User u where u.userId != :userId")
-    List<User> findAllByUserId(Integer userId, Pageable pageable);
+    @Query("select u from User u where u.userId != :userId and u.status != :status")
+    List<User> findAllByUserId(Integer userId, Status status, Pageable pageable);
 
     List<User> findAllByRole(Role role, Pageable pageable);
 
@@ -28,4 +29,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<User> findTop10ByOrderByConsecutiveAttendanceCntDesc();
 
     List<User> findTop10ByOrderByEpxCntDesc();
+
+    List<User> findAllByStatusAndDeletedAtBefore(Status status, LocalDateTime aMonthAgo);
 }

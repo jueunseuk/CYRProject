@@ -9,8 +9,8 @@ import org.springframework.data.domain.Sort;
 public class PageableMaker {
     private static final Integer PAGE = 0;
     private static final Integer SIZE = 100;
-    private static final String ASC = "ASC";
-    private static final String DESC = "DESC";
+    public static final String ASC = "ASC";
+    public static final String DESC = "DESC";
 
     public static Pageable of(String sort) {
         return of(PAGE, SIZE, sort);

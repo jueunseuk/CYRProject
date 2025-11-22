@@ -38,6 +38,10 @@ public class CheerService {
         return cheerSummaryRepository.sumTotalCheers();
     }
 
+    public Long getTotalCheer(LocalDate date) {
+        return cheerSummaryRepository.sumByCheerSummaryId_Date(date);
+    }
+
     @Transactional
     public void createCheer(Integer userId) {
         User user = userRepository.findById(userId)

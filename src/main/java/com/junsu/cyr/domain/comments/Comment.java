@@ -2,6 +2,7 @@ package com.junsu.cyr.domain.comments;
 
 import com.junsu.cyr.domain.globals.BaseTime;
 import com.junsu.cyr.domain.posts.Post;
+import com.junsu.cyr.domain.shop.ShopItem;
 import com.junsu.cyr.domain.users.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -40,6 +41,10 @@ public class Comment extends BaseTime {
     @Column(name = "locked")
     private Boolean locked;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "emoticon")
+    private ShopItem emoticon;
+
     public void update(String content, Boolean locked) {
         this.content = content;
         this.locked = locked;
@@ -48,5 +53,9 @@ public class Comment extends BaseTime {
 
     public void updateFixed(Boolean fixed) {
         this.fixed = fixed;
+    }
+
+    public void updateEmoticon(ShopItem shopItem) {
+        this.emoticon = shopItem;
     }
 }

@@ -7,4 +7,5 @@ public class CommentRequest {
     private Long postId;
     private String comment;
     private Boolean locked;
+    private Integer shopItemId;
 }

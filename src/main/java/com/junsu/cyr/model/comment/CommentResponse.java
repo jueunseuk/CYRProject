@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 public class CommentResponse {
     private Long commentId;
     private String content;
+    private String emoticonUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Boolean fixed;
@@ -27,6 +28,9 @@ public class CommentResponse {
     public CommentResponse(Comment comment, User user, Post post) {
         this.commentId = comment.getCommentId();
         this.content = comment.getContent();
+        if(comment.getEmoticon() != null) {
+            this.emoticonUrl = comment.getEmoticon().getImageUrl();
+        }
         this.createdAt = comment.getCreatedAt();
         this.updatedAt = comment.getUpdatedAt();
         this.userId = user.getUserId();

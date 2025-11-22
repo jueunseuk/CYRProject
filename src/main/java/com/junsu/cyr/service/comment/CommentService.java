@@ -3,8 +3,6 @@ package com.junsu.cyr.service.comment;
 import com.junsu.cyr.domain.achievements.Scope;
 import com.junsu.cyr.domain.achievements.Type;
 import com.junsu.cyr.domain.comments.Comment;
-import com.junsu.cyr.domain.comments.Fixed;
-import com.junsu.cyr.domain.comments.Locked;
 import com.junsu.cyr.domain.posts.Post;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.comment.CommentRequest;
@@ -68,7 +66,7 @@ public class CommentService {
                 .user(user)
                 .post(post)
                 .content(request.getComment())
-                .fixed(Fixed.F)
+                .fixed(Boolean.FALSE)
                 .locked(request.getLocked())
                 .build();
 
@@ -85,9 +83,11 @@ public class CommentService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
 
-        List<Comment> comments = commentRepository.findByPost(post);
+        List<Comment> fixedComments = commentRepository.findByPostAndFixed(post, Boolean.TRUE);
+        List<Comment> comments = commentRepository.findByPostOrderByCreatedAtDesc(post);
+        fixedComments.addAll(comments);
 
-        return comments.stream()
+        return fixedComments.stream()
                 .map(comment -> new CommentResponse(comment, comment.getUser(), post))
                 .collect(Collectors.toList());
     }
@@ -139,7 +139,7 @@ public class CommentService {
         if(searchId.equals(userId)) {
             userCommentResponses = commentRepository.findAllByUser(user, pageable);
         } else {
-            userCommentResponses = commentRepository.findAllByUserAndLocked(user, Locked.PUBLIC, pageable);
+            userCommentResponses = commentRepository.findAllByUserAndLocked(user, Boolean.FALSE, pageable);
         }
 
         return userCommentResponses.map(UserCommentResponse::new);
@@ -172,5 +172,25 @@ public class CommentService {
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
 
         return commentRepository.findAllByContentContaining(condition.getKeyword(), pageable);
+    }
+
+    @Transactional
+    public void updateFix(Long commentId, Boolean fixed, Integer userId) {
+        User user = userService.getUserById(userId);
+        Comment comment = getCommentByCommentId(commentId);
+
+        if(comment.getUser() != user) {
+            throw new BaseException(CommentExceptionCode.DO_NOT_HAVE_PERMISSION);
+        }
+
+        if(comment.getFixed() == fixed) {
+            throw new BaseException(CommentExceptionCode.INVALID_REQUEST);
+        }
+
+        if(fixed && commentRepository.countByPostAndFixed(comment.getPost(), Boolean.TRUE) > 3) {
+            throw new BaseException(CommentExceptionCode.FIX_COMMENT_NUMBER_EXCEEDED);
+        }
+
+        comment.updateFixed(fixed);
     }
 }

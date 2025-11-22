@@ -1,7 +1,6 @@
 package com.junsu.cyr.repository;
 
 import com.junsu.cyr.domain.comments.Comment;
-import com.junsu.cyr.domain.comments.Locked;
 import com.junsu.cyr.domain.posts.Post;
 import com.junsu.cyr.domain.users.User;
 import org.springframework.data.domain.Page;
@@ -22,9 +21,15 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     Page<Comment> findAllByUser(User user, Pageable pageable);
 
-    Page<Comment> findAllByUserAndLocked(User user, Locked locked, Pageable pageable);
+    Page<Comment> findAllByUserAndLocked(User user, Boolean locked, Pageable pageable);
 
     Long countByCreatedAtBetween(LocalDateTime start, LocalDateTime now);
 
     Page<Comment> findAllByContentContaining(String keyword, Pageable pageable);
+
+    List<Comment> findByPostAndFixed(Post post, Boolean fixed);
+
+    List<Comment> findByPostOrderByCreatedAtDesc(Post post);
+
+    Long countByPostAndFixed(Post post, Boolean aTrue);
 }

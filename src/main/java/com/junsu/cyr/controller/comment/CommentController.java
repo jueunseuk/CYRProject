@@ -39,4 +39,10 @@ public class CommentController {
         commentService.deleteComment(commentId, userId);
         return ResponseEntity.ok("success to delete comment");
     }
+
+    @PatchMapping("/{commentId}/fixed")
+    public ResponseEntity<?> updateFixStatus(@PathVariable Long commentId, @RequestParam Boolean fixed, @RequestAttribute Integer userId) {
+        commentService.updateFix(commentId, fixed, userId);
+        return ResponseEntity.ok("success to update fix status");
+    }
 }

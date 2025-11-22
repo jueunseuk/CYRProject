@@ -16,6 +16,9 @@ public interface CheerSummaryRepository extends JpaRepository<CheerSummary, Chee
     @Query("select sum(cs.count) from CheerSummary cs")
     Long sumTotalCheers();
 
+    @Query("select sum(cs.count) from CheerSummary cs where cs.cheerSummaryId.date = :date")
+    Long sumByCheerSummaryId_Date(LocalDate date);
+
     Optional<CheerSummary> findByCheerSummaryId(CheerSummaryId cheerSummaryId);
 
     List<CheerSummary> findAllByCheerSummaryId_UserIdAndCheerSummaryId_DateBetween(Integer userId, LocalDate start, LocalDate end);

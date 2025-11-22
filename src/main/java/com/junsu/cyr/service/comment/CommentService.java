@@ -85,8 +85,9 @@ public class CommentService {
 
         List<Comment> fixedComments = commentRepository.findByPostAndFixed(post, Boolean.TRUE);
         List<Comment> comments = commentRepository.findByPostOrderByCreatedAtDesc(post);
+        fixedComments.addAll(comments);
 
-        return comments.stream()
+        return fixedComments.stream()
                 .map(comment -> new CommentResponse(comment, comment.getUser(), post))
                 .collect(Collectors.toList());
     }

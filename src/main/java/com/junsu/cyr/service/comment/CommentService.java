@@ -4,6 +4,7 @@ import com.junsu.cyr.domain.achievements.Scope;
 import com.junsu.cyr.domain.achievements.Type;
 import com.junsu.cyr.domain.comments.Comment;
 import com.junsu.cyr.domain.posts.Post;
+import com.junsu.cyr.domain.shop.ShopItem;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.comment.CommentRequest;
 import com.junsu.cyr.model.comment.CommentResponse;
@@ -12,12 +13,14 @@ import com.junsu.cyr.model.comment.UserCommentResponse;
 import com.junsu.cyr.model.search.SearchConditionRequest;
 import com.junsu.cyr.repository.CommentRepository;
 import com.junsu.cyr.repository.PostRepository;
+import com.junsu.cyr.repository.ShopItemRepository;
 import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.CommentExceptionCode;
 import com.junsu.cyr.response.exception.code.PostExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.service.achievement.AchievementProcessor;
+import com.junsu.cyr.service.shop.ShopItemService;
 import com.junsu.cyr.service.user.UserService;
 import com.junsu.cyr.util.PageableMaker;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +45,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserService userService;
     private final AchievementProcessor achievementProcessor;
+    private final ShopItemService shopItemService;
 
     private Comment getCommentByCommentId(Long commentId) {
         return commentRepository.findById(commentId)
@@ -70,6 +74,14 @@ public class CommentService {
                 .fixed(Boolean.FALSE)
                 .locked(request.getLocked())
                 .build();
+
+        if(request.getShopItemId() != null) {
+            ShopItem shopItem = shopItemService.getShopItemById(request.getShopItemId());
+            if(shopItem.getShopCategory().getShopCategoryId() != 1) {
+                throw new BaseException(CommentExceptionCode.INVALID_EMOTICON_ID);
+            }
+            comment.updateEmoticon(shopItem);
+        }
 
         userService.addExpAndSand(user, 2, 10);
 

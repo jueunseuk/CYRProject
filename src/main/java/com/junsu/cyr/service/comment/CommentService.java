@@ -86,9 +86,9 @@ public class CommentService {
 
         List<Comment> comments;
         if(fixed) {
-            comments = commentRepository.findByPostAndFixed(post, Boolean.TRUE, PageableMaker.of("createdAt", "asc"));
+            comments = commentRepository.findByPostAndFixed(post, Boolean.TRUE, PageableMaker.of("createdAt", PageableMaker.ASC));
         } else {
-            comments = commentRepository.findByPostAndFixed(post, Boolean.FALSE,  PageableMaker.of("createdAt", "asc"));
+            comments = commentRepository.findByPostAndFixed(post, Boolean.FALSE,  PageableMaker.of("createdAt", PageableMaker.ASC));
         }
 
         return comments.stream()

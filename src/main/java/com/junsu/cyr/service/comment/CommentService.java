@@ -19,6 +19,7 @@ import com.junsu.cyr.response.exception.code.PostExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.service.achievement.AchievementProcessor;
 import com.junsu.cyr.service.user.UserService;
+import com.junsu.cyr.util.PageableMaker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -79,15 +80,18 @@ public class CommentService {
         achievementProcessor.achievementFlow(user, Type.COMMENT, Scope.DAILY, todayCommentCnt);
     }
 
-    public List<CommentResponse> getPostComments(Long postId) {
+    public List<CommentResponse> getPostComments(Long postId, Boolean fixed) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
 
-        List<Comment> fixedComments = commentRepository.findByPostAndFixed(post, Boolean.TRUE);
-        List<Comment> comments = commentRepository.findByPostOrderByCreatedAtDesc(post);
-        fixedComments.addAll(comments);
+        List<Comment> comments;
+        if(fixed) {
+            comments = commentRepository.findByPostAndFixed(post, Boolean.TRUE, PageableMaker.of("createdAt", "asc"));
+        } else {
+            comments = commentRepository.findByPostAndFixed(post, Boolean.FALSE,  PageableMaker.of("createdAt", "asc"));
+        }
 
-        return fixedComments.stream()
+        return comments.stream()
                 .map(comment -> new CommentResponse(comment, comment.getUser(), post))
                 .collect(Collectors.toList());
     }

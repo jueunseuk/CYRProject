@@ -27,9 +27,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     Page<Comment> findAllByContentContaining(String keyword, Pageable pageable);
 
-    List<Comment> findByPostAndFixed(Post post, Boolean fixed);
-
-    List<Comment> findByPostOrderByCreatedAtDesc(Post post);
+    List<Comment> findByPostAndFixed(Post post, Boolean fixed, Pageable pageable);
 
     Long countByPostAndFixed(Post post, Boolean aTrue);
 }

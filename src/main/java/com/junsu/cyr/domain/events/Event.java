@@ -75,4 +75,12 @@ public class Event extends BaseTime {
             this.commentCnt = 0L;
         }
     }
+
+    public void updateType(Type type) {
+        this.type = type;
+    }
+
+    public void updateStatus(Status status) {
+        this.status = status;
+    }
 }

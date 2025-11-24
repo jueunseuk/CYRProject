@@ -37,7 +37,7 @@ public class EventCommentService {
 
         Event event = eventService.findEventByEventId(eventId);
 
-        List<EventComment> eventComments = eventCommentRepository.findAllByEvent(event);
+        List<EventComment> eventComments = eventCommentRepository.findAllByEventOrderByCreatedAtAsc(event);
 
         return eventComments.stream().map(EventCommentResponse::new).toList();
     }
@@ -50,6 +50,10 @@ public class EventCommentService {
 
         if(!event.getUseComment()) {
             throw new BaseException(EventCommentExceptionCode.COMMENT_ARE_NOT_AVAILABLE);
+        }
+
+        if(eventCommentRepository.existsByUserAndEvent(user, event)) {
+            throw new BaseException(EventCommentExceptionCode.ALREADY_UPLOAD_COMMENT);
         }
 
         isValidUploadData(request);

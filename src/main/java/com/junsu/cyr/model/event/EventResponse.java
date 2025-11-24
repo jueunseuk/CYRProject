@@ -17,6 +17,7 @@ public class EventResponse {
     private Integer maxUser;
     private Boolean useComment;
     private Long commentCnt;
+    private Long viewCnt;
     private LocalDateTime createdAt;
     private LocalDateTime closedAt;
     private Boolean fixed;
@@ -33,6 +34,7 @@ public class EventResponse {
         this.maxUser = event.getMaxUser();
         this.useComment = event.getUseComment();
         this.commentCnt = event.getCommentCnt();
+        this.viewCnt = event.getViewCnt();
         this.createdAt = event.getCreatedAt();
         this.closedAt = event.getClosedAt();
         this.fixed = event.getFixed();

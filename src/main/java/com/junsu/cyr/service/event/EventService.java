@@ -50,9 +50,12 @@ public class EventService {
         return events.map(EventResponse::new);
     }
 
+    @Transactional
     public EventResponse findEvent(Long eventId, Integer userId) {
         userService.getUserById(userId);
         Event event = findEventByEventId(eventId);
+
+        event.increaseViewCnt();
 
         return new EventResponse(event);
     }
@@ -73,6 +76,7 @@ public class EventService {
                 .fixed(request.getFixed() || Boolean.FALSE)
                 .locked(request.getLocked() || Boolean.FALSE)
                 .commentCnt(0L)
+                .viewCnt(0L)
                 .closedAt(LocalDateTime.parse(request.getClosedAt()))
                 .build();
         eventRepository.save(event);

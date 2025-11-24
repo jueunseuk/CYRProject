@@ -1,7 +1,6 @@
 package com.junsu.cyr.service.post;
 
 import com.junsu.cyr.constant.PostSortFieldConstant;
-import com.junsu.cyr.domain.achievements.Achievement;
 import com.junsu.cyr.domain.achievements.Scope;
 import com.junsu.cyr.domain.achievements.Type;
 import com.junsu.cyr.domain.boards.Board;
@@ -21,13 +20,9 @@ import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.PostExceptionCode;
 import com.junsu.cyr.service.achievement.AchievementProcessor;
-import com.junsu.cyr.service.achievement.AchievementService;
 import com.junsu.cyr.service.board.BoardService;
-import com.junsu.cyr.service.comment.CommentService;
 import com.junsu.cyr.service.user.UserService;
 import com.junsu.cyr.util.PageableMaker;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -44,7 +39,6 @@ public class PostService {
     private final UserService userService;
     private final PostRepository postRepository;
     private final BoardService boardService;
-    private final EntityManager entityManager;
     private final EmpathyRepository empathyRepository;
     private final CommentRepository commentRepository;
     private final AchievementProcessor achievementProcessor;
@@ -155,7 +149,7 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
 
-        if(post.getUser().getUserId() != userId) {
+        if(post.getUser() != user) {
             throw new BaseException(PostExceptionCode.DO_NOT_HAVE_PERMISSION);
         }
 
@@ -165,12 +159,12 @@ public class PostService {
 
     @Transactional
     public PostUploadResponse updatePosts(PostUploadRequest request, Long postId, Integer userId) {
-        userService.getUserById(userId);
+        User user = userService.getUserById(userId);
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
 
-        if(post.getUser().getUserId() != userId) {
+        if(post.getUser() != user) {
             throw new BaseException(PostExceptionCode.DO_NOT_HAVE_PERMISSION);
         }
 

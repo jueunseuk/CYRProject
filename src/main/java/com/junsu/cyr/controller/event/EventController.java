@@ -2,8 +2,10 @@ package com.junsu.cyr.controller.event;
 
 import com.junsu.cyr.model.event.EventConditionRequest;
 import com.junsu.cyr.model.event.EventResponse;
+import com.junsu.cyr.model.event.EventUpdateRequest;
 import com.junsu.cyr.model.event.EventUploadRequest;
 import com.junsu.cyr.service.event.EventService;
+import com.sun.jdi.request.EventRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -34,4 +36,9 @@ public class EventController {
         return ResponseEntity.ok(eventResponse);
     }
 
+    @PatchMapping("/{eventId}")
+    public ResponseEntity<EventResponse> updateEvent(@PathVariable Long eventId, @RequestBody EventUpdateRequest request, @RequestAttribute Integer userId) {
+        EventResponse eventResponse = eventService.updateEvent(eventId, request, userId);
+        return ResponseEntity.ok(eventResponse);
+    }
 }

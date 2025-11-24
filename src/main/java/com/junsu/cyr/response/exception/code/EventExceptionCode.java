@@ -14,6 +14,7 @@ public enum EventExceptionCode implements ExceptionCode {
     INVALID_EVENT_TYPE("EVENT_004", "이벤트의 타입이 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
     NEGATIVE_MAX_USER("EVENT_005", "이벤트의 최대 인원 수는 0 이하일 수 없습니다.", HttpStatus.BAD_REQUEST),
     INVALID_DEADLINE("EVENT_006", "종료 시각이 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
+    INVALID_REQUEST("EVENT_007", "유효하지 않은 요청 값입니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String code;

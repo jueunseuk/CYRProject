@@ -24,6 +24,7 @@ public class EventResponse {
     private Boolean locked;
     private Integer userId;
     private String nickname;
+    private String profileUrl;
 
     public EventResponse(Event event) {
         this.eventId = event.getEventId();
@@ -41,5 +42,6 @@ public class EventResponse {
         this.locked = event.getLocked();
         this.userId = event.getUser().getUserId();
         this.nickname = event.getUser().getNickname();
+        this.profileUrl = event.getUser().getProfileUrl();
     }
 }

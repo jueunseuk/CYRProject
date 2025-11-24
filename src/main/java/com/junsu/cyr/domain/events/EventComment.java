@@ -21,13 +21,16 @@ public class EventComment extends BaseTime {
     private Long eventCommentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "user", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event")
+    @JoinColumn(name = "event", nullable = false)
     private Event event;
 
-    @Column(name = "content")
+    @Column(name = "content", nullable = false)
     private String content;
+
+    @Column(name = "imageUrl")
+    private String imageUrl;
 }

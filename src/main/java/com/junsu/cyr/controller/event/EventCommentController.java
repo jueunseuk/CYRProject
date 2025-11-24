@@ -23,7 +23,7 @@ public class EventCommentController {
     }
 
     @PostMapping
-    public ResponseEntity<EventCommentResponse> uploadComment(@PathVariable Long eventId, @RequestBody EventCommentUploadRequest request, @RequestAttribute Integer userId) {
+    public ResponseEntity<EventCommentResponse> uploadComment(@PathVariable Long eventId, @ModelAttribute EventCommentUploadRequest request, @RequestAttribute Integer userId) {
         EventCommentResponse eventCommentResponse = eventCommentService.uploadComment(eventId, request, userId);
         return ResponseEntity.ok(eventCommentResponse);
     }

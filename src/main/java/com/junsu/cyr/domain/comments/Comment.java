@@ -2,6 +2,7 @@ package com.junsu.cyr.domain.comments;
 
 import com.junsu.cyr.domain.globals.BaseTime;
 import com.junsu.cyr.domain.posts.Post;
+import com.junsu.cyr.domain.shop.ShopItem;
 import com.junsu.cyr.domain.users.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,18 +33,29 @@ public class Comment extends BaseTime {
     private String content;
 
     @Column(name = "fixed", nullable = false)
-    private Fixed fixed;
+    private Boolean fixed;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "locked")
-    private Locked locked;
+    private Boolean locked;
 
-    public void update(String content, Locked locked) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "emoticon")
+    private ShopItem emoticon;
+
+    public void update(String content, Boolean locked) {
         this.content = content;
         this.locked = locked;
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public void updateFixed(Boolean fixed) {
+        this.fixed = fixed;
+    }
+
+    public void updateEmoticon(ShopItem shopItem) {
+        this.emoticon = shopItem;
     }
 }

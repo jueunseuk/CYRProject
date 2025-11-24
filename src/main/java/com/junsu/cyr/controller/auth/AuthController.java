@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,33 +39,20 @@ public class AuthController {
         return ResponseEntity.ok(signupResponse);
     }
 
-    @PostMapping("/email/request")
+    @PostMapping("/email/verification")
     public ResponseEntity<?> mailSend(@RequestBody EmailCodeRequest request){
-        mailService.sendMail(request.getEmail());
+        mailService.sendMail(request.getEmail(), request.getPurpose());
         return ResponseEntity.ok(SuccessResponse.success("Success to request authentication code"));
     }
 
-    @PostMapping("/email/check-signup")
+    @PostMapping("/email/verification/validation")
     public ResponseEntity<?> signupCodeCheck(@RequestBody EmailMatchRequest request) {
-        mailService.verifyCode(request.getEmail(), request.getCode());
-        return ResponseEntity.ok(SuccessResponse.success("Matches with authentication code"));
-    }
-
-    @PostMapping("/email/check")
-    public ResponseEntity<?> resetCodeCheck(@RequestBody EmailMatchRequest request) {
-        mailService.verifyCodeWithPassword(request.getEmail(), request.getCode());
+        mailService.verifyCode(request.getEmail(), request.getCode(), request.getPurpose());
         return ResponseEntity.ok(SuccessResponse.success("Matches with authentication code"));
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestParam("email") String email,
-                                    @RequestParam("name") String name,
-                                    @RequestParam("password") String password,
-                                    @RequestParam("nickname") String nickname,
-                                    @RequestParam("method") Method method,
-                                    @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
-                                    HttpServletResponse response) {
-        SignupRequest request = new SignupRequest(method, name, email, password, nickname, profileImage);
+    public ResponseEntity<?> signup(@ModelAttribute SignupRequest request, HttpServletResponse response) {
         SignupResponse signupResponse = authService.signup(request, response);
         return ResponseEntity.ok(signupResponse);
     }
@@ -77,13 +63,13 @@ public class AuthController {
         return ResponseEntity.ok(signupResponse);
     }
 
-    @PostMapping("/password/reset")
+    @PatchMapping("/password")
     public ResponseEntity<?> passwordReset(@RequestBody PasswordResetRequest request) {
         authService.passwordReset(request.getEmail(), request.getPassword());
         return ResponseEntity.ok(SuccessResponse.success("Password reset successfully"));
     }
 
-    @PostMapping("/token/access/reset")
+    @PostMapping("/token/refresh")
     public ResponseEntity<?> resetAccessToken(HttpServletRequest request, HttpServletResponse response) {
         authService.resetAccessToken(request, response);
         return ResponseEntity.ok(SuccessResponse.success("Regenerate access token successfully"));
@@ -95,9 +81,9 @@ public class AuthController {
         return ResponseEntity.ok(SuccessResponse.success("Logout successfully"));
     }
 
-    @PostMapping("/secession")
-    public ResponseEntity<?> secession(HttpServletResponse response) {
-        authService.secede(response);
+    @PatchMapping("/secession")
+    public ResponseEntity<?> secession(@RequestAttribute Integer userId, HttpServletResponse response) {
+        authService.secede(userId, response);
         return ResponseEntity.ok(SuccessResponse.success("Secession successfully"));
     }
 }

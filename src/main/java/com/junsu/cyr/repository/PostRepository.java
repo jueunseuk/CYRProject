@@ -1,5 +1,6 @@
 package com.junsu.cyr.repository;
 
+import com.junsu.cyr.domain.boards.Board;
 import com.junsu.cyr.domain.posts.Locked;
 import com.junsu.cyr.domain.posts.Post;
 import com.junsu.cyr.domain.users.User;
@@ -46,4 +47,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("select p.user.userId as userId, count(*) as count from Post as p where p.createdAt between :start and :now group by p.user order by count(*) desc")
     List<CountRankingProjection> sumAllByCreatedAtBetween(LocalDateTime start, LocalDateTime now, PageRequest of);
+
+    Page<Post> findAllByBoard(Board board, Pageable pageable);
 }

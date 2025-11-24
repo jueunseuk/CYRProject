@@ -23,8 +23,8 @@ public class CommentController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<List<CommentResponse>> getPostComments(@PathVariable Long postId) {
-        List<CommentResponse> response = commentService.getPostComments(postId);
+    public ResponseEntity<List<CommentResponse>> getPostComments(@PathVariable Long postId, @RequestParam Boolean fixed) {
+        List<CommentResponse> response = commentService.getPostComments(postId, fixed);
         return ResponseEntity.ok(response);
     }
 
@@ -38,5 +38,11 @@ public class CommentController {
     public ResponseEntity<?> deleteComment(@PathVariable Long commentId, @RequestAttribute Integer userId) {
         commentService.deleteComment(commentId, userId);
         return ResponseEntity.ok("success to delete comment");
+    }
+
+    @PatchMapping("/{commentId}/fixed")
+    public ResponseEntity<?> updateFixStatus(@PathVariable Long commentId, @RequestParam Boolean fixed, @RequestAttribute Integer userId) {
+        commentService.updateFix(commentId, fixed, userId);
+        return ResponseEntity.ok("success to update fix status");
     }
 }

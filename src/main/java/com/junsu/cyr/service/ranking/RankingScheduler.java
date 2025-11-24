@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -34,6 +36,7 @@ public class RankingScheduler {
     }
 
     private void executeRefresh(Refresh refreshType) {
+        log.info("[RankingScheduler] {} : {} 타입의 랭킹 집계 시작", LocalDateTime.now(), refreshType);
         rankingAggregationService.refreshByPeriodWithScheduler(refreshType);
     }
 }

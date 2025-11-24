@@ -3,9 +3,8 @@ package com.junsu.cyr.service.comment;
 import com.junsu.cyr.domain.achievements.Scope;
 import com.junsu.cyr.domain.achievements.Type;
 import com.junsu.cyr.domain.comments.Comment;
-import com.junsu.cyr.domain.comments.Fixed;
-import com.junsu.cyr.domain.comments.Locked;
 import com.junsu.cyr.domain.posts.Post;
+import com.junsu.cyr.domain.shop.ShopItem;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.comment.CommentRequest;
 import com.junsu.cyr.model.comment.CommentResponse;
@@ -14,13 +13,16 @@ import com.junsu.cyr.model.comment.UserCommentResponse;
 import com.junsu.cyr.model.search.SearchConditionRequest;
 import com.junsu.cyr.repository.CommentRepository;
 import com.junsu.cyr.repository.PostRepository;
+import com.junsu.cyr.repository.ShopItemRepository;
 import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.CommentExceptionCode;
 import com.junsu.cyr.response.exception.code.PostExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.service.achievement.AchievementProcessor;
+import com.junsu.cyr.service.shop.ShopItemService;
 import com.junsu.cyr.service.user.UserService;
+import com.junsu.cyr.util.PageableMaker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,6 +45,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserService userService;
     private final AchievementProcessor achievementProcessor;
+    private final ShopItemService shopItemService;
 
     private Comment getCommentByCommentId(Long commentId) {
         return commentRepository.findById(commentId)
@@ -68,9 +71,17 @@ public class CommentService {
                 .user(user)
                 .post(post)
                 .content(request.getComment())
-                .fixed(Fixed.F)
+                .fixed(Boolean.FALSE)
                 .locked(request.getLocked())
                 .build();
+
+        if(request.getShopItemId() != null) {
+            ShopItem shopItem = shopItemService.getShopItemById(request.getShopItemId());
+            if(shopItem.getShopCategory().getShopCategoryId() != 1) {
+                throw new BaseException(CommentExceptionCode.INVALID_EMOTICON_ID);
+            }
+            comment.updateEmoticon(shopItem);
+        }
 
         userService.addExpAndSand(user, 2, 10);
 
@@ -81,11 +92,16 @@ public class CommentService {
         achievementProcessor.achievementFlow(user, Type.COMMENT, Scope.DAILY, todayCommentCnt);
     }
 
-    public List<CommentResponse> getPostComments(Long postId) {
+    public List<CommentResponse> getPostComments(Long postId, Boolean fixed) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
 
-        List<Comment> comments = commentRepository.findByPost(post);
+        List<Comment> comments;
+        if(fixed) {
+            comments = commentRepository.findByPostAndFixed(post, Boolean.TRUE, PageableMaker.of("createdAt", PageableMaker.ASC));
+        } else {
+            comments = commentRepository.findByPostAndFixed(post, Boolean.FALSE,  PageableMaker.of("createdAt", PageableMaker.ASC));
+        }
 
         return comments.stream()
                 .map(comment -> new CommentResponse(comment, comment.getUser(), post))
@@ -139,7 +155,7 @@ public class CommentService {
         if(searchId.equals(userId)) {
             userCommentResponses = commentRepository.findAllByUser(user, pageable);
         } else {
-            userCommentResponses = commentRepository.findAllByUserAndLocked(user, Locked.PUBLIC, pageable);
+            userCommentResponses = commentRepository.findAllByUserAndLocked(user, Boolean.FALSE, pageable);
         }
 
         return userCommentResponses.map(UserCommentResponse::new);
@@ -172,5 +188,25 @@ public class CommentService {
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
 
         return commentRepository.findAllByContentContaining(condition.getKeyword(), pageable);
+    }
+
+    @Transactional
+    public void updateFix(Long commentId, Boolean fixed, Integer userId) {
+        User user = userService.getUserById(userId);
+        Comment comment = getCommentByCommentId(commentId);
+
+        if(comment.getUser() != user) {
+            throw new BaseException(CommentExceptionCode.DO_NOT_HAVE_PERMISSION);
+        }
+
+        if(comment.getFixed() == fixed) {
+            throw new BaseException(CommentExceptionCode.INVALID_REQUEST);
+        }
+
+        if(fixed && commentRepository.countByPostAndFixed(comment.getPost(), Boolean.TRUE) > 3) {
+            throw new BaseException(CommentExceptionCode.FIX_COMMENT_NUMBER_EXCEEDED);
+        }
+
+        comment.updateFixed(fixed);
     }
 }

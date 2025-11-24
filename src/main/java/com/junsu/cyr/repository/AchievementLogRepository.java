@@ -2,6 +2,7 @@ package com.junsu.cyr.repository;
 
 import com.junsu.cyr.domain.achievements.Achievement;
 import com.junsu.cyr.domain.achievements.AchievementLog;
+import com.junsu.cyr.domain.achievements.Type;
 import com.junsu.cyr.domain.users.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,6 @@ public interface AchievementLogRepository extends JpaRepository<AchievementLog, 
     List<AchievementLog> findAllByUser(User user, Pageable pageable);
 
     Optional<AchievementLog> findByAchievementAndUser(Achievement achievement, User user);
+
+    List<AchievementLog> findAllByUserAndAchievement_Type(User user, Type type, Pageable pageable);
 }

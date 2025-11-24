@@ -59,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
 
-        if (user.getStatus() != Status.ACTIVE) {
+        if (user.getStatus() == Status.INACTIVE) {
             throw new BaseException(AuthExceptionCode.ACCOUNT_NOT_ACTIVE);
         }
 

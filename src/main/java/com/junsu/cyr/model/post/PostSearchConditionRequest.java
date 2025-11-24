@@ -1,13 +1,12 @@
 package com.junsu.cyr.model.post;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class PostSearchConditionRequest {
     private Integer boardId;
-    private Integer userId;
-    private String title;
-    private String userNickname;
     private String start;
     private String end;
 

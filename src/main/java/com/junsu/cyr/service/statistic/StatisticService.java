@@ -2,6 +2,7 @@ package com.junsu.cyr.service.statistic;
 
 import com.junsu.cyr.domain.statistics.Statistic;
 import com.junsu.cyr.repository.StatisticRepository;
+import com.junsu.cyr.service.cheer.CheerService;
 import com.junsu.cyr.service.comment.CommentService;
 import com.junsu.cyr.service.gallery.GalleryService;
 import com.junsu.cyr.service.glass.GlassService;
@@ -24,6 +25,7 @@ public class StatisticService {
     private final GalleryService galleryService;
     private final GlassService glassService;
     private final StatisticRepository statisticRepository;
+    private final CheerService cheerService;
 
     public Statistic getStatistic() {
         return statisticRepository.findFirstByOrderByCreatedAtDesc();
@@ -31,8 +33,7 @@ public class StatisticService {
 
     @Transactional
     public void createStatistic() {
-        LocalDate today = LocalDate.now();
-        LocalDateTime start = today.atStartOfDay();
+        LocalDateTime start = LocalDate.now().atStartOfDay();
         LocalDateTime now = LocalDateTime.now();
 
         Long totalMember = userService.getUserCnt();
@@ -50,6 +51,9 @@ public class StatisticService {
         Long totalConvert = glassService.getGlassConvertCnt();
         Long todayConvert = glassService.getGlassConvertCnt(start, now);
 
+        Long totalCheer = cheerService.getTotalCheer();
+        Long todayCheer = cheerService.getTotalCheer(LocalDate.now());
+
         Statistic statistic = Statistic.builder()
                 .totalMember(totalMember)
                 .todayMember(todayMember)
@@ -61,6 +65,8 @@ public class StatisticService {
                 .todayGallery(todayGallery)
                 .totalConvert(totalConvert)
                 .todayConvert(todayConvert)
+                .totalCheer(totalCheer)
+                .todayCheer(todayCheer)
                 .build();
 
         statisticRepository.save(statistic);

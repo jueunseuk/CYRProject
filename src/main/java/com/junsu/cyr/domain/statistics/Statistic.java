@@ -50,4 +50,10 @@ public class Statistic extends BaseTime {
 
     @Column(name = "today_convert")
     private Long todayConvert;
+
+    @Column(name = "total_cheer")
+    private Long totalCheer;
+
+    @Column(name = "today_cheer")
+    private Long todayCheer;
 }

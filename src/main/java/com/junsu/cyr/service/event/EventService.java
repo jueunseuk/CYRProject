@@ -1,7 +1,6 @@
 package com.junsu.cyr.service.event;
 
 import com.junsu.cyr.domain.events.Event;
-import com.junsu.cyr.domain.events.Status;
 import com.junsu.cyr.domain.events.Type;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.event.EventConditionRequest;
@@ -32,6 +31,11 @@ public class EventService {
     public Event findEventByEventId(Long eventId) {
         return eventRepository.findById(eventId)
                 .orElseThrow(() -> new BaseException(EventExceptionCode.NOT_FOUND_EVENT));
+    }
+
+    @Transactional
+    public void deleteEvent(Event event) {
+        eventRepository.delete(event);
     }
 
     public Page<EventResponse> findEventByType(EventConditionRequest request, Integer userId) {

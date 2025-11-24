@@ -46,6 +46,9 @@ public class Event extends BaseTime {
     @Column(name = "use_comment")
     private Boolean useComment;
 
+    @Column(name = "view_cnt")
+    private Long viewCnt;
+
     @Column(name = "comment_cnt")
     private Long commentCnt;
 
@@ -57,4 +60,19 @@ public class Event extends BaseTime {
 
     @Column(name = "locked")
     private Boolean locked;
+
+    public void increaseViewCnt() {
+        this.viewCnt++;
+    }
+
+    public void increaseCommentCnt() {
+        this.commentCnt++;
+    }
+
+    public void decreaseCommentCnt() {
+        this.commentCnt--;
+        if(this.commentCnt < 0) {
+            this.commentCnt = 0L;
+        }
+    }
 }

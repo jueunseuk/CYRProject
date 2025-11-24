@@ -36,9 +36,12 @@ public class AnnouncementService {
                 .orElseThrow(() -> new BaseException(AnnouncementExceptionCode.NOT_FOUND_ANNOUNCEMENT));
     }
 
+    @Transactional
     public AnnouncementResponse getAnnouncement(Long announcementId, Integer userId) {
         userService.getUserById(userId);
         Announcement announcement = getAnnouncementByAnnouncementId(announcementId);
+
+        announcement.increaseViewCnt();
 
         return new AnnouncementResponse(announcement);
     }

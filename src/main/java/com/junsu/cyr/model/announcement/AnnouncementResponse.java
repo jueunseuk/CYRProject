@@ -17,6 +17,7 @@ public class AnnouncementResponse {
     private Locked locked;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Long viewCnt;
     private Integer userId;
     private String nickname;
     private String profileUrl;
@@ -28,6 +29,7 @@ public class AnnouncementResponse {
         this.announcementId = announcement.getAnnouncementId();
         this.title = announcement.getTitle();
         this.content = announcement.getContent();
+        this.viewCnt = announcement.getViewCnt();
         this.fix = announcement.getFix();
         this.locked = announcement.getLocked();
         this.createdAt = announcement.getCreatedAt();

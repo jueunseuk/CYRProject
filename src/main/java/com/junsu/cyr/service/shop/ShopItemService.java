@@ -36,7 +36,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ShopItemService {
 
-    private final UserRepository userRepository;
     private final S3Service s3Service;
     private final ShopItemRepository shopItemRepository;
     private final ShopCategoryRepository shopCategoryRepository;

@@ -36,6 +36,24 @@ public class ManagerController {
         return ResponseEntity.ok("success to increase warn cnt");
     }
 
+    @PatchMapping("/user/{memberId}/glass")
+    public ResponseEntity<String> updateGlass(@PathVariable Integer memberId, @RequestParam Integer amount, @RequestAttribute Integer userId) {
+        managerService.updateGlass(memberId, amount, userId);
+        return ResponseEntity.ok("success to increase glass cnt");
+    }
+
+    @PatchMapping("/user/{memberId}/sand")
+    public ResponseEntity<String> updateSand(@PathVariable Integer memberId, @RequestParam Integer amount, @RequestAttribute Integer userId) {
+        managerService.updateSand(memberId, amount, userId);
+        return ResponseEntity.ok("success to increase sand cnt");
+    }
+
+    @PatchMapping("/user/{memberId}/temperature")
+    public ResponseEntity<String> updateTemperature(@PathVariable Integer memberId, @RequestParam Integer amount, @RequestAttribute Integer userId) {
+        managerService.updateTemperature(memberId, amount, userId);
+        return ResponseEntity.ok("success to increase temperature cnt");
+    }
+
     @PatchMapping("/user/{memberId}/status")
     public ResponseEntity<String> updateStatus(@PathVariable Integer memberId, @RequestParam Status status, @RequestAttribute Integer userId) {
         managerService.updateStatus(memberId, status, userId);

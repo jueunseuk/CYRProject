@@ -2,10 +2,12 @@ package com.junsu.cyr.service.achievement;
 
 import com.junsu.cyr.domain.achievements.Achievement;
 import com.junsu.cyr.domain.achievements.AchievementLog;
+import com.junsu.cyr.domain.achievements.AchievementReward;
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.achievement.AchievementLogConditionRequest;
 import com.junsu.cyr.model.achievement.AchievementLogResponse;
+import com.junsu.cyr.model.achievement.AchievementRewardResponse;
 import com.junsu.cyr.repository.AchievementLogRepository;
 import com.junsu.cyr.response.exception.code.AchievementExceptionCode;
 import com.junsu.cyr.response.exception.code.ImageExceptionCode;
@@ -30,6 +32,7 @@ public class AchievementLogService {
     private final UserService userService;
     private final S3Service s3Service;
     private final AchievementService achievementService;
+    private final AchievementRewardService achievementRewardService;
 
     public AchievementLog getAchievementLog(Long achievementLogId) {
         return achievementLogRepository.findById(achievementLogId)
@@ -66,7 +69,11 @@ public class AchievementLogService {
             achievementLogResponses = achievementLogRepository.findAllByUserAndAchievement_Type(user, condition.getType(), pageable);
         }
 
-        return achievementLogResponses.stream().map(AchievementLogResponse::new).toList();
+        return achievementLogResponses.stream().map(achievementLog -> {
+            List<AchievementReward> achievementRewards = achievementRewardService.getAchievementRewards(achievementLog.getAchievement());
+            List<AchievementRewardResponse> achievementRewardResponses = achievementRewards.stream().map(AchievementRewardResponse::new).toList();
+            return new AchievementLogResponse(achievementLog, achievementRewardResponses);
+        }).toList();
     }
 
     @Transactional

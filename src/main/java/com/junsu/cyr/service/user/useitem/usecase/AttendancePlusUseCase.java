@@ -1,6 +1,7 @@
 package com.junsu.cyr.service.user.useitem.usecase;
 
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.model.userInventory.ItemUseRequest;
 import com.junsu.cyr.model.userInventory.ItemUseResult;
 import com.junsu.cyr.service.attendance.AttendanceService;
 import com.junsu.cyr.service.user.useitem.base.UseConsumableItem;
@@ -14,7 +15,7 @@ public class AttendancePlusUseCase implements UseConsumableItem {
     private final AttendanceService attendanceService;
 
     @Override
-    public ItemUseResult use(User user) {
+    public ItemUseResult use(User user, ItemUseRequest request) {
         Integer result = attendanceService.increaseConsecutiveAttendanceToForce(user);
         return ItemUseResult.builder()
                 .success(true)

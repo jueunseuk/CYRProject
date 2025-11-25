@@ -1,6 +1,7 @@
 package com.junsu.cyr.service.user.useitem.usecase;
 
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.model.userInventory.ItemUseRequest;
 import com.junsu.cyr.model.userInventory.ItemUseResult;
 import com.junsu.cyr.service.user.UserService;
 import com.junsu.cyr.service.user.useitem.base.UseConsumableItem;
@@ -14,7 +15,7 @@ public class WarningDecreaseUseCase implements UseConsumableItem {
     private final UserService userService;
 
     @Override
-    public ItemUseResult use(User user) {
+    public ItemUseResult use(User user, ItemUseRequest request) {
         userService.decreaseWarning(user);
         return ItemUseResult.builder()
                 .success(true)

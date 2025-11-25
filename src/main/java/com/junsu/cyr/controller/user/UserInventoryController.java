@@ -5,6 +5,7 @@ import com.junsu.cyr.model.shop.ShopLogConditionRequest;
 import com.junsu.cyr.model.shop.ShopLogResponse;
 import com.junsu.cyr.model.userInventory.InventoryConditionRequest;
 import com.junsu.cyr.model.userInventory.InventoryConsumeItemResponse;
+import com.junsu.cyr.model.userInventory.ItemUseRequest;
 import com.junsu.cyr.model.userInventory.ItemUseResult;
 import com.junsu.cyr.service.shop.ShopLogService;
 import com.junsu.cyr.service.user.UserInventoryService;
@@ -47,8 +48,8 @@ public class UserInventoryController {
     }
 
     @PostMapping("/{userInventoryId}/use")
-    public ResponseEntity<ItemUseResult> useUserInventoryItem(@PathVariable Long userInventoryId, @RequestAttribute Integer userId) {
-        ItemUseResult itemUseResult = userInventoryService.useUserInventoryItem(userInventoryId, userId);
+    public ResponseEntity<ItemUseResult> useUserInventoryItem(@PathVariable Long userInventoryId, @RequestBody ItemUseRequest request, @RequestAttribute Integer userId) {
+        ItemUseResult itemUseResult = userInventoryService.useUserInventoryItem(userInventoryId, request, userId);
         return ResponseEntity.ok(itemUseResult);
     }
 }

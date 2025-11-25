@@ -1,6 +1,7 @@
 package com.junsu.cyr.service.user.useitem.usecase;
 
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.model.userInventory.ItemUseRequest;
 import com.junsu.cyr.model.userInventory.ItemUseResult;
 import com.junsu.cyr.service.user.UserService;
 import com.junsu.cyr.service.user.useitem.base.UseConsumableItem;
@@ -14,8 +15,8 @@ public class GlassGiftUseCase implements UseConsumableItem {
     private final UserService userService;
 
     @Override
-    public ItemUseResult use(User user) {
-        userService.giftGlassToOtherUser(user);
+    public ItemUseResult use(User user, ItemUseRequest request) {
+        userService.giftGlassToOtherUser(user, request);
         return ItemUseResult.builder()
                 .success(true)
                 .message("success to gift glass")

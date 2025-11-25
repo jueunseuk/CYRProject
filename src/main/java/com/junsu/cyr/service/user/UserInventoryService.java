@@ -5,6 +5,7 @@ import com.junsu.cyr.domain.shop.ShopItem;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.userInventory.InventoryConditionRequest;
 import com.junsu.cyr.model.userInventory.InventoryConsumeItemResponse;
+import com.junsu.cyr.model.userInventory.ItemUseRequest;
 import com.junsu.cyr.model.userInventory.ItemUseResult;
 import com.junsu.cyr.repository.UserInventoryRepository;
 import com.junsu.cyr.response.exception.http.BaseException;
@@ -77,7 +78,7 @@ public class UserInventoryService {
     }
 
     @Transactional
-    public ItemUseResult useUserInventoryItem(Long userInventoryId, Integer userId) {
+    public ItemUseResult useUserInventoryItem(Long userInventoryId, ItemUseRequest request, Integer userId) {
         User user = userService.getUserById(userId);
 
         UserInventory userInventory = getUserInventoryById(userInventoryId);
@@ -90,7 +91,7 @@ public class UserInventoryService {
 
         UseConsumableItem strategy = useStrategyFactory.getStrategy(code);
 
-        ItemUseResult itemUseResult = strategy.use(user);
+        ItemUseResult itemUseResult = strategy.use(user, request);
 
         userInventory.useItem();
         userInventoryRepository.save(userInventory);

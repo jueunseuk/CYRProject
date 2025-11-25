@@ -11,13 +11,16 @@ import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.auth.SignupResponse;
 import com.junsu.cyr.model.search.SearchConditionRequest;
 import com.junsu.cyr.model.user.*;
+import com.junsu.cyr.model.userInventory.ItemUseRequest;
 import com.junsu.cyr.repository.*;
+import com.junsu.cyr.response.exception.code.UserInventoryExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.service.experience.ExperienceService;
 import com.junsu.cyr.service.glass.GlassService;
 import com.junsu.cyr.service.image.S3Service;
+import com.junsu.cyr.service.notification.usecase.GiftNotificationUseCase;
 import com.junsu.cyr.service.sand.SandService;
 import com.junsu.cyr.service.temperature.TemperatureService;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +49,7 @@ public class UserService {
     private final EmpathyRepository empathyRepository;
     private final GalleryImageRepository galleryImageRepository;
     private final GlassService glassService;
+    private final GiftNotificationUseCase giftNotificationUseCase;
 
     public User getUserById(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
@@ -190,8 +194,18 @@ public class UserService {
     }
 
     @Transactional
-    public void giftGlassToOtherUser(User user) {
-        // 구현 예정
+    public void giftGlassToOtherUser(User user, ItemUseRequest request) {
+        if(request.getOtherId() == null) {
+            throw new BaseException(UserInventoryExceptionCode.INVALID_USE_REQUEST);
+        }
+
+        User target = getUserById(request.getOtherId());
+        if(target.getStatus() != Status.ACTIVE) {
+            throw new BaseException(UserExceptionCode.NOT_EXIST_USER);
+        }
+
+        addGlass(target, 6, 1);
+        giftNotificationUseCase.receiveGlass(target, user);
     }
 
     public Long getUserCnt() {

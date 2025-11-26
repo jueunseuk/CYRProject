@@ -40,7 +40,7 @@ public class GlassGiftUseCase implements UseConsumableItem {
                 .success(true)
                 .message("success to gift glass")
                 .type("GLASS_GIFT_TICKET")
-                .data(null)
+                .data(target.getNickname())
                 .build();
     }
 }

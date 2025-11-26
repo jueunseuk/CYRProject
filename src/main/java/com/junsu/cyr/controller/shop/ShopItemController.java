@@ -34,10 +34,4 @@ public class ShopItemController {
         shopItemService.buyShopItem(itemId, userId);
         return ResponseEntity.ok("success to buy item");
     }
-
-    @PostMapping("/{itemId}/use")
-    public ResponseEntity<String> useItem(@PathVariable Integer itemId, @RequestAttribute Integer userId) {
-        shopItemService.useShopItem(itemId, userId);
-        return ResponseEntity.ok("success to use item");
-    }
 }

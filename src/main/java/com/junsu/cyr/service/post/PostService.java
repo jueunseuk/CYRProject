@@ -43,7 +43,7 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final AchievementProcessor achievementProcessor;
 
-    private Post getPostByPostId(Long postId) {
+    public Post getPostByPostId(Long postId) {
         return postRepository.findById(postId)
                 .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
     }

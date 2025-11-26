@@ -16,11 +16,9 @@ import com.junsu.cyr.repository.*;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.code.ShopItemExceptionCode;
-import com.junsu.cyr.response.exception.code.UserInventoryExceptionCode;
 import com.junsu.cyr.service.glass.GlassService;
 import com.junsu.cyr.service.image.S3Service;
 import com.junsu.cyr.service.user.UserBannerSettingService;
-import com.junsu.cyr.service.user.UserInventoryService;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -40,13 +39,12 @@ public class ShopItemService {
     private final ShopItemRepository shopItemRepository;
     private final ShopCategoryRepository shopCategoryRepository;
     private final ShopLogRepository shopLogRepository;
-    private final UserInventoryRepository userInventoryRepository;
     private final UserService userService;
-    private final UserInventoryService userInventoryService;
     private final ShopLogService shopLogService;
     private final GlassService glassService;
     private final UserBannerSettingService userBannerSettingService;
     private final UserBannerSettingRepository userBannerSettingRepository;
+    private final UserInventoryRepository userInventoryRepository;
 
     @Transactional
     public void uploadItemImage(Integer itemId, MultipartFile file, Integer userId) {
@@ -89,7 +87,7 @@ public class ShopItemService {
         List<Integer> purchasedItemIds  = shopLogRepository.findAllPurchaseList(user, shopCategory, true);
 
         List<ShopItem> shopItems;
-        if(purchasedItemIds .isEmpty()) {
+        if(purchasedItemIds.isEmpty()) {
             shopItems = shopItemRepository.findAllByShopCategoryAndActive(shopCategory, true, pageable);
         } else {
             shopItems = shopItemRepository.findAllByShopItemIdNotInAndShopCategoryAndActive(purchasedItemIds , shopCategory, true, pageable);
@@ -119,8 +117,25 @@ public class ShopItemService {
         user.useGlass(shopItem.getPrice());
 
         if(shopItem.getShopCategory().getShopCategoryId() == MagicNumberConstant.SHOP_CATEGORY_CONSUME_TYPE) {
-            userInventoryService.addToInventory(shopItem, user);
+            UserInventory userInventory = userInventoryRepository.findByUserAndShopItem(user, shopItem)
+                    .orElse(null);
+
+            if(userInventory == null) {
+                userInventory = UserInventory.builder()
+                        .user(user)
+                        .shopItem(shopItem)
+                        .plus(1)
+                        .minus(0)
+                        .updatedAt(LocalDateTime.now())
+                        .build();
+
+                userInventoryRepository.save(userInventory);
+                return;
+            }
+
+            userInventory.addItem();
         }
+
         shopLogService.createShopLog(shopItem, user, Action.PURCHASE);
 
         userService.addExperience(user, 7);
@@ -140,26 +155,6 @@ public class ShopItemService {
         }
 
         shopItem.increaseSaleCnt();
-    }
-
-    @Transactional
-    public void useShopItem(Integer shopItemId, Integer userId) {
-        User user = userService.getUserById(userId);
-        ShopItem shopItem = getShopItemById(shopItemId);
-        if(shopItem.getShopCategory().getShopCategoryId() != MagicNumberConstant.SHOP_CATEGORY_CONSUME_TYPE) {
-            throw new BaseException(ShopItemExceptionCode.CANNOT_USABLE_ITEM);
-        }
-
-        UserInventory userInventory = userInventoryRepository.findByUserAndShopItem(user, shopItem)
-                .orElseThrow(() -> new BaseException(UserInventoryExceptionCode.INSUFFICIENT_NUMBER_OF_ITEMS));
-
-        if(userInventory.getCurrentAmount() < 1) {
-            throw new BaseException(UserInventoryExceptionCode.INSUFFICIENT_NUMBER_OF_ITEMS);
-        }
-
-        userInventory.useItem();
-
-        shopLogService.createShopLog(shopItem, user, Action.USE);
     }
 
     public ShopItem getShopItemById(Integer itemId) {

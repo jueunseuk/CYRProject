@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ItemUseRequest {
     private Integer otherId;
+    private Long postId;
 }

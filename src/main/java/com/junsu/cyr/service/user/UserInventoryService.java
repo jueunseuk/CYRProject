@@ -1,7 +1,6 @@
 package com.junsu.cyr.service.user;
 
 import com.junsu.cyr.domain.users.UserInventory;
-import com.junsu.cyr.domain.shop.ShopItem;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.userInventory.InventoryConditionRequest;
 import com.junsu.cyr.model.userInventory.InventoryConsumeItemResponse;
@@ -19,7 +18,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -33,32 +31,6 @@ public class UserInventoryService {
     public UserInventory getUserInventoryById(Long userInventoryId) {
         return userInventoryRepository.findById(userInventoryId)
                 .orElseThrow(() -> new BaseException(UserInventoryExceptionCode.NOT_FOUND_USER_INVENTORY_ITEM));
-    }
-
-    @Transactional
-    public void addToInventory(ShopItem shopItem, User user) {
-        UserInventory userInventory = userInventoryRepository.findByUserAndShopItem(user, shopItem)
-                .orElse(null);
-
-        if(userInventory == null) {
-            createInventory(shopItem, user);
-            return;
-        }
-
-        userInventory.addItem();
-    }
-
-    @Transactional
-    public void createInventory(ShopItem shopItem, User user) {
-        UserInventory userInventory = UserInventory.builder()
-                .user(user)
-                .shopItem(shopItem)
-                .plus(1)
-                .minus(0)
-                .updatedAt(LocalDateTime.now())
-                .build();
-
-        userInventoryRepository.save(userInventory);
     }
 
     public List<InventoryConsumeItemResponse> getAllInventoryByUser(InventoryConditionRequest condition, Integer userId) {

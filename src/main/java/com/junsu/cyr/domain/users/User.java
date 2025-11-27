@@ -1,7 +1,6 @@
 package com.junsu.cyr.domain.users;
 
 import com.junsu.cyr.domain.globals.BaseTime;
-import com.junsu.cyr.model.user.UserActivityResponse;
 import com.junsu.cyr.model.user.UserProfileUpdateRequest;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
@@ -159,23 +158,22 @@ public class User extends BaseTime {
     }
 
     public void updateSand(Integer amount) {
-        this.sand += amount;
-        if(this.sand < 0) {
-            this.sand = 0;
+        if(this.sand == 0 && amount < 0) {
+            throw new BaseException(UserExceptionCode.INVALID_VALUE_INJECTION);
         }
+        this.sand += amount;
     }
 
     public void updateTemperature(Integer amount) {
+        if(amount % 50 != 0) {
+            throw new BaseException(UserExceptionCode.CAN_ONLY_BE_CHANGED_TO_50_UNITS);
+        }
         this.temperature += amount;
         if(temperature > 1800) {
             this.temperature = 1800;
         } else if(temperature < 0) {
             this.temperature = 0;
         }
-    }
-
-    public void initTemperature() {
-        this.temperature = 0;
     }
 
     public void increaseCheerCnt() {
@@ -198,6 +196,9 @@ public class User extends BaseTime {
     }
 
     public void updateWarnCnt(int amount) {
+        if(this.warn == 0 && amount < 0) {
+            throw new BaseException(UserExceptionCode.WARNING_ALREADY_ZERO);
+        }
         this.warn += amount;
     }
 
@@ -240,6 +241,9 @@ public class User extends BaseTime {
     }
 
     public void updateGlass(Integer amount) {
+        if(this.glass == 0 && amount < 0) {
+            throw new BaseException(UserExceptionCode.INVALID_VALUE_INJECTION);
+        }
         this.glass += amount;
     }
 

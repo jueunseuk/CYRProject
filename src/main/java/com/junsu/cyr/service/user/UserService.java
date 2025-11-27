@@ -1,10 +1,8 @@
 package com.junsu.cyr.service.user;
 
 import com.junsu.cyr.domain.experiences.Experience;
-import com.junsu.cyr.domain.glass.Glass;
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.sand.Sand;
-import com.junsu.cyr.domain.temperature.Temperature;
 import com.junsu.cyr.domain.users.Role;
 import com.junsu.cyr.domain.users.Status;
 import com.junsu.cyr.domain.users.User;
@@ -16,10 +14,8 @@ import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.service.experience.ExperienceService;
-import com.junsu.cyr.service.glass.GlassService;
 import com.junsu.cyr.service.image.S3Service;
 import com.junsu.cyr.service.sand.SandService;
-import com.junsu.cyr.service.temperature.TemperatureService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,9 +35,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final ExperienceService experienceService;
     private final SandService sandService;
-    private final TemperatureService temperatureService;
     private final S3Service s3Service;
-    private final GlassService glassService;
 
     public User getUserById(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
@@ -92,30 +86,6 @@ public class UserService {
         sandService.createSandLog(sand, sand.getAmount(), user);
     }
 
-    @Transactional
-    public void addSand(User user, Integer sandId, Integer amount) {
-        Sand sand = sandService.getSand(sandId);
-        user.updateSand(amount);
-
-        sandService.createSandLog(sand, amount, user);
-    }
-
-    @Transactional
-    public void addGlass(User user, Integer glassId, Integer amount) {
-        Glass glass = glassService.getGlass(glassId);
-        user.updateGlass(amount);
-
-        glassService.createGlassLog(glass, user, amount);
-    }
-
-    @Transactional
-    public void addTemperature(User user, Integer temperatureId) {
-        Temperature temperature = temperatureService.getTemperature(temperatureId);
-        user.updateTemperature(temperature.getAmount());
-
-        temperatureService.createTemperatureLog(user, temperature);
-    }
-
     public OtherProfileResponse getOtherProfile(Integer otherId) {
         User user = getUserById(otherId);
         return new OtherProfileResponse(user);
@@ -161,14 +131,6 @@ public class UserService {
         return new UserActivityResponse(user.getPostCnt(), user.getCommentCnt(), user.getEmpathyCnt(), user.getImageCnt());
     }
 
-    @Transactional
-    public void decreaseWarning(User user) {
-        if(user.getWarn() == 0) {
-            throw new BaseException(UserExceptionCode.WARNING_ALREADY_ZERO);
-        }
-        user.updateWarnCnt(-1);
-    }
-
     public Long getUserCnt() {
         return userRepository.count();
     }
@@ -202,19 +164,5 @@ public class UserService {
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
 
         return userRepository.findAllByNicknameContaining(condition.getKeyword(), pageable);
-    }
-
-    @Transactional
-    public Integer userCleaning() {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime aMonthAgo = now.minusMonths(1);
-
-        List<User> users = userRepository.findAllByStatusAndDeletedAtBefore(Status.SECESSION, aMonthAgo);
-
-        for(User user : users) {
-            user.delete();
-        }
-
-        return users.size();
     }
 }

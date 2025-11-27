@@ -59,7 +59,7 @@ public class EmpathyService {
         post.increaseEmpathyCnt();
         user.increaseEmpathyCnt();
 
-        unlockAchievementFlow.achievementFlow(user, Type.EMPATHY, Scope.TOTAL, user.getEmpathyCnt());
+        unlockAchievementFlow.unlockAchievement(user, Type.EMPATHY, Scope.TOTAL, user.getEmpathyCnt());
 
         return new EmpathyResponse(postId, userId);
     }

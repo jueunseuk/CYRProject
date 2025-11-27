@@ -1,6 +1,7 @@
 package com.junsu.cyr.controller.user;
 
 import com.junsu.cyr.constant.MagicNumberConstant;
+import com.junsu.cyr.flow.user.inventory.UseInventoryItemFlow;
 import com.junsu.cyr.model.shop.ShopLogConditionRequest;
 import com.junsu.cyr.model.shop.ShopLogResponse;
 import com.junsu.cyr.model.userInventory.InventoryConditionRequest;
@@ -22,6 +23,7 @@ public class UserInventoryController {
 
     private final UserInventoryService userInventoryService;
     private final ShopLogService shopLogService;
+    private final UseInventoryItemFlow useInventoryItemFlow;
 
     @GetMapping("/"+ MagicNumberConstant.SHOP_CATEGORY_CONSUME_TYPE)
     public ResponseEntity<List<InventoryConsumeItemResponse>> getUserInventoryConsume(@ModelAttribute InventoryConditionRequest condition, @RequestAttribute Integer userId) {
@@ -49,7 +51,7 @@ public class UserInventoryController {
 
     @PostMapping("/{userInventoryId}/use")
     public ResponseEntity<ItemUseResult> useUserInventoryItem(@PathVariable Long userInventoryId, @RequestBody ItemUseRequest request, @RequestAttribute Integer userId) {
-        ItemUseResult itemUseResult = userInventoryService.useUserInventoryItem(userInventoryId, request, userId);
+        ItemUseResult itemUseResult = useInventoryItemFlow.useInventoryItem(userInventoryId, request, userId);
         return ResponseEntity.ok(itemUseResult);
     }
 }

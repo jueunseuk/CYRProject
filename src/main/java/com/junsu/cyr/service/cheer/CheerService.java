@@ -66,8 +66,8 @@ public class CheerService {
         cheerSummary.increase();
         cheerSummaryRepository.save(cheerSummary);
 
-        unlockAchievementFlow.achievementFlow(user, Type.CHEER, Scope.TOTAL, user.getCheerCnt());
-        unlockAchievementFlow.achievementFlow(user, Type.CHEER, Scope.DAILY, cheerSummary.getCount());
+        unlockAchievementFlow.unlockAchievement(user, Type.CHEER, Scope.TOTAL, user.getCheerCnt());
+        unlockAchievementFlow.unlockAchievement(user, Type.CHEER, Scope.DAILY, cheerSummary.getCount());
     }
 
     @Transactional

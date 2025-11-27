@@ -86,9 +86,9 @@ public class CommentService {
 
         commentRepository.save(comment);
 
-        unlockAchievementFlow.achievementFlow(user, Type.COMMENT, Scope.TOTAL, user.getCommentCnt());
+        unlockAchievementFlow.unlockAchievement(user, Type.COMMENT, Scope.TOTAL, user.getCommentCnt());
         Long todayCommentCnt = commentRepository.countByCreatedAtBetween(LocalDate.now().atStartOfDay(), LocalDateTime.now());
-        unlockAchievementFlow.achievementFlow(user, Type.COMMENT, Scope.DAILY, todayCommentCnt);
+        unlockAchievementFlow.unlockAchievement(user, Type.COMMENT, Scope.DAILY, todayCommentCnt);
     }
 
     public List<CommentResponse> getPostComments(Long postId, Boolean fixed) {

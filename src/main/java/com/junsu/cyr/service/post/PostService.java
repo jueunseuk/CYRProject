@@ -121,9 +121,9 @@ public class PostService {
         postRepository.save(post);
         user.increasePostCnt();
 
-        unlockAchievementFlow.achievementFlow(user, Type.POST, Scope.TOTAL, user.getPostCnt());
+        unlockAchievementFlow.unlockAchievement(user, Type.POST, Scope.TOTAL, user.getPostCnt());
         Long todayPostCnt = postRepository.countByCreatedAtBetween(LocalDate.now().atStartOfDay(), LocalDateTime.now());
-        unlockAchievementFlow.achievementFlow(user, Type.POST, Scope.DAILY, todayPostCnt);
+        unlockAchievementFlow.unlockAchievement(user, Type.POST, Scope.DAILY, todayPostCnt);
 
         switch(board.getBoardId()) {
             case 9 -> userService.addSand(user, 1);

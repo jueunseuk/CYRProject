@@ -1,27 +1,27 @@
-package com.junsu.cyr.service.user.useitem.usecase;
+package com.junsu.cyr.flow.user.inventory;
 
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.userInventory.ItemUseRequest;
 import com.junsu.cyr.model.userInventory.ItemUseResult;
-import com.junsu.cyr.service.user.UserService;
+import com.junsu.cyr.service.sand.SandService;
 import com.junsu.cyr.service.user.useitem.base.UseConsumableItem;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@Service("WARNING_DECREASE_TICKET")
+@Service("RANDOM_SAND_BOX")
 @RequiredArgsConstructor
-public class WarningDecreaseUseCase implements UseConsumableItem {
+public class RandomSandBoxUseCase implements UseConsumableItem {
 
-    private final UserService userService;
+    private final SandService sandService;
 
     @Override
     public ItemUseResult use(User user, ItemUseRequest request) {
-        userService.decreaseWarning(user);
+        Integer result = sandService.openRandomSandBox(user);
         return ItemUseResult.builder()
                 .success(true)
-                .message("success to decrease warning cnt")
-                .data(null)
-                .type("WARNING_DECREASE_TICKET")
+                .message("success to use random sand box")
+                .data(result)
+                .type("RANDOM_SAND_BOX")
                 .build();
     }
 }

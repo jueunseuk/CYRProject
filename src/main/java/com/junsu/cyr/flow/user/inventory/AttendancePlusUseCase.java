@@ -1,4 +1,4 @@
-package com.junsu.cyr.service.user.useitem.usecase;
+package com.junsu.cyr.flow.user.inventory;
 
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.userInventory.ItemUseRequest;

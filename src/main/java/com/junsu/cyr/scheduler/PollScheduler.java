@@ -1,4 +1,4 @@
-package com.junsu.cyr.service.poll;
+package com.junsu.cyr.scheduler;
 
 import com.junsu.cyr.domain.polls.Poll;
 import com.junsu.cyr.domain.polls.Status;
@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class PollSchedulerService {
+public class PollScheduler {
 
     private final PollRepository pollRepository;
 

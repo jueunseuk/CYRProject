@@ -10,6 +10,7 @@ public class NotificationMessageConstant {
     public static final String TEMPERATURE_MAXIMUM = "활동 온도가 최대치인 1800℃에 도달했습니다.";
     public static final String TEMPERATURE_MAXIMUM_AND_CRAFT_GLASS = "활동 온도가 최대치인 1800℃에 도달해서 공방 제작 조건을 만족합니다.";
     public static final String RECEIVED_GLASS_FROM_OTHER = "다른 사용자 '%s'(으)로부터 유리 조각을 하나 선물 받았습니다.";
+    public static final String REFRESH_ACTIVITY_FORCE = "활동 내역을 강제로 새로고침하는 데 성공했습니다.";
 
     public static String format(String template, String targetName) {
         return String.format(template, targetName);

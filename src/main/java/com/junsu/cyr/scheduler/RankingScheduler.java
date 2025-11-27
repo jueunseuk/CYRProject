@@ -1,6 +1,7 @@
-package com.junsu.cyr.service.ranking;
+package com.junsu.cyr.scheduler;
 
 import com.junsu.cyr.domain.rankings.Refresh;
+import com.junsu.cyr.service.ranking.RankingAggregationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

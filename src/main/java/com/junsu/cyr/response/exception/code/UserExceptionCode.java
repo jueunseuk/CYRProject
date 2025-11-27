@@ -16,6 +16,7 @@ public enum UserExceptionCode implements ExceptionCode {
     WARNING_ALREADY_ZERO("USER_006", "이미 경고 횟수가 0입니다.", HttpStatus.BAD_REQUEST),
     INCORRECT_ROLE_CHANGE_REQUEST("USER_007", "옳지 않은 권한 변경 요청입니다.", HttpStatus.BAD_REQUEST),
     CAN_ONLY_BE_CHANGED_TO_50_UNITS("USER_008", "활동 온도는 50 단위로만 변경 가능합니다.", HttpStatus.BAD_REQUEST),
+    INVALID_VALUE_INJECTION("USER_009", "유효하지 않은 값 주입 시도입니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String code;

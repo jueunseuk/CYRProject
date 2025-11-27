@@ -1,10 +1,13 @@
-package com.junsu.cyr.service.achievement;
+package com.junsu.cyr.flow.user.achievement;
 
 import com.junsu.cyr.domain.achievements.Achievement;
 import com.junsu.cyr.domain.achievements.AchievementReward;
 import com.junsu.cyr.domain.achievements.Scope;
 import com.junsu.cyr.domain.achievements.Type;
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.service.achievement.AchievementLogService;
+import com.junsu.cyr.service.achievement.AchievementRewardService;
+import com.junsu.cyr.service.achievement.AchievementService;
 import com.junsu.cyr.service.notification.usecase.AchievementNotificationUseCase;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +18,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class AchievementProcessor {
+public class UnlockAchievementFlow {
 
     private final AchievementService achievementService;
     private final AchievementRewardService achievementRewardService;

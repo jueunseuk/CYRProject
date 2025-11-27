@@ -1,5 +1,6 @@
-package com.junsu.cyr.service.statistic;
+package com.junsu.cyr.scheduler;
 
+import com.junsu.cyr.service.statistic.StatisticService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

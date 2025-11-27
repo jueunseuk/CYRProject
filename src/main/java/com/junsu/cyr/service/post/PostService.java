@@ -19,7 +19,7 @@ import com.junsu.cyr.response.exception.code.BoardExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.PostExceptionCode;
-import com.junsu.cyr.service.achievement.AchievementProcessor;
+import com.junsu.cyr.flow.user.achievement.UnlockAchievementFlow;
 import com.junsu.cyr.service.board.BoardService;
 import com.junsu.cyr.service.user.UserService;
 import com.junsu.cyr.util.PageableMaker;
@@ -41,7 +41,7 @@ public class PostService {
     private final BoardService boardService;
     private final EmpathyRepository empathyRepository;
     private final CommentRepository commentRepository;
-    private final AchievementProcessor achievementProcessor;
+    private final UnlockAchievementFlow unlockAchievementFlow;
 
     public Post getPostByPostId(Long postId) {
         return postRepository.findById(postId)
@@ -121,9 +121,9 @@ public class PostService {
         postRepository.save(post);
         user.increasePostCnt();
 
-        achievementProcessor.achievementFlow(user, Type.POST, Scope.TOTAL, user.getPostCnt());
+        unlockAchievementFlow.achievementFlow(user, Type.POST, Scope.TOTAL, user.getPostCnt());
         Long todayPostCnt = postRepository.countByCreatedAtBetween(LocalDate.now().atStartOfDay(), LocalDateTime.now());
-        achievementProcessor.achievementFlow(user, Type.POST, Scope.DAILY, todayPostCnt);
+        unlockAchievementFlow.achievementFlow(user, Type.POST, Scope.DAILY, todayPostCnt);
 
         switch(board.getBoardId()) {
             case 9 -> userService.addSand(user, 1);

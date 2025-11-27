@@ -41,10 +41,6 @@ public class UserService {
     private final SandService sandService;
     private final TemperatureService temperatureService;
     private final S3Service s3Service;
-    private final PostRepository postRepository;
-    private final CommentRepository commentRepository;
-    private final EmpathyRepository empathyRepository;
-    private final GalleryImageRepository galleryImageRepository;
     private final GlassService glassService;
 
     public User getUserById(Integer userId) {
@@ -157,22 +153,6 @@ public class UserService {
         }
 
         return user.getProfileUrl();
-    }
-
-    @Transactional
-    public UserActivityResponse forceRefresh(Integer userId) {
-        User user = getUserById(userId);
-
-        Long postCnt = postRepository.countByUser(user);
-        Long commentCnt = commentRepository.countByUser(user);
-        Long empathyCnt = empathyRepository.countByUser(user);
-        Long imageCnt = galleryImageRepository.countByUser(user);
-
-        UserActivityResponse userActivityResponse = new UserActivityResponse(postCnt, commentCnt, empathyCnt, imageCnt);
-
-        user.updateActivity(userActivityResponse);
-
-        return userActivityResponse;
     }
 
     public UserActivityResponse getUserActivityData(Integer userId) {

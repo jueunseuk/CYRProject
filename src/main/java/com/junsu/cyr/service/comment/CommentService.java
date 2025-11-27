@@ -13,13 +13,12 @@ import com.junsu.cyr.model.comment.UserCommentResponse;
 import com.junsu.cyr.model.search.SearchConditionRequest;
 import com.junsu.cyr.repository.CommentRepository;
 import com.junsu.cyr.repository.PostRepository;
-import com.junsu.cyr.repository.ShopItemRepository;
 import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.CommentExceptionCode;
 import com.junsu.cyr.response.exception.code.PostExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
-import com.junsu.cyr.service.achievement.AchievementProcessor;
+import com.junsu.cyr.flow.user.achievement.UnlockAchievementFlow;
 import com.junsu.cyr.service.shop.ShopItemService;
 import com.junsu.cyr.service.user.UserService;
 import com.junsu.cyr.util.PageableMaker;
@@ -44,7 +43,7 @@ public class CommentService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final UserService userService;
-    private final AchievementProcessor achievementProcessor;
+    private final UnlockAchievementFlow unlockAchievementFlow;
     private final ShopItemService shopItemService;
 
     private Comment getCommentByCommentId(Long commentId) {
@@ -87,9 +86,9 @@ public class CommentService {
 
         commentRepository.save(comment);
 
-        achievementProcessor.achievementFlow(user, Type.COMMENT, Scope.TOTAL, user.getCommentCnt());
+        unlockAchievementFlow.achievementFlow(user, Type.COMMENT, Scope.TOTAL, user.getCommentCnt());
         Long todayCommentCnt = commentRepository.countByCreatedAtBetween(LocalDate.now().atStartOfDay(), LocalDateTime.now());
-        achievementProcessor.achievementFlow(user, Type.COMMENT, Scope.DAILY, todayCommentCnt);
+        unlockAchievementFlow.achievementFlow(user, Type.COMMENT, Scope.DAILY, todayCommentCnt);
     }
 
     public List<CommentResponse> getPostComments(Long postId, Boolean fixed) {

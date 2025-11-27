@@ -16,7 +16,7 @@ import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.EmpathyExceptionCode;
 import com.junsu.cyr.response.exception.code.PostExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
-import com.junsu.cyr.service.achievement.AchievementProcessor;
+import com.junsu.cyr.flow.user.achievement.UnlockAchievementFlow;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,7 +34,7 @@ public class EmpathyService {
     private final PostRepository postRepository;
     private final EmpathyRepository empathyRepository;
     private final UserRepository userRepository;
-    private final AchievementProcessor achievementProcessor;
+    private final UnlockAchievementFlow unlockAchievementFlow;
 
     @Transactional
     public EmpathyResponse createEmpathy(Long postId, Integer userId) {
@@ -59,7 +59,7 @@ public class EmpathyService {
         post.increaseEmpathyCnt();
         user.increaseEmpathyCnt();
 
-        achievementProcessor.achievementFlow(user, Type.EMPATHY, Scope.TOTAL, user.getEmpathyCnt());
+        unlockAchievementFlow.achievementFlow(user, Type.EMPATHY, Scope.TOTAL, user.getEmpathyCnt());
 
         return new EmpathyResponse(postId, userId);
     }

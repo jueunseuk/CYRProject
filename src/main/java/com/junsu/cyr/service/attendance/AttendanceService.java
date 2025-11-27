@@ -11,7 +11,7 @@ import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.AttendanceExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
-import com.junsu.cyr.service.achievement.AchievementProcessor;
+import com.junsu.cyr.flow.user.achievement.UnlockAchievementFlow;
 import com.junsu.cyr.service.notification.usecase.TemperatureNotificationUseCase;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class AttendanceService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final TemperatureNotificationUseCase temperatureNotificationUseCase;
-    private final AchievementProcessor achievementProcessor;
+    private final UnlockAchievementFlow unlockAchievementFlow;
 
     @Transactional
     public void makeAttendance(User user, AttendanceRequest request) {
@@ -84,13 +84,13 @@ public class AttendanceService {
         createAttendance(attendanceId, request);
         user.updateAttendanceCnt();
 
-        achievementProcessor.achievementFlow(user, Type.ATTENDANCE, Scope.TOTAL, Long.valueOf(user.getAttendanceCnt()));
-        achievementProcessor.achievementFlow(user, Type.ATTENDANCE, Scope.STREAK, Long.valueOf(user.getConsecutiveAttendanceCnt()));
+        unlockAchievementFlow.achievementFlow(user, Type.ATTENDANCE, Scope.TOTAL, Long.valueOf(user.getAttendanceCnt()));
+        unlockAchievementFlow.achievementFlow(user, Type.ATTENDANCE, Scope.STREAK, Long.valueOf(user.getConsecutiveAttendanceCnt()));
         LocalDate now = LocalDate.now();
         if(now.getMonthValue() == 2 && now.getDayOfMonth() == 24) {
-            achievementProcessor.achievementFlow(user, Type.ATTENDANCE, Scope.DATE, 1L);
+            unlockAchievementFlow.achievementFlow(user, Type.ATTENDANCE, Scope.DATE, 1L);
         } else if(now.getMonthValue() == 11 && now.getDayOfMonth() == 24) {
-            achievementProcessor.achievementFlow(user, Type.ATTENDANCE, Scope.DATE, 2L);
+            unlockAchievementFlow.achievementFlow(user, Type.ATTENDANCE, Scope.DATE, 2L);
         }
     }
 

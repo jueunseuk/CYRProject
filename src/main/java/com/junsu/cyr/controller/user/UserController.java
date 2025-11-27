@@ -1,6 +1,7 @@
 package com.junsu.cyr.controller.user;
 
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.flow.user.profile.RefreshActivityFlow;
 import com.junsu.cyr.model.auth.SignupResponse;
 import com.junsu.cyr.model.comment.CommentSearchConditionRequest;
 import com.junsu.cyr.model.comment.UserCommentResponse;
@@ -39,6 +40,7 @@ public class UserController {
     private final GlassService glassService;
     private final ShopItemService shopItemService;
     private final ShopLogService shopLogService;
+    private final RefreshActivityFlow refreshActivityFlow;
 
     @GetMapping("/me/basic")
     public ResponseEntity<SignupResponse> getUserLocalStorageInfo(@RequestAttribute Integer userId) {
@@ -84,7 +86,7 @@ public class UserController {
 
     @PatchMapping("/profile/refresh")
     public ResponseEntity<UserActivityResponse> refreshUserProfile(@RequestAttribute Integer userId) {
-        UserActivityResponse userActivityResponse = userService.forceRefresh(userId);
+        UserActivityResponse userActivityResponse = refreshActivityFlow.refreshActivity(userId);
         return ResponseEntity.ok(userActivityResponse);
     }
 

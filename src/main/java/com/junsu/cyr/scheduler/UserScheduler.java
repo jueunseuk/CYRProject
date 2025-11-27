@@ -1,5 +1,6 @@
-package com.junsu.cyr.service.user;
+package com.junsu.cyr.scheduler;
 
+import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

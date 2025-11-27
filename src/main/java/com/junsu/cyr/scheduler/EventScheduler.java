@@ -1,4 +1,4 @@
-package com.junsu.cyr.service.event;
+package com.junsu.cyr.scheduler;
 
 import com.junsu.cyr.domain.events.Event;
 import com.junsu.cyr.domain.events.Status;
@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class EventSchedulerService {
+public class EventScheduler {
 
     private final EventRepository eventRepository;
 

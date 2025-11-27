@@ -3,6 +3,8 @@ package com.junsu.cyr.domain.users;
 import com.junsu.cyr.domain.globals.BaseTime;
 import com.junsu.cyr.model.user.UserActivityResponse;
 import com.junsu.cyr.model.user.UserProfileUpdateRequest;
+import com.junsu.cyr.response.exception.code.UserExceptionCode;
+import com.junsu.cyr.response.exception.http.BaseException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -122,11 +124,14 @@ public class User extends BaseTime {
         this.name = request.getName() == null ? this.name : request.getName();
     }
 
-    public void updateActivity(UserActivityResponse userActivityResponse) {
-        this.postCnt = userActivityResponse.getPostCnt();
-        this.commentCnt = userActivityResponse.getCommentCnt();
-        this.imageCnt = userActivityResponse.getImageCnt();
-        this.empathyCnt = userActivityResponse.getEmpathyCnt();
+    public void updateActivity(Long postCnt, Long commentCnt, Long empathyCnt, Long imageCnt) {
+        if(getPostCnt() < 0 || getCommentCnt() < 0 || getImageCnt() < 0 || getEmpathyCnt() < 0) {
+            throw new BaseException(UserExceptionCode.INVALID_VALUE_INJECTION);
+        }
+        this.postCnt = postCnt;
+        this.commentCnt = commentCnt;
+        this.imageCnt = empathyCnt;
+        this.empathyCnt = imageCnt;
     }
 
     public void updateToSecession() {

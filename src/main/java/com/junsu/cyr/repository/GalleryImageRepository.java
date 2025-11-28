@@ -25,8 +25,7 @@ public interface GalleryImageRepository extends JpaRepository<GalleryImage, Inte
 
     Page<GalleryImage> findAllByGallery_User(User user, Pageable pageable);
 
-    @Query("select count(gi) from GalleryImage gi where gi.gallery = :gallery")
-    Long countByGalleryImageId(Gallery gallery);
+    Long countByGallery(Gallery gallery);
 
     Long countByCreatedAtBetween(LocalDateTime start, LocalDateTime now);
 

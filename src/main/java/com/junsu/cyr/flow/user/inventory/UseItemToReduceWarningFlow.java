@@ -1,0 +1,25 @@
+package com.junsu.cyr.flow.user.inventory;
+
+import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.model.userInventory.ItemUseRequest;
+import com.junsu.cyr.model.userInventory.ItemUseResult;
+import com.junsu.cyr.service.user.useitem.base.UseConsumableItem;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service("WARNING_DECREASE_TICKET")
+@RequiredArgsConstructor
+public class UseItemToReduceWarningFlow implements UseConsumableItem {
+
+    @Override
+    public ItemUseResult use(User user, ItemUseRequest request) {
+        user.updateWarnCnt(-1);
+
+        return ItemUseResult.builder()
+                .success(true)
+                .message("success to decrease warning cnt")
+                .data(null)
+                .type("WARNING_DECREASE_TICKET")
+                .build();
+    }
+}

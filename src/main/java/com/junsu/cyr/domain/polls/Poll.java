@@ -3,7 +3,8 @@ package com.junsu.cyr.domain.polls;
 import com.junsu.cyr.domain.globals.BaseTime;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.poll.PollOptionCount;
-import com.junsu.cyr.model.poll.PollUpdateRequest;
+import com.junsu.cyr.response.exception.code.PollExceptionCode;
+import com.junsu.cyr.response.exception.http.BaseException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -54,11 +55,22 @@ public class Poll extends BaseTime {
     private Long winningOptionId;
 
     public void updateStatus(Status status) {
+        if(status == null) {
+            throw new BaseException(PollExceptionCode.INVALID_VALUE_INJECTION);
+        }
         this.status = status;
     }
 
-    public void updateResult(PollOptionCount max) {
-        this.winningOptionId = max.getPollOptionId();
-        this.userCnt = max.getVoteCount();
+    public void updateResult(Long winningOptionId, Long userCnt) {
+        this.winningOptionId = winningOptionId;
+        this.userCnt = userCnt;
+        this.status = Status.CLOSED;
+    }
+
+    public void updateImageUrl(String imageUrl) {
+        if(imageUrl == null || imageUrl.isEmpty()) {
+            throw new BaseException(PollExceptionCode.INVALID_VALUE_INJECTION);
+        }
+        this.imageUrl = imageUrl;
     }
 }

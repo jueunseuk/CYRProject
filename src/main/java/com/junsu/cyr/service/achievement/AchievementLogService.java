@@ -89,13 +89,7 @@ public class AchievementLogService {
             throw new BaseException(ImageExceptionCode.NO_PHOTOS_TO_UPLOAD);
         }
 
-        String imageUrl;
-        try {
-            imageUrl = s3Service.uploadFile(file, Type.ACHIEVEMENT);
-        } catch (Exception e) {
-            throw new BaseException(ImageExceptionCode.FAILED_TO_UPLOAD_IMAGE);
-        }
-
+        String imageUrl = s3Service.uploadFile(file, Type.ACHIEVEMENT);
         achievement.updateImage(imageUrl);
     }
 }

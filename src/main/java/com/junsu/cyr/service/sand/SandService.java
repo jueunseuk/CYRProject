@@ -14,7 +14,6 @@ import com.junsu.cyr.response.exception.code.SandExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,17 +30,6 @@ public class SandService {
     public Sand getSand(Integer sandId) {
         return sandRepository.findById(sandId)
                 .orElseThrow(() -> new BaseException(SandExceptionCode.NOT_FOUND_SAND));
-    }
-
-    public void createSandLog(Sand sand, Integer delta, User user) {
-        SandLog sandLog = SandLog.builder()
-                .sand(sand)
-                .user(user)
-                .after(user.getSand())
-                .delta(delta)
-                .build();
-
-        sandLogRepository.save(sandLog);
     }
 
     public UserAssetDataResponse getAssetData(Integer userId) {
@@ -121,17 +109,5 @@ public class SandService {
         }
 
         return count;
-    }
-
-    @Transactional
-    public Integer openRandomSandBox(User user) {
-        Integer randomCnt = (int) (Math.random() * 250) + 50;
-
-        user.updateSand(randomCnt);
-
-        Sand sand = getSand(15);
-        createSandLog(sand, randomCnt, user);
-
-        return randomCnt;
     }
 }

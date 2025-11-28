@@ -2,6 +2,8 @@ package com.junsu.cyr.domain.users;
 
 import com.junsu.cyr.domain.globals.BaseTime;
 import com.junsu.cyr.domain.shop.ShopItem;
+import com.junsu.cyr.response.exception.code.UserInventoryExceptionCode;
+import com.junsu.cyr.response.exception.http.BaseException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,16 +41,15 @@ public class UserInventory extends BaseTime {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public Integer getCurrentAmount() {
-        return this.plus - this.minus;
-    }
-
     public void addItem() {
         this.plus += 1;
         this.updatedAt = LocalDateTime.now();
     }
 
     public void useItem() {
+        if (this.plus - this.minus < 1) {
+            throw new BaseException(UserInventoryExceptionCode.INSUFFICIENT_NUMBER_OF_ITEMS);
+        }
         this.minus += 1;
         this.updatedAt = LocalDateTime.now();
     }

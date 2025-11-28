@@ -1,7 +1,5 @@
 package com.junsu.cyr.service.attendance;
 
-import com.junsu.cyr.domain.achievements.Scope;
-import com.junsu.cyr.domain.achievements.Type;
 import com.junsu.cyr.domain.attendances.Attendance;
 import com.junsu.cyr.domain.attendances.AttendanceId;
 import com.junsu.cyr.domain.users.User;
@@ -11,16 +9,12 @@ import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.AttendanceExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
-import com.junsu.cyr.service.achievement.AchievementProcessor;
-import com.junsu.cyr.service.notification.usecase.TemperatureNotificationUseCase;
-import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
@@ -30,95 +24,11 @@ public class AttendanceService {
 
     private final AttendanceRepository attendanceRepository;
     private final UserRepository userRepository;
-    private final UserService userService;
-    private final TemperatureNotificationUseCase temperatureNotificationUseCase;
-    private final AchievementProcessor achievementProcessor;
 
-    @Transactional
-    public void makeAttendance(User user, AttendanceRequest request) {
-        AttendanceId attendanceId = new AttendanceId(user.getUserId(), LocalDate.now());
-
-        Optional<Attendance> attendance = attendanceRepository.findByAttendanceId(attendanceId);
-        if(attendance.isPresent()) {
-            throw new BaseException(AttendanceExceptionCode.ALREADY_ATTEND_USER);
-        }
-
-        userService.addExpAndSand(user, 4, 12);
-
-        long gap = getGapWithLastAttendanceDate(user);
-        if(gap == 0) {
-            userService.addTemperature(user, 1);
-            user.initConsecutiveAttendanceCnt();
-        } else if(gap == 1) {
-            userService.addTemperature(user, 2);
-            user.increaseConsecutiveAttendanceCnt();
-        } else if(gap >= 2) {
-            user.initConsecutiveAttendanceCnt();
-            if(gap <= 3) {
-                userService.addTemperature(user, 7);
-            } else if(gap <= 30) {
-                userService.addTemperature(user, 8);
-            } else {
-                user.initTemperature();
-            }
-        }
-
-        if(user.getTemperature() == 1800) {
-            if(user.getSand() < 100) {
-                temperatureNotificationUseCase.temperatureMaximumReached(user);
-            } else {
-                temperatureNotificationUseCase.temperatureMaximumReachAndCraftGlass(user);
-            }
-        }
-
-        if(user.getConsecutiveAttendanceCnt() % 7 == 0) {
-            userService.addTemperature(user, 3);
-        } else if(user.getConsecutiveAttendanceCnt() % 30 == 0) {
-            userService.addTemperature(user, 4);
-        } else if(user.getConsecutiveAttendanceCnt() % 100 == 0) {
-            userService.addTemperature(user, 5);
-        } else if(user.getConsecutiveAttendanceCnt() % 365 == 0) {
-            userService.addTemperature(user, 6);
-        }
-
-        createAttendance(attendanceId, request);
-        user.updateAttendanceCnt();
-
-        achievementProcessor.achievementFlow(user, Type.ATTENDANCE, Scope.TOTAL, Long.valueOf(user.getAttendanceCnt()));
-        achievementProcessor.achievementFlow(user, Type.ATTENDANCE, Scope.STREAK, Long.valueOf(user.getConsecutiveAttendanceCnt()));
-        LocalDate now = LocalDate.now();
-        if(now.getMonthValue() == 2 && now.getDayOfMonth() == 24) {
-            achievementProcessor.achievementFlow(user, Type.ATTENDANCE, Scope.DATE, 1L);
-        } else if(now.getMonthValue() == 11 && now.getDayOfMonth() == 24) {
-            achievementProcessor.achievementFlow(user, Type.ATTENDANCE, Scope.DATE, 2L);
-        }
-    }
-
-    private long getGapWithLastAttendanceDate(User user) {
-        Optional<Attendance> getAttendance = getLastAttendanceDate(user.getUserId());
-        if(getAttendance.isEmpty()) {
-            return 0;
-        }
-
-        Attendance lastAttendance = getAttendance.get();
-        LocalDate lastDate = lastAttendance.getCreatedAt().toLocalDate();
-        LocalDate today = LocalDate.now();
-
-        return ChronoUnit.DAYS.between(lastDate, today);
-    }
-
-    public Optional<Attendance> getLastAttendanceDate(Integer userId) {
-        return attendanceRepository.findTopByAttendanceIdUserIdOrderByCreatedAtDesc(userId);
-    }
-
-    public void createAttendance(AttendanceId attendanceId, AttendanceRequest request) {
-        if(request.getComment() == null || request.getComment().isEmpty()) {
-            throw new BaseException(AttendanceExceptionCode.CONTENT_DOES_NOT_EXISTS);
-        }
-
+    public void createAttendance(AttendanceId attendanceId, String comment) {
         Attendance attendance = Attendance.builder()
                 .attendanceId(attendanceId)
-                .comment(request.getComment())
+                .comment(comment)
                 .build();
 
         attendanceRepository.save(attendance);

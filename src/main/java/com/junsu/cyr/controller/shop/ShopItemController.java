@@ -1,5 +1,6 @@
 package com.junsu.cyr.controller.shop;
 
+import com.junsu.cyr.flow.shop.PurchaseItemFlow;
 import com.junsu.cyr.model.shop.ShopItemConditionRequest;
 import com.junsu.cyr.model.shop.ShopItemResponse;
 import com.junsu.cyr.service.shop.ShopItemService;
@@ -16,6 +17,7 @@ import java.util.List;
 public class ShopItemController {
 
     private final ShopItemService shopItemService;
+    private final PurchaseItemFlow purchaseItemFlow;
 
     @PatchMapping("/{itemId}")
     public ResponseEntity<String> uploadImage(@PathVariable Integer itemId, MultipartFile file, @RequestAttribute Integer userId) {
@@ -31,7 +33,7 @@ public class ShopItemController {
 
     @PostMapping("/{itemId}/buy")
     public ResponseEntity<String> buyItem(@PathVariable Integer itemId, @RequestAttribute Integer userId) {
-        shopItemService.buyShopItem(itemId, userId);
+        purchaseItemFlow.purchaseItem(itemId, userId);
         return ResponseEntity.ok("success to buy item");
     }
 }

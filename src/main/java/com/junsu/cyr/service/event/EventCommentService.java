@@ -59,12 +59,8 @@ public class EventCommentService {
         isValidUploadData(request);
 
         String imageUrl = null;
-        try {
-            if(request.getFile() != null) {
-                imageUrl = s3Service.uploadFile(request.getFile(), Type.EVENT_COMMENT);
-            }
-        } catch (Exception e) {
-            throw new BaseException(ImageExceptionCode.FAILED_TO_UPLOAD_IMAGE);
+        if(request.getFile() != null) {
+            imageUrl = s3Service.uploadFile(request.getFile(), Type.EVENT_COMMENT);
         }
 
         EventComment eventComment = EventComment.builder()

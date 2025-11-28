@@ -35,4 +35,15 @@ public class TemperatureNotificationUseCase {
 
         notificationService.pushNotification(user.getUserId(), notification);
     }
+
+    public void additionalTemperatureReached(User user) {
+        Notification notification = notificationService.createNotification(
+                user,
+                Type.SYSTEM,
+                NotificationMessageConstant.RECEIVED_ADDITIONAL_TEMPERATURE,
+                null
+        );
+
+        notificationService.pushNotification(user.getUserId(), notification);
+    }
 }

@@ -116,12 +116,8 @@ public class CalendarService {
         }
 
         String itemUrl = null;
-        try {
-            if(request.getFile() != null) {
-                itemUrl = s3Service.uploadFile(request.getFile(), Type.SCHEDULE);
-            }
-        } catch (Exception e) {
-            throw new BaseException(ImageExceptionCode.FAILED_TO_UPLOAD_IMAGE);
+        if(request.getFile() != null) {
+            itemUrl = s3Service.uploadFile(request.getFile(), Type.SCHEDULE);
         }
 
         Calendar calendar = Calendar.builder()
@@ -149,14 +145,10 @@ public class CalendarService {
                 .orElseThrow(() -> new BaseException(CalendarExceptionCode.NOT_EXIST_CALENDAR_ID));
 
         String newImageUrl = null;
-        try {
-            if (request.getFile() != null && !request.getFile().isEmpty()) {
-                newImageUrl = s3Service.uploadFile(request.getFile(), Type.SCHEDULE);
-            } else if (request.getImageUrl() != null && !request.getImageUrl().isBlank()) {
-                newImageUrl = request.getImageUrl();
-            }
-        } catch (Exception e) {
-            throw new BaseException(ImageExceptionCode.FAILED_TO_UPLOAD_IMAGE);
+        if (request.getFile() != null && !request.getFile().isEmpty()) {
+            newImageUrl = s3Service.uploadFile(request.getFile(), Type.SCHEDULE);
+        } else if (request.getImageUrl() != null && !request.getImageUrl().isBlank()) {
+            newImageUrl = request.getImageUrl();
         }
 
         calendar.updateCalendar(request, newImageUrl);

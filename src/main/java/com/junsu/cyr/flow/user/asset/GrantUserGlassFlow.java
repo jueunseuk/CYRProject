@@ -1,10 +1,9 @@
 package com.junsu.cyr.flow.user.asset;
 
-import com.junsu.cyr.domain.glass.Glass;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
-import com.junsu.cyr.service.glass.GlassService;
+import com.junsu.cyr.service.glass.GlassRewardService;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class GrantUserGlassFlow {
 
     private final UserService userService;
-    private final GlassService glassService;
+    private final GlassRewardService glassRewardService;
 
     @Transactional
     public void grantUserGlass(Integer memberId, Integer amount, Integer userId) {
@@ -25,9 +24,6 @@ public class GrantUserGlassFlow {
         }
 
         User member = userService.getUserById(memberId);
-        member.updateGlass(amount);
-
-        Glass glass = glassService.getGlass(5);
-        glassService.createGlassLog(glass, user, amount);
+        glassRewardService.addGlass(member, 5, amount);
     }
 }

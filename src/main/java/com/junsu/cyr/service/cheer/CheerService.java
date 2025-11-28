@@ -1,38 +1,25 @@
 package com.junsu.cyr.service.cheer;
 
-import com.junsu.cyr.domain.achievements.Scope;
-import com.junsu.cyr.domain.achievements.Type;
-import com.junsu.cyr.domain.cheers.CheerLog;
 import com.junsu.cyr.domain.cheers.CheerSummary;
-import com.junsu.cyr.domain.cheers.CheerSummaryId;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.common.UserAssetDataResponse;
 import com.junsu.cyr.model.user.GraphResponse;
-import com.junsu.cyr.repository.CheerLogRepository;
 import com.junsu.cyr.repository.CheerSummaryRepository;
 import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.http.BaseException;
-import com.junsu.cyr.response.exception.code.CheerSummaryExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
-import com.junsu.cyr.flow.user.achievement.UnlockAchievementFlow;
-import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class CheerService {
 
-    private final CheerLogRepository cheerLogRepository;
     private final UserRepository userRepository;
     private final CheerSummaryRepository cheerSummaryRepository;
-    private final UserService userService;
-    private final UnlockAchievementFlow unlockAchievementFlow;
 
     public Long getTotalCheer() {
         return cheerSummaryRepository.sumTotalCheers();
@@ -40,43 +27,6 @@ public class CheerService {
 
     public Long getTotalCheer(LocalDate date) {
         return cheerSummaryRepository.sumByCheerSummaryId_Date(date);
-    }
-
-    @Transactional
-    public void createCheer(Integer userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
-
-        CheerSummaryId cheerSummaryId = new CheerSummaryId(user.getUserId(), LocalDate.now());
-        CheerSummary cheerSummary = cheerSummaryRepository.findByCheerSummaryId(cheerSummaryId)
-                .orElseGet(() -> CheerSummary.builder()
-                        .cheerSummaryId(cheerSummaryId)
-                        .count(0L)
-                        .updatedAt(null)
-                        .build());
-
-        if (cheerSummary.getUpdatedAt() != null && cheerSummary.getUpdatedAt().isAfter(LocalDateTime.now().minusMinutes(1))) {
-            throw new BaseException(CheerSummaryExceptionCode.INVALID_REQUEST_PERIOD);
-        }
-
-        user.increaseCheerCnt();
-        userService.addExpAndSand(user, 5, 13);
-
-        createCheerLog(user);
-        cheerSummary.increase();
-        cheerSummaryRepository.save(cheerSummary);
-
-        unlockAchievementFlow.unlockAchievement(user, Type.CHEER, Scope.TOTAL, user.getCheerCnt());
-        unlockAchievementFlow.unlockAchievement(user, Type.CHEER, Scope.DAILY, cheerSummary.getCount());
-    }
-
-    @Transactional
-    public void createCheerLog(User user) {
-        CheerLog cheerLog = CheerLog.builder()
-                .user(user)
-                .build();
-
-        cheerLogRepository.save(cheerLog);
     }
 
     public UserAssetDataResponse getAssetData(Integer userId) {

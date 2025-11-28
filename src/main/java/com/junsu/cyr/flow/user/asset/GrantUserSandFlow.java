@@ -1,10 +1,9 @@
 package com.junsu.cyr.flow.user.asset;
 
-import com.junsu.cyr.domain.sand.Sand;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
-import com.junsu.cyr.service.sand.SandService;
+import com.junsu.cyr.service.sand.SandRewardService;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class GrantUserSandFlow {
 
     private final UserService userService;
-    private final SandService sandService;
+    private final SandRewardService sandRewardService;
 
     @Transactional
     public void grantUserSand(Integer memberId, Integer amount, Integer userId) {
@@ -25,9 +24,6 @@ public class GrantUserSandFlow {
         }
 
         User member = userService.getUserById(memberId);
-        member.updateSand(amount);
-
-        Sand sand = sandService.getSand(18);
-        sandService.createSandLog(sand, amount, user);
+        sandRewardService.addSand(member, 18, amount);
     }
 }

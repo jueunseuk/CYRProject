@@ -1,25 +1,18 @@
 package com.junsu.cyr.service.post;
 
 import com.junsu.cyr.constant.PostSortFieldConstant;
-import com.junsu.cyr.domain.achievements.Scope;
-import com.junsu.cyr.domain.achievements.Type;
 import com.junsu.cyr.domain.boards.Board;
-import com.junsu.cyr.domain.comments.Comment;
-import com.junsu.cyr.domain.empathys.Empathy;
 import com.junsu.cyr.domain.empathys.EmpathyId;
 import com.junsu.cyr.domain.posts.Locked;
 import com.junsu.cyr.domain.posts.Post;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.post.*;
 import com.junsu.cyr.model.search.SearchConditionRequest;
-import com.junsu.cyr.repository.CommentRepository;
 import com.junsu.cyr.repository.EmpathyRepository;
 import com.junsu.cyr.repository.PostRepository;
 import com.junsu.cyr.response.exception.code.BoardExceptionCode;
-import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.PostExceptionCode;
-import com.junsu.cyr.flow.user.achievement.UnlockAchievementFlow;
 import com.junsu.cyr.service.board.BoardService;
 import com.junsu.cyr.service.user.UserService;
 import com.junsu.cyr.util.PageableMaker;
@@ -28,9 +21,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -40,8 +31,6 @@ public class PostService {
     private final PostRepository postRepository;
     private final BoardService boardService;
     private final EmpathyRepository empathyRepository;
-    private final CommentRepository commentRepository;
-    private final UnlockAchievementFlow unlockAchievementFlow;
 
     public Post getPostByPostId(Long postId) {
         return postRepository.findById(postId)
@@ -97,91 +86,6 @@ public class PostService {
         return posts.map(PostListResponse::new);
     }
 
-    @Transactional
-    public PostUploadResponse uploadPost(PostUploadRequest request, Integer userId) {
-        User user = userService.getUserById(userId);
-
-        Board board = boardService.findBoardByBoardId(Integer.parseInt(request.getBoardId()));
-
-        if(request.getContent() == null){
-            throw new BaseException(PostExceptionCode.CONTENT_IS_EMPTY);
-        }
-
-        Post post = Post.builder()
-                .title(request.getTitle())
-                .content(request.getContent())
-                .board(board)
-                .user(user)
-                .viewCnt(1L)
-                .commentCnt(0L)
-                .empathyCnt(0L)
-                .locked(request.getLocked())
-                .build();
-
-        postRepository.save(post);
-        user.increasePostCnt();
-
-        unlockAchievementFlow.unlockAchievement(user, Type.POST, Scope.TOTAL, user.getPostCnt());
-        Long todayPostCnt = postRepository.countByCreatedAtBetween(LocalDate.now().atStartOfDay(), LocalDateTime.now());
-        unlockAchievementFlow.unlockAchievement(user, Type.POST, Scope.DAILY, todayPostCnt);
-
-        switch(board.getBoardId()) {
-            case 9 -> userService.addSand(user, 1);
-            case 10 -> userService.addSand(user, 2);
-            case 11 -> userService.addSand(user, 3);
-            case 12 -> userService.addSand(user, 4);
-            case 13 -> userService.addSand(user, 5);
-            case 14 -> userService.addSand(user, 6);
-            case 15 -> userService.addSand(user, 7);
-            case 16 -> userService.addSand(user, 8);
-            case 17 -> userService.addSand(user, 9);
-            default -> userService.addSand(user, 10);
-        }
-        userService.addExperience(user, 1);
-
-        return new PostUploadResponse(post.getBoard(), post.getPostId());
-    }
-
-    @Transactional
-    public void deletePosts(Long postId, Integer userId) {
-        User user = userService.getUserById(userId);
-
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
-
-        if(post.getUser() != user) {
-            throw new BaseException(PostExceptionCode.DO_NOT_HAVE_PERMISSION);
-        }
-
-        postRepository.delete(post);
-        user.decreasePostCnt();
-    }
-
-    @Transactional
-    public PostUploadResponse updatePosts(PostUploadRequest request, Long postId, Integer userId) {
-        User user = userService.getUserById(userId);
-
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
-
-        if(post.getUser() != user) {
-            throw new BaseException(PostExceptionCode.DO_NOT_HAVE_PERMISSION);
-        }
-
-        if(request.getContent() == null || request.getContent().isEmpty()){
-            throw new BaseException(PostExceptionCode.CONTENT_IS_EMPTY);
-        }
-
-        Board board = boardService.findBoardByBoardId(Integer.parseInt(request.getBoardId()));
-
-        post.update(request.getTitle(),
-                request.getContent(),
-                board,
-                request.getLocked());
-
-        return new PostUploadResponse(post.getBoard(), post.getPostId());
-    }
-
     public Page<PostListResponse> getPostsByUser(Integer searchId, Integer userId, PostSearchConditionRequest condition) {
         User user = userService.getUserById(searchId);
 
@@ -209,24 +113,6 @@ public class PostService {
 
     public Long getPostCnt(LocalDateTime start, LocalDateTime now) {
         return postRepository.countByCreatedAtBetween(start, now);
-    }
-
-    @Transactional
-    public void deletePostForce(Long postId, Integer userId) {
-        User user = userService.getUserById(userId);
-
-        if(!userService.isLeastManager(user)) {
-            throw new BaseException(UserExceptionCode.REQUIRES_AT_LEAST_MANAGER);
-        }
-
-        Post post = getPostByPostId(postId);
-
-        List<Comment> comments = commentRepository.findByPost(post);
-        List<Empathy> empathyList = empathyRepository.findAllByPost(post);
-
-        commentRepository.deleteAll(comments);
-        empathyRepository.deleteAll(empathyList);
-        postRepository.delete(post);
     }
 
     public Page<Post> searchByTitle(SearchConditionRequest condition) {

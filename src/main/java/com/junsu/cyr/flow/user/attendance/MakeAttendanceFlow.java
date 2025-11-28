@@ -4,8 +4,6 @@ import com.junsu.cyr.domain.achievements.Scope;
 import com.junsu.cyr.domain.achievements.Type;
 import com.junsu.cyr.domain.attendances.Attendance;
 import com.junsu.cyr.domain.attendances.AttendanceId;
-import com.junsu.cyr.domain.experiences.Experience;
-import com.junsu.cyr.domain.sand.Sand;
 import com.junsu.cyr.domain.temperature.Temperature;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.flow.user.achievement.UnlockAchievementFlow;
@@ -14,10 +12,10 @@ import com.junsu.cyr.repository.AttendanceRepository;
 import com.junsu.cyr.response.exception.code.AttendanceExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.service.attendance.AttendanceService;
-import com.junsu.cyr.service.experience.ExperienceService;
+import com.junsu.cyr.service.experience.ExperienceRewardService;
 import com.junsu.cyr.service.notification.usecase.TemperatureNotificationUseCase;
-import com.junsu.cyr.service.sand.SandService;
-import com.junsu.cyr.service.temperature.TemperatureService;
+import com.junsu.cyr.service.sand.SandRewardService;
+import com.junsu.cyr.service.temperature.TemperatureRewardService;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,12 +31,12 @@ public class MakeAttendanceFlow {
 
     private final UserService userService;
     private final AttendanceRepository attendanceRepository;
-    private final ExperienceService experienceService;
-    private final SandService sandService;
-    private final TemperatureService temperatureService;
     private final TemperatureNotificationUseCase temperatureNotificationUseCase;
     private final AttendanceService attendanceService;
     private final UnlockAchievementFlow unlockAchievementFlow;
+    private final ExperienceRewardService experienceRewardService;
+    private final SandRewardService sandRewardService;
+    private final TemperatureRewardService temperatureRewardService;
 
     @Transactional
     public void makeAttendance(Integer userId, AttendanceRequest request) {
@@ -50,41 +48,27 @@ public class MakeAttendanceFlow {
             throw new BaseException(AttendanceExceptionCode.ALREADY_ATTEND_USER);
         }
 
-        Experience experience = experienceService.getExperience(4);
-        user.increaseExpCnt(experience.getAmount());
-        experienceService.createExperienceLog(experience, user);
+        experienceRewardService.addExperience(user, 4);
 
-        Sand sand = sandService.getSand(12);
-        user.updateSand(sand.getAmount());
-        sandService.createSandLog(sand, sand.getAmount(), user);
+        sandRewardService.addSand(user, 12);
 
         long gap = getGapWithLastAttendanceDate(user);
 
         Temperature temperature;
         if(gap == 0) {
-            temperature = temperatureService.getTemperature(1);
-            user.updateTemperature(temperature.getAmount());
-            temperatureService.createTemperatureLog(user, temperature);
+            temperatureRewardService.addTemperature(user, 1);
             user.initConsecutiveAttendanceCnt();
         } else if(gap == 1) {
-            temperature = temperatureService.getTemperature(2);
-            user.updateTemperature(temperature.getAmount());
-            temperatureService.createTemperatureLog(user, temperature);
+            temperatureRewardService.addTemperature(user, 2);
             user.increaseConsecutiveAttendanceCnt();
         } else if(gap >= 2) {
             user.initConsecutiveAttendanceCnt();
             if(gap <= 3) {
-                temperature = temperatureService.getTemperature(7);
-                user.updateTemperature(temperature.getAmount());
-                temperatureService.createTemperatureLog(user, temperature);
+                temperatureRewardService.addTemperature(user, 7);
             } else if(gap <= 30) {
-                temperature = temperatureService.getTemperature(8);
-                user.updateTemperature(temperature.getAmount());
-                temperatureService.createTemperatureLog(user, temperature);
+                temperatureRewardService.addTemperature(user, 8);
             } else {
-                temperature = temperatureService.getTemperature(9);
-                user.updateTemperature(temperature.getAmount());
-                temperatureService.createTemperatureLog(user, temperature);
+                temperatureRewardService.addTemperature(user, 9);
             }
         }
 
@@ -96,18 +80,24 @@ public class MakeAttendanceFlow {
             }
         }
 
+        boolean flag = false;
+        int amount = 0;
         if(user.getConsecutiveAttendanceCnt() % 7 == 0) {
-            temperature = temperatureService.getTemperature(3);
-            user.updateTemperature(temperature.getAmount());
+            temperatureRewardService.addTemperature(user, 3);
+            flag = true;
         } else if(user.getConsecutiveAttendanceCnt() % 30 == 0) {
-            temperature = temperatureService.getTemperature(4);
-            user.updateTemperature(temperature.getAmount());
+            temperatureRewardService.addTemperature(user, 4);
+            flag = true;
         } else if(user.getConsecutiveAttendanceCnt() % 100 == 0) {
-            temperature = temperatureService.getTemperature(5);
-            user.updateTemperature(temperature.getAmount());
+            temperatureRewardService.addTemperature(user, 5);
+            flag = true;
         } else if(user.getConsecutiveAttendanceCnt() % 365 == 0) {
-            temperature = temperatureService.getTemperature(6);
-            user.updateTemperature(temperature.getAmount());
+            temperatureRewardService.addTemperature(user, 6);
+            flag = true;
+        }
+
+        if(flag) {
+            temperatureNotificationUseCase.additionalTemperatureReached(user);
         }
 
         if(request.getComment() == null || request.getComment().isEmpty()) {

@@ -6,7 +6,6 @@ import com.junsu.cyr.domain.polls.PollOption;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.poll.PollOptionCount;
 import com.junsu.cyr.repository.PollLogRepository;
-import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +16,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PollLogService {
 
-    private final UserService userService;
     private final PollLogRepository pollLogRepository;
 
     @Transactional

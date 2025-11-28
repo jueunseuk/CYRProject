@@ -1,6 +1,8 @@
 package com.junsu.cyr.domain.gallery;
 
 import com.junsu.cyr.domain.globals.BaseTime;
+import com.junsu.cyr.response.exception.code.GalleryExceptionCode;
+import com.junsu.cyr.response.exception.http.BaseException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +35,19 @@ public class GalleryImage extends BaseTime {
 
     @Column(name = "picturedAt", nullable = false)
     private LocalDateTime picturedAt;
+
+    public static GalleryImage create(Gallery gallery, String url, Integer sequence) {
+        if(gallery == null || url == null || sequence == null) {
+            throw new BaseException(GalleryExceptionCode.INVALID_VALUE_INJECTION);
+        }
+
+        return GalleryImage.builder()
+                .gallery(gallery)
+                .url(url)
+                .sequence(sequence)
+                .picturedAt(gallery.getPicturedAt())
+                .build();
+    }
 
     public void updatePicturedAt(LocalDateTime request) {
         this.picturedAt = request;

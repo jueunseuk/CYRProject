@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service("LOUD_SPEAKER")
 @RequiredArgsConstructor
-public class LoudSpeakerUseCase implements UseConsumableItem {
+public class UseItemToLoudSpeakerFlow implements UseConsumableItem {
 
     private final PostService postService;
     private final ExposurePostService exposurePostService;

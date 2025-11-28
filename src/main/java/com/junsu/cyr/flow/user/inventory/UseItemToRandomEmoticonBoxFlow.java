@@ -20,7 +20,7 @@ import java.util.List;
 
 @Service("RANDOM_EMOTICON_BOX")
 @RequiredArgsConstructor
-public class RandomEmoticonBoxUseCase implements UseConsumableItem {
+public class UseItemToRandomEmoticonBoxFlow implements UseConsumableItem {
 
     private final ShopItemService shopItemService;
     private final ShopLogService shopLogService;

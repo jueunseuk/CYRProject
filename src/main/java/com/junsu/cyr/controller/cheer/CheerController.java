@@ -1,5 +1,6 @@
 package com.junsu.cyr.controller.cheer;
 
+import com.junsu.cyr.flow.cheer.MakeCheerFlow;
 import com.junsu.cyr.model.common.UserAssetDataResponse;
 import com.junsu.cyr.model.user.GraphResponse;
 import com.junsu.cyr.service.cheer.CheerService;
@@ -15,6 +16,7 @@ import java.util.List;
 public class CheerController {
 
     private final CheerService cheerService;
+    private final MakeCheerFlow makeCheerFlow;
 
     @GetMapping("/total")
     public ResponseEntity<?> getTotalCheer() {
@@ -24,7 +26,7 @@ public class CheerController {
 
     @PostMapping("")
     public ResponseEntity<Long> updateCheer(@RequestAttribute Integer userId) {
-        cheerService.createCheer(userId);
+        makeCheerFlow.makeCheer(userId);
         return ResponseEntity.ok(cheerService.getTotalCheer());
     }
 

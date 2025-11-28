@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service("ATTENDANCE_PLUS_TICKET")
 @RequiredArgsConstructor
-public class AttendancePlusUseCase implements UseConsumableItem {
+public class UseItemToPlusConsecutiveAttendanceCountFlow implements UseConsumableItem {
 
     private final AttendanceService attendanceService;
 

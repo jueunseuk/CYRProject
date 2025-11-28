@@ -114,13 +114,25 @@ public class User extends BaseTime {
     public void updateProfileUrl(String profileUrl) {
         this.profileUrl = profileUrl;
     }
+    public void updateInformation(Integer age, String nickname, Gender gender, String introduction, String name) {
+        if(nickname != null && nickname.length() > 20) {
+            throw new BaseException(UserExceptionCode.INVALID_NICKNAME_VALUE);
+        }
+        if(introduction != null && introduction.length() < 5) {
+            throw new BaseException(UserExceptionCode.TOO_SHORT_INTRODUCTION);
+        }
+        if(age != null && age < 0) {
+            throw new BaseException(UserExceptionCode.INVALID_AGE_VALUE);
+        }
+        if(name != null && name.length() > 10) {
+            throw new BaseException(UserExceptionCode.INVALID_NAME_VALUE);
+        }
 
-    public void updateInformation(UserProfileUpdateRequest request) {
-        this.age = request.getAge() == null ? this.age : request.getAge();
-        this.gender = request.getGender() == null ? this.gender : request.getGender();
-        this.nickname = request.getNickname() == null ? this.nickname : request.getNickname();
-        this.introduction = request.getIntroduction() == null ? this.introduction : request.getIntroduction();
-        this.name = request.getName() == null ? this.name : request.getName();
+        this.age = age == null ? this.age : age;
+        this.gender = gender == null ? this.gender : gender;
+        this.nickname = nickname == null ? this.nickname : nickname;
+        this.introduction = introduction == null ? this.introduction : introduction;
+        this.name = name == null ? this.name : name;
     }
 
     public void updateActivity(Long postCnt, Long commentCnt, Long empathyCnt, Long imageCnt) {
@@ -155,6 +167,9 @@ public class User extends BaseTime {
 
     public void increaseExpCnt(Integer amount) {
         this.epxCnt += amount;
+        if(this.epxCnt < 0) {
+            throw new BaseException(UserExceptionCode.INVALID_VALUE_INJECTION);
+        }
     }
 
     public void updateSand(Integer amount) {

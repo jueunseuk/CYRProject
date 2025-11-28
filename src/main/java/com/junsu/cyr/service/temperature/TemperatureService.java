@@ -32,11 +32,12 @@ public class TemperatureService {
                 .orElseThrow(() -> new BaseException(TemperatureExceptionCode.NOT_FOUND_TEMPERATURE));
     }
 
-    public void createTemperatureLog(User user, Temperature temperature) {
+    public void createTemperatureLog(User user, Temperature temperature, Integer amount) {
         TemperatureLog temperatureLog = TemperatureLog.builder()
                 .user(user)
                 .temperature(temperature)
                 .after(user.getTemperature())
+                .delta(amount)
                 .build();
 
         temperatureLogRepository.save(temperatureLog);

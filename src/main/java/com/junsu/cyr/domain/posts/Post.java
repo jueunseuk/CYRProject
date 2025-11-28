@@ -2,7 +2,12 @@ package com.junsu.cyr.domain.posts;
 
 import com.junsu.cyr.domain.boards.Board;
 import com.junsu.cyr.domain.globals.BaseTime;
+import com.junsu.cyr.domain.users.Status;
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.response.exception.code.BoardExceptionCode;
+import com.junsu.cyr.response.exception.code.PostExceptionCode;
+import com.junsu.cyr.response.exception.code.UserExceptionCode;
+import com.junsu.cyr.response.exception.http.BaseException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,7 +58,46 @@ public class Post extends BaseTime {
     @Column(name = "locked")
     private Locked locked;
 
+    public static Post create(User user, Board board, String title, String content, Locked locked) {
+        if (user == null || user.getStatus() != Status.ACTIVE) {
+            throw new BaseException(UserExceptionCode.NOT_EXIST_USER);
+        }
+        if (board == null) {
+            throw new BaseException(BoardExceptionCode.NOT_FOUND_BOARD);
+        }
+        if (title == null || title.isBlank()) {
+            throw new BaseException(PostExceptionCode.INVALID_VALUE_INJECTION);
+        }
+        if (content == null || content.isBlank()) {
+            throw new BaseException(PostExceptionCode.INVALID_VALUE_INJECTION);
+        }
+
+        return Post.builder()
+                .user(user)
+                .board(board)
+                .title(title)
+                .content(content)
+                .viewCnt(0L)
+                .commentCnt(0L)
+                .empathyCnt(0L)
+                .locked(locked)
+                .build();
+    }
+
     public void update(String title, String content, Board board, Locked locked) {
+        if (user == null || user.getStatus() != Status.ACTIVE) {
+            throw new BaseException(UserExceptionCode.NOT_EXIST_USER);
+        }
+        if (board == null) {
+            throw new BaseException(BoardExceptionCode.NOT_FOUND_BOARD);
+        }
+        if (title == null || title.isBlank()) {
+            throw new BaseException(PostExceptionCode.INVALID_VALUE_INJECTION);
+        }
+        if (content == null || content.isBlank()) {
+            throw new BaseException(PostExceptionCode.INVALID_VALUE_INJECTION);
+        }
+
         this.title = title;
         this.content = content;
         this.board = board;

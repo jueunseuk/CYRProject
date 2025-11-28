@@ -10,7 +10,6 @@ import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.AuthExceptionCode;
 import com.junsu.cyr.response.exception.code.EmailExceptionCode;
-import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.service.image.S3Service;
 import com.junsu.cyr.service.user.UserService;
@@ -128,14 +127,10 @@ public class AuthService {
 
         User user = createdUserWithEmail(signupRequest);
 
-        try {
-            if (signupRequest.getProfileImage() != null) {
-                String profileUrl = s3Service.uploadFile(signupRequest.getProfileImage(), Type.PROFILE);
-                user.updateProfileUrl(profileUrl);
-                userRepository.save(user);
-            }
-        } catch (Exception e) {
-            throw new BaseException(ImageExceptionCode.FAILED_TO_UPLOAD_IMAGE);
+        if (signupRequest.getProfileImage() != null) {
+            String profileUrl = s3Service.uploadFile(signupRequest.getProfileImage(), Type.PROFILE);
+            user.updateProfileUrl(profileUrl);
+            userRepository.save(user);
         }
 
         return generateTokensAndCreateResponse(user, response);

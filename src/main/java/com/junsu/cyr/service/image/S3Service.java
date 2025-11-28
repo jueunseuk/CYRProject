@@ -1,6 +1,8 @@
 package com.junsu.cyr.service.image;
 
 import com.junsu.cyr.domain.images.Type;
+import com.junsu.cyr.response.exception.code.ImageExceptionCode;
+import com.junsu.cyr.response.exception.http.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,7 @@ public class S3Service {
     private String bucket;
 
     @Transactional
-    public String uploadFile(MultipartFile file, Type type) throws IOException {
+    public String uploadFile(MultipartFile file, Type type) {
         String filePurpose = type.toString().toLowerCase();
 
         String fileName = filePurpose + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
@@ -34,16 +36,20 @@ public class S3Service {
                 .key(fileName)
                 .build();
 
-        s3Client.putObject(
-                putObjectRequest,
-                RequestBody.fromInputStream(file.getInputStream(), file.getSize())
-        );
+        try {
+            s3Client.putObject(
+                    putObjectRequest,
+                    RequestBody.fromInputStream(file.getInputStream(), file.getSize())
+            );
+        } catch (IOException e) {
+            throw new BaseException(ImageExceptionCode.FAILED_TO_UPLOAD_IMAGE);
+        }
 
         return "https://" + bucket + ".s3.amazonaws.com/" + fileName;
     }
 
     @Transactional
-    public List<String> uploadFiles(List<MultipartFile> files, Type type) throws IOException {
+    public List<String> uploadFiles(List<MultipartFile> files, Type type) {
         List<String> uploadedUrls = new ArrayList<>();
 
         for (MultipartFile file : files) {

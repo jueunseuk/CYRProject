@@ -2,6 +2,8 @@ package com.junsu.cyr.controller.user;
 
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.flow.user.profile.RefreshActivityFlow;
+import com.junsu.cyr.flow.user.profile.UpdateUserInformationFlow;
+import com.junsu.cyr.flow.user.profile.UpdateUserProfileImageFlow;
 import com.junsu.cyr.model.auth.SignupResponse;
 import com.junsu.cyr.model.comment.CommentSearchConditionRequest;
 import com.junsu.cyr.model.comment.UserCommentResponse;
@@ -41,6 +43,8 @@ public class UserController {
     private final ShopItemService shopItemService;
     private final ShopLogService shopLogService;
     private final RefreshActivityFlow refreshActivityFlow;
+    private final UpdateUserInformationFlow updateUserInformationFlow;
+    private final UpdateUserProfileImageFlow updateUserProfileImageFlow;
 
     @GetMapping("/me/basic")
     public ResponseEntity<SignupResponse> getUserLocalStorageInfo(@RequestAttribute Integer userId) {
@@ -68,13 +72,13 @@ public class UserController {
 
     @PatchMapping("/profile/info")
     public ResponseEntity<?> updateUserProfileInformation(@RequestBody UserProfileUpdateRequest request, @RequestAttribute Integer userId) {
-        UserProfileUpdateRequest userProfileUpdateRequest = userService.updateUserInformation(request, userId);
+        UserProfileUpdateRequest userProfileUpdateRequest = updateUserInformationFlow.updateUserInformation(request, userId);
         return ResponseEntity.ok(userProfileUpdateRequest);
     }
 
     @PatchMapping("/profile/image")
     public ResponseEntity<String> updateUserProfileImage(MultipartFile request, @RequestAttribute Integer userId) {
-        String userProfileUrl = userService.updateUserProfileImage(request, userId);
+        String userProfileUrl = updateUserProfileImageFlow.updateUserProfileImage(request, userId);
         return ResponseEntity.ok(userProfileUrl);
     }
 

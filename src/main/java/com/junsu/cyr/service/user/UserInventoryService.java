@@ -1,5 +1,6 @@
 package com.junsu.cyr.service.user;
 
+import com.junsu.cyr.domain.shop.ShopItem;
 import com.junsu.cyr.domain.users.UserInventory;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.userInventory.InventoryConditionRequest;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -41,5 +43,17 @@ public class UserInventoryService {
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
         List<UserInventory> userInventories = userInventoryRepository.findAllByUserWithUse(user, pageable);
         return userInventories.stream().map(InventoryConsumeItemResponse::new).toList();
+    }
+
+    public void createUserInventory(User user, ShopItem shopItem) {
+        UserInventory userInventory = UserInventory.builder()
+                .user(user)
+                .shopItem(shopItem)
+                .plus(1)
+                .minus(0)
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        userInventoryRepository.save(userInventory);
     }
 }

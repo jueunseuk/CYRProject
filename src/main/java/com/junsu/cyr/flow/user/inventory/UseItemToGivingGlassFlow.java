@@ -1,6 +1,5 @@
 package com.junsu.cyr.flow.user.inventory;
 
-import com.junsu.cyr.domain.glass.Glass;
 import com.junsu.cyr.domain.users.Status;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.userInventory.ItemUseRequest;
@@ -8,7 +7,7 @@ import com.junsu.cyr.model.userInventory.ItemUseResult;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.code.UserInventoryExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
-import com.junsu.cyr.service.glass.GlassService;
+import com.junsu.cyr.service.glass.GlassRewardService;
 import com.junsu.cyr.service.notification.usecase.GiftNotificationUseCase;
 import com.junsu.cyr.service.user.UserService;
 import com.junsu.cyr.service.user.useitem.base.UseConsumableItem;
@@ -22,7 +21,7 @@ public class UseItemToGivingGlassFlow implements UseConsumableItem {
 
     private final UserService userService;
     private final GiftNotificationUseCase giftNotificationUseCase;
-    private final GlassService glassService;
+    private final GlassRewardService glassRewardService;
 
     @Override
     @Transactional
@@ -36,9 +35,7 @@ public class UseItemToGivingGlassFlow implements UseConsumableItem {
             throw new BaseException(UserExceptionCode.NOT_EXIST_USER);
         }
 
-        Glass glass = glassService.getGlass(6);
-        target.updateGlass(1);
-        glassService.createGlassLog(glass, target, 1);
+        glassRewardService.addGlass(target, 6);
 
         giftNotificationUseCase.receiveGlass(target, user);
 

@@ -13,6 +13,7 @@ public enum PostExceptionCode implements ExceptionCode {
     CONTENT_IS_EMPTY("POST_003", "게시글의 내용이 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
     DO_NOT_HAVE_PERMISSION("POST_004", "권한이 없습니다.", HttpStatus.BAD_REQUEST),
     UNSUPPORTED_SORT_FIELD("POST_005", "정렬할 수 없는 필드입니다.", HttpStatus.BAD_REQUEST),
+    INVALID_VALUE_INJECTION("POST_006", "유효하지 않은 값 주입 시도입니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String code;

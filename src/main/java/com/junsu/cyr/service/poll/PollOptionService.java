@@ -3,6 +3,8 @@ package com.junsu.cyr.service.poll;
 import com.junsu.cyr.domain.polls.Poll;
 import com.junsu.cyr.domain.polls.PollOption;
 import com.junsu.cyr.repository.PollOptionRepository;
+import com.junsu.cyr.response.exception.code.PollExceptionCode;
+import com.junsu.cyr.response.exception.http.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,10 @@ public class PollOptionService {
 
     @Transactional
     public void createPollOptions(Poll poll, List<String> options) {
+        if(options == null || options.size() < 2) {
+            throw new BaseException(PollExceptionCode.INSUFFICIENT_TO_OPTIONS);
+        }
+
         List<PollOption> pollOptions = options.stream()
                 .map(option -> PollOption.builder()
                         .poll(poll)

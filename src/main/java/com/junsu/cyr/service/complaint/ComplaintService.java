@@ -108,12 +108,8 @@ public class ComplaintService {
         ComplaintCategory complaintCategory = complaintCategoryRepository.findByName(request.getCategoryName());
 
         String uploadUrl = null;
-        try {
-            if(request.getFile() != null) {
-                uploadUrl = s3Service.uploadFile(request.getFile(), Type.COMPLAINT);
-            }
-        } catch (Exception e) {
-            throw new BaseException(ImageExceptionCode.FAILED_TO_UPLOAD_IMAGE);
+        if(request.getFile() != null) {
+            uploadUrl = s3Service.uploadFile(request.getFile(), Type.COMPLAINT);
         }
 
         String link = request.getLink().equals("/complaint") ? null : MagicNumberConstant.FRONT_DOMAIN+request.getLink();

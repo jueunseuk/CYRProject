@@ -14,6 +14,7 @@ public enum CommentExceptionCode implements ExceptionCode {
     INVALID_REQUEST("COM_004", "유효하지 않은 요청입니다.", HttpStatus.BAD_REQUEST),
     FIX_COMMENT_NUMBER_EXCEEDED("COM_005", "고정 가능한 댓글 개수를 초과했습니다.", HttpStatus.BAD_REQUEST),
     INVALID_EMOTICON_ID("COM_006", "사용할 수 없는 이모티콘입니다.", HttpStatus.BAD_REQUEST),
+    INVALID_VALUE_INJECTION("COM_007", "유효하지 않은 값 주입 시도입니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String code;

@@ -16,6 +16,9 @@ public class UserManagementResponse {
     private Status status;
     private LocalDateTime createdAt;
     private Integer warn;
+    private Integer glass;
+    private Integer sand;
+    private Integer temperature;
 
     public UserManagementResponse(User user) {
         this.userId = user.getUserId();
@@ -25,5 +28,8 @@ public class UserManagementResponse {
         this.status = user.getStatus();
         this.createdAt = user.getCreatedAt();
         this.warn = user.getWarn();
+        this.glass = user.getGlass();
+        this.sand = user.getSand();
+        this.temperature = user.getTemperature();
     }
 }

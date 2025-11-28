@@ -30,4 +30,7 @@ public class TemperatureLog extends BaseTime {
 
     @Column(name = "after", nullable = false)
     private Integer after;
+
+    @Column(name = "delta", nullable = false)
+    private Integer delta;
 }

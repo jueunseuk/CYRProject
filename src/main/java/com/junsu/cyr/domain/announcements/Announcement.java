@@ -37,6 +37,9 @@ public class Announcement extends BaseTime {
     @Column(name = "content", nullable = false, columnDefinition = "LONGTEXT")
     private String content;
 
+    @Column(name = "view_cnt")
+    private Long viewCnt;
+
     @Column(name = "fix", nullable = false)
     private Boolean fix;
 
@@ -57,5 +60,9 @@ public class Announcement extends BaseTime {
 
     public void updateCategory(AnnouncementCategory announcementCategory) {
         this.announcementCategory = announcementCategory;
+    }
+
+    public void increaseViewCnt() {
+        this.viewCnt++;
     }
 }

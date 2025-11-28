@@ -1,5 +1,6 @@
 package com.junsu.cyr.service.user;
 
+import com.junsu.cyr.domain.shop.ShopItem;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.domain.users.UserBannerSetting;
 import com.junsu.cyr.model.userBannerSetting.UserBannerItem;
@@ -18,6 +19,17 @@ public class UserBannerSettingService {
 
     private final UserBannerSettingRepository userBannerSettingRepository;
     private final UserService userService;
+
+    public void createUserBannerSetting(User user, ShopItem shopItem, Integer next) {
+        UserBannerSetting userBannerSetting = UserBannerSetting.builder()
+                .user(user)
+                .shopItem(shopItem)
+                .sequence(next)
+                .isActive(true)
+                .build();
+
+        userBannerSettingRepository.save(userBannerSetting);
+    }
 
     public Integer findNextSequence(User user) {
         Integer next = userBannerSettingRepository.findMaxSequenceByUser(user);

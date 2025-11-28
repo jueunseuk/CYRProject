@@ -1,5 +1,8 @@
 package com.junsu.cyr.controller.post;
 
+import com.junsu.cyr.flow.post.CreatePostFlow;
+import com.junsu.cyr.flow.post.DeletePostFlow;
+import com.junsu.cyr.flow.post.UpdatePostFlow;
 import com.junsu.cyr.model.post.*;
 import com.junsu.cyr.service.post.PostService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
 
     private final PostService postService;
+    private final CreatePostFlow createPostFlow;
+    private final UpdatePostFlow updatePostFlow;
+    private final DeletePostFlow deletePostFlow;
 
     @GetMapping("/{postId}")
     public ResponseEntity<PostResponse> getPost(@PathVariable Long postId, @RequestAttribute Integer userId) {
@@ -40,19 +46,19 @@ public class PostController {
 
     @PostMapping("")
     public ResponseEntity<PostUploadResponse> uploadPost(@RequestBody PostUploadRequest request, @RequestAttribute Integer userId) {
-        PostUploadResponse postUploadResponse = postService.uploadPost(request, userId);
+        PostUploadResponse postUploadResponse = createPostFlow.createPost(request, userId);
         return ResponseEntity.ok(postUploadResponse);
     }
 
     @PatchMapping("/{postId}")
     public ResponseEntity<PostUploadResponse> updatePost(@RequestBody PostUploadRequest request,@PathVariable Long postId, @RequestAttribute Integer userId) {
-        PostUploadResponse postUploadResponse = postService.updatePosts(request, postId, userId);
+        PostUploadResponse postUploadResponse = updatePostFlow.updatePost(request, postId, userId);
         return ResponseEntity.ok(postUploadResponse);
     }
 
     @DeleteMapping("/{postId}")
     public ResponseEntity<?> deletePost(@PathVariable Long postId, @RequestAttribute Integer userId) {
-        postService.deletePosts(postId, userId);
+        deletePostFlow.deletePost(postId, userId);
         return ResponseEntity.ok("success to delete post");
     }
 }

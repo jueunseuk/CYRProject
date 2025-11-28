@@ -17,12 +17,14 @@ public class EventResponse {
     private Integer maxUser;
     private Boolean useComment;
     private Long commentCnt;
+    private Long viewCnt;
     private LocalDateTime createdAt;
     private LocalDateTime closedAt;
     private Boolean fixed;
     private Boolean locked;
     private Integer userId;
     private String nickname;
+    private String profileUrl;
 
     public EventResponse(Event event) {
         this.eventId = event.getEventId();
@@ -33,11 +35,13 @@ public class EventResponse {
         this.maxUser = event.getMaxUser();
         this.useComment = event.getUseComment();
         this.commentCnt = event.getCommentCnt();
+        this.viewCnt = event.getViewCnt();
         this.createdAt = event.getCreatedAt();
         this.closedAt = event.getClosedAt();
         this.fixed = event.getFixed();
         this.locked = event.getLocked();
         this.userId = event.getUser().getUserId();
         this.nickname = event.getUser().getNickname();
+        this.profileUrl = event.getUser().getProfileUrl();
     }
 }

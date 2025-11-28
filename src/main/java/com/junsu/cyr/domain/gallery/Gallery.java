@@ -3,6 +3,8 @@ package com.junsu.cyr.domain.gallery;
 import com.junsu.cyr.domain.globals.BaseTime;
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.response.exception.code.GalleryExceptionCode;
+import com.junsu.cyr.response.exception.http.BaseException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,6 +46,9 @@ public class Gallery extends BaseTime {
     private Long viewCnt;
 
     public void updateGallery(String title, String description, LocalDateTime picturedAt) {
+        if(title == null || title.trim().isEmpty() || description == null || description.trim().isEmpty() || picturedAt == null) {
+            throw new BaseException(GalleryExceptionCode.INVALID_VALUE_INJECTION);
+        }
         this.title = title;
         this.description = description;
         this.picturedAt = picturedAt;

@@ -4,6 +4,7 @@ import com.junsu.cyr.domain.achievements.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class AchievementLogResponse {
@@ -15,8 +16,9 @@ public class AchievementLogResponse {
     private Scope scope;
     private Difficulty difficulty;
     private LocalDateTime createdAt;
+    private List<AchievementRewardResponse> achievementRewards;
 
-    public AchievementLogResponse(AchievementLog achievementLog) {
+    public AchievementLogResponse(AchievementLog achievementLog, List<AchievementRewardResponse> achievementRewards) {
         this.achievementLogId = achievementLog.getAchievementLogId();
         this.createdAt = achievementLog.getCreatedAt();
         Achievement achievement = achievementLog.getAchievement();
@@ -26,5 +28,6 @@ public class AchievementLogResponse {
         this.type = achievement.getType();
         this.scope = achievement.getScope();
         this.difficulty = achievement.getDifficulty();
+        this.achievementRewards = achievementRewards;
     }
 }

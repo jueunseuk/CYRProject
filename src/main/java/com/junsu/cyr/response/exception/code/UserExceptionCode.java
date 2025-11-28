@@ -15,6 +15,11 @@ public enum UserExceptionCode implements ExceptionCode {
     REQUIRES_AT_LEAST_ADMIN("USER_005", "적어도 어드민의 권한이 필요합니다.", HttpStatus.FORBIDDEN),
     WARNING_ALREADY_ZERO("USER_006", "이미 경고 횟수가 0입니다.", HttpStatus.BAD_REQUEST),
     INCORRECT_ROLE_CHANGE_REQUEST("USER_007", "옳지 않은 권한 변경 요청입니다.", HttpStatus.BAD_REQUEST),
+    CAN_ONLY_BE_CHANGED_TO_50_UNITS("USER_008", "활동 온도는 50 단위로만 변경 가능합니다.", HttpStatus.BAD_REQUEST),
+    INVALID_VALUE_INJECTION("USER_009", "유효하지 않은 값 주입 시도입니다.", HttpStatus.BAD_REQUEST),
+    INVALID_NICKNAME_VALUE("USER_010", "닉네임의 길이가 너무 짧거나 깁니다.", HttpStatus.BAD_REQUEST),
+    INVALID_AGE_VALUE("USER_011", "나이 값이 유효하지 않습니다.", HttpStatus.BAD_REQUEST),
+    INVALID_NAME_VALUE("USER_012", "이름의 길이가 너무 짧거나 깁니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String code;

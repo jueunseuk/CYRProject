@@ -1,5 +1,8 @@
 package com.junsu.cyr.controller.gallery;
 
+import com.junsu.cyr.flow.gallery.CreateGalleryFlow;
+import com.junsu.cyr.flow.gallery.DeleteGalleryFlow;
+import com.junsu.cyr.flow.gallery.UpdateGalleryFlow;
 import com.junsu.cyr.model.gallery.*;
 import com.junsu.cyr.service.gallery.GalleryService;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +18,13 @@ import java.util.List;
 public class GalleryController {
 
     private final GalleryService galleryService;
+    private final CreateGalleryFlow createGalleryFlow;
+    private final DeleteGalleryFlow deleteGalleryFlow;
+    private final UpdateGalleryFlow updateGalleryFlow;
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadGallery(@ModelAttribute GalleryUploadRequest galleryUploadRequest, @RequestAttribute Integer userId) {
-        galleryService.uploadGallery(galleryUploadRequest, userId);
+        createGalleryFlow.createGallery(galleryUploadRequest, userId);
         return ResponseEntity.ok("success to upload gallery");
     }
 
@@ -42,14 +48,13 @@ public class GalleryController {
 
     @DeleteMapping("/{galleryId}")
     public ResponseEntity<?> deleteGallery(@PathVariable Long galleryId, @RequestAttribute Integer userId) {
-        galleryService.deleteGallery(galleryId, userId);
+        deleteGalleryFlow.deleteGallery(galleryId, userId);
         return ResponseEntity.ok("success to delete gallery");
     }
 
     @PostMapping("/{galleryId}")
     public ResponseEntity<?> updateGallery(@ModelAttribute GalleryUploadRequest galleryUploadRequest, @PathVariable Long galleryId, @RequestAttribute Integer userId) {
-        galleryService.updateGallery(galleryId, galleryUploadRequest, userId);
+        updateGalleryFlow.updateGallery(galleryId, galleryUploadRequest, userId);
         return ResponseEntity.ok("success to update gallery");
     }
-
 }

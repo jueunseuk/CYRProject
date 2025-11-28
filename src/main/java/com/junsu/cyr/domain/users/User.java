@@ -1,8 +1,9 @@
 package com.junsu.cyr.domain.users;
 
 import com.junsu.cyr.domain.globals.BaseTime;
-import com.junsu.cyr.model.user.UserActivityResponse;
 import com.junsu.cyr.model.user.UserProfileUpdateRequest;
+import com.junsu.cyr.response.exception.code.UserExceptionCode;
+import com.junsu.cyr.response.exception.http.BaseException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -113,20 +114,35 @@ public class User extends BaseTime {
     public void updateProfileUrl(String profileUrl) {
         this.profileUrl = profileUrl;
     }
+    public void updateInformation(Integer age, String nickname, Gender gender, String introduction, String name) {
+        if(nickname != null && nickname.length() > 20) {
+            throw new BaseException(UserExceptionCode.INVALID_NICKNAME_VALUE);
+        }
+        if(introduction != null && introduction.length() < 5) {
+            throw new BaseException(UserExceptionCode.TOO_SHORT_INTRODUCTION);
+        }
+        if(age != null && age < 0) {
+            throw new BaseException(UserExceptionCode.INVALID_AGE_VALUE);
+        }
+        if(name != null && name.length() > 10) {
+            throw new BaseException(UserExceptionCode.INVALID_NAME_VALUE);
+        }
 
-    public void updateInformation(UserProfileUpdateRequest request) {
-        this.age = request.getAge() == null ? this.age : request.getAge();
-        this.gender = request.getGender() == null ? this.gender : request.getGender();
-        this.nickname = request.getNickname() == null ? this.nickname : request.getNickname();
-        this.introduction = request.getIntroduction() == null ? this.introduction : request.getIntroduction();
-        this.name = request.getName() == null ? this.name : request.getName();
+        this.age = age == null ? this.age : age;
+        this.gender = gender == null ? this.gender : gender;
+        this.nickname = nickname == null ? this.nickname : nickname;
+        this.introduction = introduction == null ? this.introduction : introduction;
+        this.name = name == null ? this.name : name;
     }
 
-    public void updateActivity(UserActivityResponse userActivityResponse) {
-        this.postCnt = userActivityResponse.getPostCnt();
-        this.commentCnt = userActivityResponse.getCommentCnt();
-        this.imageCnt = userActivityResponse.getImageCnt();
-        this.empathyCnt = userActivityResponse.getEmpathyCnt();
+    public void updateActivity(Long postCnt, Long commentCnt, Long empathyCnt, Long imageCnt) {
+        if(getPostCnt() < 0 || getCommentCnt() < 0 || getImageCnt() < 0 || getEmpathyCnt() < 0) {
+            throw new BaseException(UserExceptionCode.INVALID_VALUE_INJECTION);
+        }
+        this.postCnt = postCnt;
+        this.commentCnt = commentCnt;
+        this.imageCnt = empathyCnt;
+        this.empathyCnt = imageCnt;
     }
 
     public void updateToSecession() {
@@ -151,26 +167,28 @@ public class User extends BaseTime {
 
     public void increaseExpCnt(Integer amount) {
         this.epxCnt += amount;
-    }
-
-    public void updateSand(Integer amount) {
-        this.sand += amount;
-        if(this.sand < 0) {
-            this.sand = 0;
+        if(this.epxCnt < 0) {
+            throw new BaseException(UserExceptionCode.INVALID_VALUE_INJECTION);
         }
     }
 
+    public void updateSand(Integer amount) {
+        if(this.sand == 0 && amount < 0) {
+            throw new BaseException(UserExceptionCode.INVALID_VALUE_INJECTION);
+        }
+        this.sand += amount;
+    }
+
     public void updateTemperature(Integer amount) {
+        if(amount % 50 != 0) {
+            throw new BaseException(UserExceptionCode.CAN_ONLY_BE_CHANGED_TO_50_UNITS);
+        }
         this.temperature += amount;
         if(temperature > 1800) {
             this.temperature = 1800;
         } else if(temperature < 0) {
             this.temperature = 0;
         }
-    }
-
-    public void initTemperature() {
-        this.temperature = 0;
     }
 
     public void increaseCheerCnt() {
@@ -193,6 +211,9 @@ public class User extends BaseTime {
     }
 
     public void updateWarnCnt(int amount) {
+        if(this.warn == 0 && amount < 0) {
+            throw new BaseException(UserExceptionCode.WARNING_ALREADY_ZERO);
+        }
         this.warn += amount;
     }
 
@@ -235,6 +256,9 @@ public class User extends BaseTime {
     }
 
     public void updateGlass(Integer amount) {
+        if(this.glass == 0 && amount < 0) {
+            throw new BaseException(UserExceptionCode.INVALID_VALUE_INJECTION);
+        }
         this.glass += amount;
     }
 

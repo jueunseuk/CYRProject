@@ -5,13 +5,14 @@ import com.junsu.cyr.domain.events.Type;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.event.EventConditionRequest;
 import com.junsu.cyr.model.event.EventResponse;
+import com.junsu.cyr.model.event.EventUpdateRequest;
 import com.junsu.cyr.model.event.EventUploadRequest;
 import com.junsu.cyr.repository.EventRepository;
 import com.junsu.cyr.response.exception.code.EventExceptionCode;
+import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.service.user.UserService;
 import com.junsu.cyr.util.PageableMaker;
-import com.sun.jdi.request.EventRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,11 @@ public class EventService {
                 .orElseThrow(() -> new BaseException(EventExceptionCode.NOT_FOUND_EVENT));
     }
 
+    @Transactional
+    public void deleteEvent(Event event) {
+        eventRepository.delete(event);
+    }
+
     public Page<EventResponse> findEventByType(EventConditionRequest request, Integer userId) {
         userService.getUserById(userId);
 
@@ -50,9 +56,12 @@ public class EventService {
         return events.map(EventResponse::new);
     }
 
+    @Transactional
     public EventResponse findEvent(Long eventId, Integer userId) {
         userService.getUserById(userId);
         Event event = findEventByEventId(eventId);
+
+        event.increaseViewCnt();
 
         return new EventResponse(event);
     }
@@ -60,6 +69,10 @@ public class EventService {
     @Transactional
     public EventResponse uploadEvent(EventUploadRequest request, Integer userId) {
         User user = userService.getUserById(userId);
+
+        if(!userService.isLeastManager(user)) {
+            throw new BaseException(UserExceptionCode.REQUIRES_AT_LEAST_MANAGER);
+        }
 
         isValidUploadData(request);
 
@@ -73,6 +86,8 @@ public class EventService {
                 .fixed(request.getFixed() || Boolean.FALSE)
                 .locked(request.getLocked() || Boolean.FALSE)
                 .commentCnt(0L)
+                .status(request.getStatus())
+                .viewCnt(0L)
                 .closedAt(LocalDateTime.parse(request.getClosedAt()))
                 .build();
         eventRepository.save(event);
@@ -95,4 +110,28 @@ public class EventService {
         }
     }
 
+    @Transactional
+    public EventResponse updateEvent(Long eventId, EventUpdateRequest request, Integer userId) {
+        User user = userService.getUserById(userId);
+
+        if(!userService.isLeastManager(user)) {
+            throw new BaseException(UserExceptionCode.REQUIRES_AT_LEAST_MANAGER);
+        }
+
+        if(request.getType() == null && request.getStatus() == null) {
+            throw new BaseException(EventExceptionCode.INVALID_REQUEST);
+        }
+
+        Event event = findEventByEventId(eventId);
+
+        if(request.getType() != null) {
+            event.updateType(request.getType());
+        }
+
+        if(request.getStatus() != null) {
+            event.updateStatus(request.getStatus());
+        }
+
+        return new EventResponse(event);
+    }
 }

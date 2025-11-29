@@ -27,7 +27,7 @@ public class AuthService {
     private final UserService userService;
 
     public User createUserWithEmail(SignupRequest signupRequest) {
-        if(!signupRequest.getAuthenticated()) {
+        if(signupRequest.getAuthenticated() == null || !signupRequest.getAuthenticated()) {
             throw new BaseException(AuthExceptionCode.NOT_AUTHENTICATED_USER);
         }
         if(signupRequest.getEmail() == null | signupRequest.getPassword() == null || signupRequest.getMethod() == null || signupRequest.getNickname() == null ) {
@@ -139,11 +139,11 @@ public class AuthService {
 
     private Integer getCharacterType(char c) {
         if(Character.isLetter(c)) {
-            return 0;
-        } else if(Character.isDigit(c)) {
             return 1;
-        } else if(SPECIAL_CHARS.contains(c)) {
+        } else if(Character.isDigit(c)) {
             return 2;
+        } else if(SPECIAL_CHARS.contains(c)) {
+            return 3;
         }
 
         return -1;

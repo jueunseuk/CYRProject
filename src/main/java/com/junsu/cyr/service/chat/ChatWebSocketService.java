@@ -37,9 +37,6 @@ public class ChatWebSocketService {
         }
 
         ChatMessage chatMessage = chatMessageService.createUserMessage(chatRoom, user, request.getContent(), request.getType());
-
-        chatRoom.updateLastMessage(chatMessage);
-
         return new ChatMessageResponse(chatMessage);
     }
 

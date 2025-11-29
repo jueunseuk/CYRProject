@@ -8,7 +8,6 @@ import com.junsu.cyr.model.chat.ChatMessageConditionRequest;
 import com.junsu.cyr.model.chat.ChatMessageResponse;
 import com.junsu.cyr.repository.ChatMessageRepository;
 import com.junsu.cyr.response.exception.http.BaseException;
-import com.junsu.cyr.response.exception.code.ChatMessageExceptionCode;
 import com.junsu.cyr.response.exception.code.ChatRoomUserExceptionCode;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +28,6 @@ public class ChatMessageService {
     private final ChatRoomService chatRoomService;
     private final ChatRoomUserService chatRoomUserService;
 
-    public ChatMessage getChatMessageByChatRoomId(Long chatMessageId) {
-        return chatMessageRepository.findById(chatMessageId)
-                .orElseThrow(() -> new BaseException(ChatMessageExceptionCode.NOT_FOUND_CHAT_ROOM));
-    }
-
     @Transactional
     public ChatMessage createUserMessage(ChatRoom chatRoom, User user, String content, Type type) {
         ChatMessage chatMessage = ChatMessage.builder()
@@ -43,6 +37,7 @@ public class ChatMessageService {
                 .type(type)
                 .build();
 
+        chatRoom.updateLastMessage(chatMessage);
         return chatMessageRepository.save(chatMessage);
     }
 
@@ -55,6 +50,7 @@ public class ChatMessageService {
                 .type(Type.SYSTEM)
                 .build();
 
+        chatRoom.updateLastMessage(chatMessage);
         return chatMessageRepository.save(chatMessage);
     }
 

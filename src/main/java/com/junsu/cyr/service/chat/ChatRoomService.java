@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -55,11 +54,6 @@ public class ChatRoomService {
         List<ChatRoom> otherChatRooms = chatRoomRepository.findAllByChatRoomIdNotIn(chatRoomIds);
 
         return otherChatRooms.stream().map(ChatRoomResponse::new).toList();
-    }
-
-    @Transactional
-    public void deleteChatRoom(ChatRoom chatRoom) {
-        chatRoomRepository.delete(chatRoom);
     }
 
     @Transactional

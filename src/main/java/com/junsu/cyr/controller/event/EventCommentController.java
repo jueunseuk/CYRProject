@@ -1,5 +1,7 @@
 package com.junsu.cyr.controller.event;
 
+import com.junsu.cyr.flow.event.comment.CreateEventCommentFlow;
+import com.junsu.cyr.flow.event.comment.DeleteEventCommentFlow;
 import com.junsu.cyr.model.event.EventCommentResponse;
 import com.junsu.cyr.model.event.EventCommentUploadRequest;
 import com.junsu.cyr.service.event.EventCommentService;
@@ -15,6 +17,8 @@ import java.util.List;
 public class EventCommentController {
 
     private final EventCommentService eventCommentService;
+    private final CreateEventCommentFlow createEventCommentFlow;
+    private final DeleteEventCommentFlow deleteEventCommentFlow;
 
     @GetMapping("/all")
     public ResponseEntity<List<EventCommentResponse>> getAllComments(@PathVariable Long eventId, @RequestAttribute Integer userId) {
@@ -24,13 +28,13 @@ public class EventCommentController {
 
     @PostMapping
     public ResponseEntity<EventCommentResponse> uploadComment(@PathVariable Long eventId, @ModelAttribute EventCommentUploadRequest request, @RequestAttribute Integer userId) {
-        EventCommentResponse eventCommentResponse = eventCommentService.uploadComment(eventId, request, userId);
+        EventCommentResponse eventCommentResponse = createEventCommentFlow.createEventComment(eventId, request, userId);
         return ResponseEntity.ok(eventCommentResponse);
     }
 
     @DeleteMapping("/{eventCommentId}")
     public ResponseEntity<String> deleteComment(@PathVariable Long eventId, @PathVariable Long eventCommentId, @RequestAttribute Integer userId) {
-        eventCommentService.deleteEventComment(eventId, eventCommentId, userId);
+        deleteEventCommentFlow.deleteEventComment(eventId, eventCommentId, userId);
         return ResponseEntity.ok("success to delete event comment");
     }
 }

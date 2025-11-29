@@ -46,6 +46,9 @@ public class ChatRoom extends BaseTime {
 
     public void decreaseMemberCount() {
         memberCount--;
+        if(memberCount < 0) {
+            this.memberCount = 0L;
+        }
     }
 
     public void updateLastMessage(ChatMessage chatMessage) {

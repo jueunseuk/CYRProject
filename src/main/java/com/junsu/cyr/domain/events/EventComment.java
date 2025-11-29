@@ -2,6 +2,8 @@ package com.junsu.cyr.domain.events;
 
 import com.junsu.cyr.domain.globals.BaseTime;
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.response.exception.code.EventExceptionCode;
+import com.junsu.cyr.response.exception.http.BaseException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,4 +35,11 @@ public class EventComment extends BaseTime {
 
     @Column(name = "imageUrl")
     private String imageUrl;
+
+    public void updateImageUrl(String imageUrl) {
+        if(imageUrl == null) {
+            throw new BaseException(EventExceptionCode.INVALID_REQUEST);
+        }
+        this.imageUrl = imageUrl;
+    }
 }

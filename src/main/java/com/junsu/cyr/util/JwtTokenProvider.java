@@ -1,8 +1,10 @@
 package com.junsu.cyr.util;
 
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.model.auth.SignupResponse;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -63,5 +65,22 @@ public class JwtTokenProvider {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public SignupResponse generateToken(User user, HttpServletResponse response) {
+        String refreshToken = generateRefreshToken(user);
+        String accessToken = generateAccessToken(user);
+
+        CookieUtil.addCookie(response, "refreshToken", refreshToken);
+        CookieUtil.addCookie(response, "accessToken", accessToken);
+
+        return new SignupResponse(
+                user.getUserId(),
+                user.getProfileUrl(),
+                user.getName(),
+                user.getNickname(),
+                user.getCreatedAt(),
+                user.getRole()
+        );
     }
 }

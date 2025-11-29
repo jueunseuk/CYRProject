@@ -2,6 +2,8 @@ package com.junsu.cyr.domain.calendar;
 
 import com.junsu.cyr.domain.globals.BaseTime;
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.response.exception.code.CalendarRequestExceptionCode;
+import com.junsu.cyr.response.exception.http.BaseException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -38,6 +40,9 @@ public class CalendarRequest extends BaseTime {
     }
 
     public void updateContent(String content) {
+        if(content == null || content.length() < 5) {
+            throw new BaseException(CalendarRequestExceptionCode.TOO_SHORT_CONTENT);
+        }
         this.content = content;
         this.status = false;
     }

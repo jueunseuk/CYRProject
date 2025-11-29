@@ -1,6 +1,12 @@
 package com.junsu.cyr.controller.auth;
 
-import com.junsu.cyr.domain.users.Method;
+import com.junsu.cyr.flow.authentication.login.EmailLoginFlow;
+import com.junsu.cyr.flow.authentication.login.GoogleLoginOrSignupFlow;
+import com.junsu.cyr.flow.authentication.login.KakaoLoginOrSignupFlow;
+import com.junsu.cyr.flow.authentication.login.NaverLoginOrSignupFlow;
+import com.junsu.cyr.flow.authentication.passwork.ResetPasswordFlow;
+import com.junsu.cyr.flow.authentication.signup.EmailSignupFlow;
+import com.junsu.cyr.flow.authentication.token.ReissueAccessTokenFlow;
 import com.junsu.cyr.model.auth.*;
 import com.junsu.cyr.model.email.EmailCodeRequest;
 import com.junsu.cyr.model.email.EmailMatchRequest;
@@ -20,22 +26,29 @@ public class AuthController {
 
     private final AuthService authService;
     private final MailService mailService;
+    private final NaverLoginOrSignupFlow naverLoginOrSignup;
+    private final GoogleLoginOrSignupFlow googleLoginOrSignupFlow;
+    private final KakaoLoginOrSignupFlow kakaoLoginOrSignupFlow;
+    private final EmailSignupFlow emailSignupFlow;
+    private final EmailLoginFlow emailLoginFlow;
+    private final ResetPasswordFlow resetPasswordFlow;
+    private final ReissueAccessTokenFlow reissueAccessTokenFlow;
 
     @PostMapping("/naver/callback")
     public ResponseEntity<SignupResponse> naverLoginOrSignup(@RequestBody NaverUserRequest request, HttpServletResponse response) {
-        SignupResponse signupResponse = authService.naverLoginOrSignUp(request, response);
+        SignupResponse signupResponse = naverLoginOrSignup.naverLoginOrSignUp(request, response);
         return ResponseEntity.ok(signupResponse);
     }
 
     @PostMapping("/google/callback")
     public ResponseEntity<SignupResponse> googleLoginOrSignup(@RequestBody GoogleUserRequest request, HttpServletResponse response) {
-        SignupResponse signupResponse = authService.googleLoginOrSignUp(request, response);
+        SignupResponse signupResponse = googleLoginOrSignupFlow.googleLoginOrSignUp(request, response);
         return ResponseEntity.ok(signupResponse);
     }
 
     @PostMapping("/kakao/callback")
     public ResponseEntity<SignupResponse> kakaoLoginOrSignup(@RequestBody KakaoUserRequest request, HttpServletResponse response) {
-        SignupResponse signupResponse = authService.kakaoLoginOrSignUp(request, response);
+        SignupResponse signupResponse = kakaoLoginOrSignupFlow.kakaoLoginOrSignUp(request, response);
         return ResponseEntity.ok(signupResponse);
     }
 
@@ -53,25 +66,25 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@ModelAttribute SignupRequest request, HttpServletResponse response) {
-        SignupResponse signupResponse = authService.signup(request, response);
+        SignupResponse signupResponse = emailSignupFlow.emailSignup(request, response);
         return ResponseEntity.ok(signupResponse);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody EmailLoginRequest request, HttpServletResponse response) {
-        SignupResponse signupResponse = authService.login(request, response);
+        SignupResponse signupResponse = emailLoginFlow.emailLogin(request, response);
         return ResponseEntity.ok(signupResponse);
     }
 
     @PatchMapping("/password")
     public ResponseEntity<?> passwordReset(@RequestBody PasswordResetRequest request) {
-        authService.passwordReset(request.getEmail(), request.getPassword());
+        resetPasswordFlow.resetPassword(request.getEmail(), request.getPassword());
         return ResponseEntity.ok(SuccessResponse.success("Password reset successfully"));
     }
 
     @PostMapping("/token/refresh")
     public ResponseEntity<?> resetAccessToken(HttpServletRequest request, HttpServletResponse response) {
-        authService.resetAccessToken(request, response);
+        reissueAccessTokenFlow.reissueAccessToken(request, response);
         return ResponseEntity.ok(SuccessResponse.success("Regenerate access token successfully"));
     }
 

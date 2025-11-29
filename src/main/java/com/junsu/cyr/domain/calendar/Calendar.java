@@ -3,6 +3,8 @@ package com.junsu.cyr.domain.calendar;
 import com.junsu.cyr.domain.globals.BaseTime;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.calendar.CalendarEditRequest;
+import com.junsu.cyr.response.exception.code.CalendarExceptionCode;
+import com.junsu.cyr.response.exception.http.BaseException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -61,15 +63,21 @@ public class Calendar extends BaseTime implements Comparable<Calendar> {
         return this.getDate().compareTo(o.getDate());
     }
 
-    public void updateCalendar(CalendarEditRequest newData, String imageUrl) {
+    public void updateCalendar(CalendarEditRequest newData) {
         this.title = newData.getTitle();
         this.description = newData.getDescription();
         this.location = newData.getLocation();
         this.date = LocalDate.parse(newData.getDate());
         this.link1 = newData.getLink1();
         this.link2 = newData.getLink2();
-        this.imageUrl = imageUrl;
         this.type = newData.getType();
         updatedAt = LocalDateTime.now();
+    }
+
+    public void updateImageUrl(String imageUrl) {
+        if(imageUrl == null || !imageUrl.startsWith("https://cyr-project-images.s3.amazonaws.com/schedule")) {
+            throw new BaseException(CalendarExceptionCode.INVALID_VALUE_INJECTION);
+        }
+        this.imageUrl = imageUrl;
     }
 }

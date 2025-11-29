@@ -22,6 +22,7 @@ public enum AuthExceptionCode implements ExceptionCode {
     NO_CORRESPONDING_NAVER_STATE("AUTH_012", "네이버 State 값이 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
     NOT_EXISTS_ACCESS_TOKEN("AUTH_013", "액세스 토큰이 존재하지 않습니다.", HttpStatus.UNAUTHORIZED),
     DIFFERENT_LOGIN_METHOD("AUTH_014", "다른 로그인 방식으로 가입된 계정입니다.", HttpStatus.BAD_REQUEST),
+    INVALID_VALUE_INJECTION("AUTH_015", "올바르지 않은 값 주입 시도입니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String code;

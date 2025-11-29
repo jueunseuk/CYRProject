@@ -1,5 +1,6 @@
 package com.junsu.cyr.controller.attendance;
 
+import com.junsu.cyr.flow.attendance.GetSimpleAttendanceStatisticFlow;
 import com.junsu.cyr.flow.user.attendance.MakeAttendanceFlow;
 import com.junsu.cyr.model.attendance.*;
 import com.junsu.cyr.service.attendance.AttendanceService;
@@ -16,6 +17,7 @@ public class AttendanceController {
 
     private final AttendanceService attendanceService;
     private final MakeAttendanceFlow makeAttendanceFlow;
+    private final GetSimpleAttendanceStatisticFlow getSimpleAttendanceStatisticFlow;
 
     @PostMapping("")
     public ResponseEntity<?> makeAttendance(@RequestAttribute Integer userId, @RequestBody AttendanceRequest request) {
@@ -31,7 +33,7 @@ public class AttendanceController {
 
     @GetMapping("/statistic")
     public ResponseEntity<AttendanceWeekCntResponse> getAttendanceCnt() {
-        AttendanceWeekCntResponse attendanceWeekCntResponses = attendanceService.getAttendanceCnt();
+        AttendanceWeekCntResponse attendanceWeekCntResponses = getSimpleAttendanceStatisticFlow.getSimpleAttendanceStatistic();
         return ResponseEntity.ok(attendanceWeekCntResponses);
     }
 

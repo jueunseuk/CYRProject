@@ -14,4 +14,5 @@ public class SignupRequest {
     private String password;
     private String nickname;
     private MultipartFile profileImage;
+    private Boolean authenticated;
 }

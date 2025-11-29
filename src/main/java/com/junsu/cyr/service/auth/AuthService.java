@@ -1,7 +1,5 @@
 package com.junsu.cyr.service.auth;
 
-import com.junsu.cyr.domain.images.Type;
-import com.junsu.cyr.domain.users.Method;
 import com.junsu.cyr.domain.users.Role;
 import com.junsu.cyr.domain.users.Status;
 import com.junsu.cyr.domain.users.User;
@@ -9,15 +7,8 @@ import com.junsu.cyr.model.auth.*;
 import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.AuthExceptionCode;
-import com.junsu.cyr.response.exception.code.EmailExceptionCode;
-import com.junsu.cyr.response.exception.code.UserExceptionCode;
-import com.junsu.cyr.service.image.S3Service;
 import com.junsu.cyr.service.user.UserService;
 import com.junsu.cyr.util.CookieUtil;
-import com.junsu.cyr.util.JwtTokenProvider;
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -33,110 +24,17 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final OAuthService oAuthService;
-    private final JwtTokenProvider jwtTokenProvider;
-    private final S3Service s3Service;
     private final UserService userService;
 
-    @Transactional
-    public SignupResponse naverLoginOrSignUp(NaverUserRequest request, HttpServletResponse response) {
-        String accessToken = oAuthService.getNaverAccessToken(request.getCode(), request.getState());
-        OAuthUserInfoRequest userInfo = oAuthService.getUserInfo(accessToken, "https://openapi.naver.com/v1/nid/me", Method.NAVER);
-
-        Optional<User> userCheck = userRepository.findByEmail(userInfo.getEmail());
-
-        User user;
-        if (userCheck.isPresent()) {
-            user = userCheck.get();
-
-            if (user.getStatus() != Status.ACTIVE) {
-                throw new BaseException(AuthExceptionCode.ACCOUNT_NOT_ACTIVE);
-            }
-
-            if(user.getMethod() != Method.NAVER) {
-                throw new BaseException(AuthExceptionCode.DIFFERENT_LOGIN_METHOD);
-            }
-        } else {
-            user = createUserWithOAuth(userInfo);
+    public User createUserWithEmail(SignupRequest signupRequest) {
+        if(!signupRequest.getAuthenticated()) {
+            throw new BaseException(AuthExceptionCode.NOT_AUTHENTICATED_USER);
         }
-
-        return generateTokensAndCreateResponse(user, response);
-    }
-
-    @Transactional
-    public SignupResponse googleLoginOrSignUp(GoogleUserRequest request, HttpServletResponse response) {
-        String accessToken = oAuthService.getGoogleAccessToken(request.getCode());
-        OAuthUserInfoRequest userInfo = oAuthService.getUserInfo(accessToken, "https://www.googleapis.com/oauth2/v2/userinfo", Method.GOOGLE);
-
-        Optional<User> userCheck = userRepository.findByEmail(userInfo.getEmail());
-
-        User user;
-        if (userCheck.isPresent()) {
-            user = userCheck.get();
-
-            if (user.getStatus() != Status.ACTIVE) {
-                throw new BaseException(AuthExceptionCode.ACCOUNT_NOT_ACTIVE);
-            }
-
-            if(user.getMethod() != Method.GOOGLE) {
-                throw new BaseException(AuthExceptionCode.DIFFERENT_LOGIN_METHOD);
-            }
-        } else {
-            user = createUserWithOAuth(userInfo);
+        if(signupRequest.getEmail() == null | signupRequest.getPassword() == null || signupRequest.getMethod() == null || signupRequest.getNickname() == null ) {
+            throw new BaseException(AuthExceptionCode.INVALID_VALUE_INJECTION);
         }
+        isValidPassword(signupRequest.getPassword());
 
-        return generateTokensAndCreateResponse(user, response);
-    }
-
-    @Transactional
-    public SignupResponse kakaoLoginOrSignUp(KakaoUserRequest request, HttpServletResponse response) {
-        String accessToken = oAuthService.getKakaoAccessToken(request.getCode());
-        OAuthUserInfoRequest userInfo = oAuthService.getUserInfo(accessToken, "https://kapi.kakao.com/v2/user/me", Method.KAKAO);
-
-        Optional<User> userCheck = userRepository.findByEmail(userInfo.getEmail());
-
-        User user;
-        if (userCheck.isPresent()) {
-            user = userCheck.get();
-
-            if (user.getStatus() != Status.ACTIVE) {
-                throw new BaseException(AuthExceptionCode.ACCOUNT_NOT_ACTIVE);
-            }
-
-            if(user.getMethod() != Method.KAKAO) {
-                throw new BaseException(AuthExceptionCode.DIFFERENT_LOGIN_METHOD);
-            }
-        } else {
-            user = createUserWithOAuth(userInfo);
-        }
-
-        return generateTokensAndCreateResponse(user, response);
-    }
-
-    @Transactional
-    public SignupResponse signup(SignupRequest signupRequest, HttpServletResponse response) {
-        Optional<User> check = userRepository.findByEmail(signupRequest.getEmail());
-
-        if (check.isPresent()) {
-            throw new BaseException(EmailExceptionCode.ALREADY_EXIST_EMAIL);
-        }
-
-        if (!isValidPassword(signupRequest.getPassword())) {
-            throw new BaseException(AuthExceptionCode.INVALID_PASSWORD_VALUE);
-        }
-
-        User user = createdUserWithEmail(signupRequest);
-
-        if (signupRequest.getProfileImage() != null) {
-            String profileUrl = s3Service.uploadFile(signupRequest.getProfileImage(), Type.PROFILE);
-            user.updateProfileUrl(profileUrl);
-            userRepository.save(user);
-        }
-
-        return generateTokensAndCreateResponse(user, response);
-    }
-
-    public User createdUserWithEmail(SignupRequest signupRequest) {
         User user = User.builder()
                 .email(signupRequest.getEmail())
                 .name(signupRequest.getName())
@@ -166,6 +64,10 @@ public class AuthService {
     }
 
     public User createUserWithOAuth(OAuthUserInfoRequest userInfo) {
+        if(userInfo.getEmail() == null || userInfo.getName() == null || userInfo.getMethod() == null) {
+            throw new BaseException(AuthExceptionCode.FAILED_TO_FETCH_USER_INFO);
+        }
+
         User user = User.builder()
                 .email(userInfo.getEmail())
                 .name(userInfo.getName())
@@ -192,62 +94,6 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    public SignupResponse login(EmailLoginRequest request, HttpServletResponse response) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
-
-        if (user.getStatus() != Status.ACTIVE) {
-            throw new BaseException(AuthExceptionCode.ACCOUNT_NOT_ACTIVE);
-        }
-
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new BaseException(AuthExceptionCode.NO_CORRESPONDING_PASSWORD_VALUE);
-        }
-
-        return generateTokensAndCreateResponse(user, response);
-    }
-
-    private SignupResponse generateTokensAndCreateResponse(User user, HttpServletResponse response) {
-        String refreshToken = jwtTokenProvider.generateRefreshToken(user);
-        String accessToken = jwtTokenProvider.generateAccessToken(user);
-
-        CookieUtil.addCookie(response, "refreshToken", refreshToken);
-        CookieUtil.addCookie(response, "accessToken", accessToken);
-
-        return  new SignupResponse(
-                user.getUserId(),
-                user.getProfileUrl(),
-                user.getName(),
-                user.getNickname(),
-                user.getCreatedAt(),
-                user.getRole()
-        );
-    }
-
-    @Transactional
-    public void passwordReset(String email, String password) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new BaseException(EmailExceptionCode.NO_CORRESPONDING_EMAIL_FOUND));
-
-        if (user.getStatus() == Status.SECESSION) {
-            throw new BaseException(AuthExceptionCode.ACCOUNT_ALREADY_DEACTIVATED);
-        }
-
-        if (!isValidPassword(password)) {
-            throw new BaseException(AuthExceptionCode.INVALID_PASSWORD_VALUE);
-        }
-
-        user.updatePassword(passwordEncoder.encode(password));
-        userRepository.save(user);
-    }
-
-    @Transactional
-    public void resetAccessToken(HttpServletRequest request, HttpServletResponse response) {
-        User user = getUserFromRefreshToken(request);
-        String accessToken = jwtTokenProvider.generateAccessToken(user);
-        CookieUtil.addCookie(response, "accessToken", accessToken);
-    }
-
     public void logout(HttpServletResponse response) {
         CookieUtil.deleteCookie(response, "refreshToken");
         CookieUtil.deleteCookie(response, "accessToken");
@@ -267,26 +113,46 @@ public class AuthService {
         user.updateToSecession();
     }
 
-    private User getUserFromRefreshToken(HttpServletRequest request) {
-        Optional<Cookie> cookie = CookieUtil.getCookie(request, "refreshToken");
-
-        if (cookie.isEmpty()) {
-            throw new BaseException(AuthExceptionCode.NO_CORRESPONDING_REFRESH_TOKEN);
+    public void isValidPassword(String password) {
+        if(password == null || password.length() < 8 || password.length() > 20) {
+            throw new BaseException(AuthExceptionCode.INVALID_PASSWORD_VALUE);
         }
 
-        String refreshToken = cookie.get().getValue();
-        if (jwtTokenProvider.isValidToken(refreshToken)) {
-            throw new BaseException(AuthExceptionCode.INVALID_REFRESH_TOKEN);
+        char[] chars = password.toCharArray();
+        int alphabet = 0;
+        int number = 0;
+        int symbol = 0;
+
+        for(char c : chars) {
+            switch(getCharacterType(c)) {
+                case 1: alphabet++; break;
+                case 2: number++; break;
+                case 3: symbol++; break;
+                default: throw new BaseException(AuthExceptionCode.INVALID_PASSWORD_VALUE);
+            }
         }
 
-        Claims claims = jwtTokenProvider.parseClaims(refreshToken);
-        Integer userId = Integer.parseInt(claims.getSubject());
-
-        return userRepository.findByUserId(userId)
-                .orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
+        if(alphabet < 1 || number < 1 || symbol < 1) {
+            throw new BaseException(AuthExceptionCode.INVALID_PASSWORD_VALUE);
+        }
     }
 
-    public Boolean isValidPassword(String password) {
-        return password != null && password.length() >= 8 && password.length() <= 20;
+    private Integer getCharacterType(char c) {
+        if(Character.isLetter(c)) {
+            return 0;
+        } else if(Character.isDigit(c)) {
+            return 1;
+        } else if(SPECIAL_CHARS.contains(c)) {
+            return 2;
+        }
+
+        return -1;
     }
+
+    private static final Set<Character> SPECIAL_CHARS = Set.of(
+            '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*',
+            '+', ',', '-', '.', '/', ':', ';', '<', '=', '>',
+            '?', '@', '[', '₩', ']', '^', '_', '`', '{', '|',
+            '}', '~'
+    );
 }

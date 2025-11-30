@@ -4,6 +4,7 @@ import com.junsu.cyr.constant.MagicNumberConstant;
 import com.junsu.cyr.domain.shop.ShopItem;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.domain.users.UserNicknameSetting;
+import com.junsu.cyr.model.shop.ShopItemResponse;
 import com.junsu.cyr.repository.UserNicknameSettingRepository;
 import com.junsu.cyr.response.exception.code.SettingExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserNicknameSettingService {
 
     private final UserNicknameSettingRepository userNicknameSettingRepository;
+    private final UserService userService;
 
     @Transactional
     public void createUserNicknameSetting(User user, ShopItem shopItem) {
@@ -33,5 +35,11 @@ public class UserNicknameSettingService {
 
     public UserNicknameSetting getUserNicknameSetting(User user) {
         return userNicknameSettingRepository.findByUser(user);
+    }
+
+    public ShopItemResponse getUserNicknameSetting(Integer userId) {
+        User user = userService.getUserById(userId);
+        UserNicknameSetting userNicknameSetting = getUserNicknameSetting(user);
+        return new ShopItemResponse(userNicknameSetting.getShopItem());
     }
 }

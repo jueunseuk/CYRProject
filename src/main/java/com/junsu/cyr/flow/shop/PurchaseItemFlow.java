@@ -5,6 +5,7 @@ import com.junsu.cyr.domain.shop.Action;
 import com.junsu.cyr.domain.shop.ShopItem;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.domain.users.UserInventory;
+import com.junsu.cyr.flow.user.profile.UpdateUserNicknameColorFlow;
 import com.junsu.cyr.repository.ShopLogRepository;
 import com.junsu.cyr.repository.UserInventoryRepository;
 import com.junsu.cyr.response.exception.code.ShopItemExceptionCode;
@@ -33,6 +34,7 @@ public class PurchaseItemFlow {
     private final UserBannerSettingService userBannerSettingService;
     private final ExperienceRewardService experienceRewardService;
     private final GlassRewardService glassRewardService;
+    private final UpdateUserNicknameColorFlow updateUserNicknameColorFlow;
 
     @Transactional
     public void purchaseItem(Integer shopItemId, Integer userId) {
@@ -69,6 +71,8 @@ public class PurchaseItemFlow {
         if(shopItem.getShopCategory().getShopCategoryId() == MagicNumberConstant.SHOP_CATEGORY_BANNER_TYPE) {
             Integer next = userBannerSettingService.findNextSequence(user);
             userBannerSettingService.createUserBannerSetting(user, shopItem, next);
+        } else if(shopItem.getShopCategory().getShopCategoryId() == MagicNumberConstant.SHOP_CATEGORY_NICKNAME_TYPE) {
+            updateUserNicknameColorFlow.updateUserNicknameColor(shopItem.getShopItemId(), userId);
         }
 
         shopItem.increaseSaleCnt();

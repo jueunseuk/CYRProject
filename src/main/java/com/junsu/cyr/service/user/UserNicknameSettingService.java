@@ -40,6 +40,9 @@ public class UserNicknameSettingService {
     public ShopItemResponse getUserNicknameSetting(Integer userId) {
         User user = userService.getUserById(userId);
         UserNicknameSetting userNicknameSetting = getUserNicknameSetting(user);
+        if(userNicknameSetting == null) {
+            return null;
+        }
         return new ShopItemResponse(userNicknameSetting.getShopItem());
     }
 }

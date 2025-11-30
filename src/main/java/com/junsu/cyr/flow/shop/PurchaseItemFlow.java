@@ -64,8 +64,7 @@ public class PurchaseItemFlow {
         shopLogService.createShopLog(shopItem, user, Action.PURCHASE);
 
         experienceRewardService.addExperience(user, 7);
-
-        glassRewardService.addGlass(user, 3, shopItem.getPrice());
+        glassRewardService.addGlass(user, 3, -shopItem.getPrice());
 
         if(shopItem.getShopCategory().getShopCategoryId() == MagicNumberConstant.SHOP_CATEGORY_BANNER_TYPE) {
             Integer next = userBannerSettingService.findNextSequence(user);

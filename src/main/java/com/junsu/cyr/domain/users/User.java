@@ -1,7 +1,7 @@
 package com.junsu.cyr.domain.users;
 
 import com.junsu.cyr.domain.globals.BaseTime;
-import com.junsu.cyr.model.user.UserProfileUpdateRequest;
+import com.junsu.cyr.response.exception.code.ShopItemExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
 import jakarta.persistence.*;
@@ -207,6 +207,9 @@ public class User extends BaseTime {
     }
 
     public void useGlass(Integer amount) {
+        if(this.glass < amount) {
+            throw new BaseException(ShopItemExceptionCode.GLASSES_ARE_INSUFFICIENT);
+        }
         this.glass -= amount;
     }
 

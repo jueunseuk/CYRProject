@@ -1,6 +1,8 @@
 package com.junsu.cyr.controller.user;
 
 import com.junsu.cyr.flow.user.profile.UpdateUserNicknameColorFlow;
+import com.junsu.cyr.model.shop.ShopItemResponse;
+import com.junsu.cyr.service.user.UserNicknameSettingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,10 +13,17 @@ import org.springframework.web.bind.annotation.*;
 public class UserNicknameSettingController {
 
     private final UpdateUserNicknameColorFlow updateUserNicknameColorFlow;
+    private final UserNicknameSettingService userNicknameSettingService;
 
     @PostMapping
     public ResponseEntity<String> setUserNicknameColor(@RequestParam Integer shopItemId, @RequestAttribute Integer userId) {
         updateUserNicknameColorFlow.updateUserNicknameColor(shopItemId, userId);
         return ResponseEntity.ok("success to update user nickname color");
+    }
+
+    @GetMapping
+    public ResponseEntity<ShopItemResponse> getUserNicknameColor(@RequestAttribute Integer userId) {
+        ShopItemResponse shopItemResponse = userNicknameSettingService.getUserNicknameSetting(userId);
+        return ResponseEntity.ok(shopItemResponse);
     }
 }

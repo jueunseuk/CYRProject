@@ -1,10 +1,11 @@
 package com.junsu.cyr.controller.event;
 
+import com.junsu.cyr.flow.event.CreateEventFlow;
+import com.junsu.cyr.flow.event.DeleteEventFlow;
 import com.junsu.cyr.model.event.EventConditionRequest;
 import com.junsu.cyr.model.event.EventResponse;
 import com.junsu.cyr.model.event.EventUpdateRequest;
 import com.junsu.cyr.model.event.EventUploadRequest;
-import com.junsu.cyr.service.event.EventFlowService;
 import com.junsu.cyr.service.event.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,7 +18,8 @@ import org.springframework.web.bind.annotation.*;
 public class EventController {
 
     private final EventService eventService;
-    private final EventFlowService eventFlowService;
+    private final CreateEventFlow createEventFlow;
+    private final DeleteEventFlow deleteEventFlow;
 
     @GetMapping("/list")
     public ResponseEntity<Page<EventResponse>> getAllEvents(@ModelAttribute EventConditionRequest request, @RequestAttribute Integer userId) {
@@ -33,7 +35,7 @@ public class EventController {
 
     @PostMapping
     public ResponseEntity<EventResponse> uploadEvent(@RequestBody EventUploadRequest request, @RequestAttribute Integer userId) {
-        EventResponse eventResponse = eventService.uploadEvent(request, userId);
+        EventResponse eventResponse = createEventFlow.createEvent(request, userId);
         return ResponseEntity.ok(eventResponse);
     }
 
@@ -45,7 +47,7 @@ public class EventController {
 
     @DeleteMapping("/{eventId}")
     public ResponseEntity<String> deleteEvent(@PathVariable Long eventId, @RequestAttribute Integer userId) {
-        eventFlowService.deleteEvent(eventId, userId);
+        deleteEventFlow.deleteEvent(eventId, userId);
         return ResponseEntity.ok("success to delete event and event comment");
     }
 }

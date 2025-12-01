@@ -2,6 +2,7 @@ package com.junsu.cyr.util;
 
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.auth.SignupResponse;
+import com.junsu.cyr.service.user.UserNicknameSettingService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,6 +17,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
+    private final UserNicknameSettingService userNicknameSettingService;
     @Value("${jwt.jwt-key}")
     private String jwtSecretKey;
 
@@ -80,7 +82,8 @@ public class JwtTokenProvider {
                 user.getName(),
                 user.getNickname(),
                 user.getCreatedAt(),
-                user.getRole()
+                user.getRole(),
+                userNicknameSettingService.getUserNicknameColor(user)
         );
     }
 }

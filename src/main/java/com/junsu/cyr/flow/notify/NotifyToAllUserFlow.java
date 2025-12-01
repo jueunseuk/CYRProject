@@ -3,10 +3,10 @@ package com.junsu.cyr.flow.notify;
 import com.junsu.cyr.domain.notification.Type;
 import com.junsu.cyr.domain.users.Status;
 import com.junsu.cyr.domain.users.User;
-import com.junsu.cyr.global.annotation.ManagerOnly;
 import com.junsu.cyr.model.notification.NotificationAllRequest;
 import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.code.NotificationExceptionCode;
+import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.service.notification.NotificationService;
 import com.junsu.cyr.service.user.UserService;
@@ -24,10 +24,13 @@ public class NotifyToAllUserFlow {
     private final NotificationService notificationService;
     private final UserRepository userRepository;
 
-    @ManagerOnly
     @Transactional
     public void notifyToAllUser(NotificationAllRequest request, Integer userId) {
-        userService.getUserById(userId);
+        User user = userService.getUserById(userId);
+
+        if(!userService.isLeastManager(user)) {
+            throw new BaseException(UserExceptionCode.REQUIRES_AT_LEAST_MANAGER);
+        }
 
         if(request.getMessage() == null) {
             throw new BaseException(NotificationExceptionCode.TOO_SHORT_MESSAGE);

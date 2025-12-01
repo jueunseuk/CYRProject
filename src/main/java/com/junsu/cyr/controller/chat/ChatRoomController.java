@@ -1,9 +1,8 @@
 package com.junsu.cyr.controller.chat;
 
-import com.junsu.cyr.flow.chat.CreateChatRoomFlow;
-import com.junsu.cyr.flow.chat.DeleteChatRoomFlow;
 import com.junsu.cyr.model.chat.ChatRoomRequest;
 import com.junsu.cyr.model.chat.ChatRoomResponse;
+import com.junsu.cyr.service.chat.ChatService;
 import com.junsu.cyr.service.chat.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +16,7 @@ import java.util.List;
 public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
-    private final CreateChatRoomFlow createChatRoomFlow;
-    private final DeleteChatRoomFlow deleteChatRoomFlow;
+    private final ChatService chatService;
 
     @GetMapping("/{chatRoomId}")
     public ResponseEntity<ChatRoomResponse> getChatRoom(@PathVariable Long chatRoomId, @RequestAttribute Integer userId) {
@@ -40,13 +38,13 @@ public class ChatRoomController {
 
     @PostMapping
     public ResponseEntity<ChatRoomResponse> createChatRoom(@RequestBody ChatRoomRequest request, @RequestAttribute Integer userId) {
-        ChatRoomResponse chatRoomResponse = createChatRoomFlow.createChatRoom(request, userId);
+        ChatRoomResponse chatRoomResponse = chatService.createChatRoom(request, userId);
         return ResponseEntity.ok(chatRoomResponse);
     }
 
     @DeleteMapping("/{chatRoomId}")
     public ResponseEntity<String> deleteChatRoom(@PathVariable Long chatRoomId, @RequestAttribute Integer userId) {
-        deleteChatRoomFlow.deleteChatRoom(chatRoomId, userId);
+        chatService.deleteChatRoom(chatRoomId, userId);
         return ResponseEntity.ok("success to delete chat room");
     }
 }

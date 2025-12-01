@@ -32,7 +32,7 @@ public class UserService {
 
     public SignupResponse getUserLocalStorageInfo(Integer userId) {
         User user = getUserById(userId);
-        return new SignupResponse(user);
+        return new SignupResponse(user, userNicknameSettingService.getUserNicknameColor(user));
     }
 
     public boolean isLeastManager(User user) {

@@ -32,7 +32,6 @@ public class ChatRoomUserService {
                 .user(user)
                 .build();
 
-        chatRoom.increaseMemberCount();
         chatRoomUserRepository.save(chatRoomUser);
     }
 

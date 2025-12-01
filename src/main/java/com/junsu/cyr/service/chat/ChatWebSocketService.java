@@ -9,6 +9,7 @@ import com.junsu.cyr.model.chat.ChatMessageResponse;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.ChatMessageExceptionCode;
 import com.junsu.cyr.response.exception.code.ChatRoomUserExceptionCode;
+import com.junsu.cyr.service.user.UserNicknameSettingService;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class ChatWebSocketService {
     private final ChatRoomService chatRoomService;
     private final ChatRoomUserService chatRoomUserService;
     private final ChatMessageService chatMessageService;
+    private final UserNicknameSettingService userNicknameSettingService;
 
     @Transactional
     public ChatMessageResponse saveAndBroadcast(Long chatRoomId, ChatMessageRequest request) {
@@ -37,7 +39,10 @@ public class ChatWebSocketService {
         }
 
         ChatMessage chatMessage = chatMessageService.createUserMessage(chatRoom, user, request.getContent(), request.getType());
-        return new ChatMessageResponse(chatMessage);
+
+        chatRoom.updateLastMessage(chatMessage);
+
+        return new ChatMessageResponse(chatMessage, userNicknameSettingService.getUserNicknameColor(chatMessage.getUser()));
     }
 
     @Transactional
@@ -52,7 +57,7 @@ public class ChatWebSocketService {
         String content = String.format(ChatSystemMessageConstant.JOIN, user.getNickname());
         ChatMessage chatMessage = chatMessageService.createSystemMessage(chatRoom, content);
 
-        return new ChatMessageResponse(chatMessage);
+        return new ChatMessageResponse(chatMessage, userNicknameSettingService.getUserNicknameColor(chatMessage.getUser()));
     }
 
     @Transactional
@@ -67,7 +72,7 @@ public class ChatWebSocketService {
         String content = String.format(ChatSystemMessageConstant.EXIT, user.getNickname());
         ChatMessage chatMessage = chatMessageService.createSystemMessage(chatRoom, content);
 
-        return new ChatMessageResponse(chatMessage);
+        return new ChatMessageResponse(chatMessage, userNicknameSettingService.getUserNicknameColor(chatMessage.getUser()));
     }
 
     public ChatMessageResponse enterRoom(Long chatRoomId, ChatMessageRequest request) {
@@ -81,7 +86,7 @@ public class ChatWebSocketService {
         String content = String.format(ChatSystemMessageConstant.ENTER, user.getNickname());
         ChatMessage chatMessage = chatMessageService.createSystemMessage(chatRoom, content);
 
-        return new ChatMessageResponse(chatMessage);
+        return new ChatMessageResponse(chatMessage, userNicknameSettingService.getUserNicknameColor(chatMessage.getUser()));
     }
 
     public ChatMessageResponse leaveRoom(Long chatRoomId, ChatMessageRequest request) {
@@ -95,6 +100,6 @@ public class ChatWebSocketService {
         String content = String.format(ChatSystemMessageConstant.LEAVE, user.getNickname());
         ChatMessage chatMessage = chatMessageService.createSystemMessage(chatRoom, content);
 
-        return new ChatMessageResponse(chatMessage);
+        return new ChatMessageResponse(chatMessage, userNicknameSettingService.getUserNicknameColor(chatMessage.getUser()));
     }
 }

@@ -33,39 +33,9 @@ public class EventService {
                 .orElseThrow(() -> new BaseException(EventExceptionCode.NOT_FOUND_EVENT));
     }
 
-    public Event createEvent(EventUploadRequest request, User user) {
-        if(request.getTitle() == null || request.getTitle().length() < 5) {
-            throw new BaseException(EventExceptionCode.TOO_SHORT_TITLE);
-        }
-        if(request.getContent() == null || request.getContent().length() < 5) {
-            throw new BaseException(EventExceptionCode.TOO_SHORT_CONTENT);
-        }
-        if(request.getType() == null) {
-            throw new BaseException(EventExceptionCode.INVALID_EVENT_TYPE);
-        }
-        if(request.getType() == Type.FIRSTCOME && request.getMaxUser() == null) {
-            throw new BaseException(EventExceptionCode.INVALID_REQUEST);
-        }
-        if(request.getClosedAt() == null) {
-            throw new BaseException(EventExceptionCode.INVALID_DEADLINE);
-        }
-
-        Event event = Event.builder()
-                .user(user)
-                .title(request.getTitle())
-                .content(request.getContent())
-                .type(request.getType())
-                .maxUser(request.getType() == Type.FIRSTCOME ? request.getMaxUser() : Integer.MAX_VALUE)
-                .useComment(request.getUseComment())
-                .fixed(request.getFixed() || Boolean.FALSE)
-                .locked(request.getLocked() || Boolean.FALSE)
-                .commentCnt(0L)
-                .status(request.getStatus())
-                .viewCnt(0L)
-                .closedAt(LocalDateTime.parse(request.getClosedAt()))
-                .build();
-
-        return eventRepository.save(event);
+    @Transactional
+    public void deleteEvent(Event event) {
+        eventRepository.delete(event);
     }
 
     public Page<EventResponse> findEventByType(EventConditionRequest request, Integer userId) {
@@ -94,6 +64,50 @@ public class EventService {
         event.increaseViewCnt();
 
         return new EventResponse(event);
+    }
+
+    @Transactional
+    public EventResponse uploadEvent(EventUploadRequest request, Integer userId) {
+        User user = userService.getUserById(userId);
+
+        if(!userService.isLeastManager(user)) {
+            throw new BaseException(UserExceptionCode.REQUIRES_AT_LEAST_MANAGER);
+        }
+
+        isValidUploadData(request);
+
+        Event event = Event.builder()
+                .user(user)
+                .title(request.getTitle())
+                .content(request.getContent())
+                .type(request.getType())
+                .maxUser(request.getType() == Type.FIRSTCOME ? request.getMaxUser() : Integer.MAX_VALUE)
+                .useComment(request.getUseComment())
+                .fixed(request.getFixed() || Boolean.FALSE)
+                .locked(request.getLocked() || Boolean.FALSE)
+                .commentCnt(0L)
+                .status(request.getStatus())
+                .viewCnt(0L)
+                .closedAt(LocalDateTime.parse(request.getClosedAt()))
+                .build();
+        eventRepository.save(event);
+
+        return new EventResponse(event);
+    }
+
+    private void isValidUploadData(EventUploadRequest request) {
+        if(request.getTitle() == null || request.getTitle().length() < 5) {
+            throw new BaseException(EventExceptionCode.TOO_SHORT_TITLE);
+        }
+        if(request.getContent() == null || request.getContent().length() < 5) {
+            throw new BaseException(EventExceptionCode.TOO_SHORT_CONTENT);
+        }
+        if(request.getType() == null) {
+            throw new BaseException(EventExceptionCode.INVALID_EVENT_TYPE);
+        }
+        if(request.getClosedAt() == null) {
+            throw new BaseException(EventExceptionCode.INVALID_DEADLINE);
+        }
     }
 
     @Transactional

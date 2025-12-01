@@ -10,6 +10,7 @@ import com.junsu.cyr.repository.ChatMessageRepository;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.ChatMessageExceptionCode;
 import com.junsu.cyr.response.exception.code.ChatRoomUserExceptionCode;
+import com.junsu.cyr.service.user.UserNicknameSettingService;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +29,7 @@ public class ChatMessageService {
     private final UserService userService;
     private final ChatRoomService chatRoomService;
     private final ChatRoomUserService chatRoomUserService;
+    private final UserNicknameSettingService userNicknameSettingService;
 
     public ChatMessage getChatMessageByChatRoomId(Long chatMessageId) {
         return chatMessageRepository.findById(chatMessageId)
@@ -76,6 +78,6 @@ public class ChatMessageService {
 
         List<ChatMessage> chatMessages = chatMessageRepository.findALlByChatRoom(chatRoom, pageable);
 
-        return chatMessages.stream().map(ChatMessageResponse::new).toList();
+        return chatMessages.stream().map(chatMessage -> new ChatMessageResponse(chatMessage, userNicknameSettingService.getUserNicknameColor(chatMessage.getUser()))).toList();
     }
 }

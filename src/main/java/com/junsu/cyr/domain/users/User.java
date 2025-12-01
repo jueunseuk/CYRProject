@@ -206,13 +206,6 @@ public class User extends BaseTime {
         this.sand -= 100;
     }
 
-    public void useGlass(Integer amount) {
-        if(this.glass < amount) {
-            throw new BaseException(ShopItemExceptionCode.GLASSES_ARE_INSUFFICIENT);
-        }
-        this.glass -= amount;
-    }
-
     public void updateWarnCnt(int amount) {
         if(this.warn == 0 && amount < 0) {
             throw new BaseException(UserExceptionCode.WARNING_ALREADY_ZERO);
@@ -259,6 +252,8 @@ public class User extends BaseTime {
     }
 
     public void updateGlass(Integer amount) {
+        System.out.println(amount);
+        System.out.println(this.glass);
         if(this.glass == 0 && amount < 0) {
             throw new BaseException(UserExceptionCode.INVALID_VALUE_INJECTION);
         }

@@ -37,6 +37,15 @@ public class UserNicknameSettingService {
         return userNicknameSettingRepository.findByUser(user);
     }
 
+    public String getUserNicknameColor(User user) {
+        UserNicknameSetting userNicknameSetting = userNicknameSettingRepository.findByUser(user);
+        if(userNicknameSetting == null) {
+            return "black";
+        } else {
+            return userNicknameSetting.getShopItem().getDescription();
+        }
+    }
+
     public ShopItemResponse getUserNicknameSetting(Integer userId) {
         User user = userService.getUserById(userId);
         UserNicknameSetting userNicknameSetting = getUserNicknameSetting(user);

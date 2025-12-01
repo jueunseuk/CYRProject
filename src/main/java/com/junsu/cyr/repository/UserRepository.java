@@ -31,4 +31,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<User> findTop10ByOrderByEpxCntDesc();
 
     List<User> findAllByStatusAndDeletedAtBefore(Status status, LocalDateTime aMonthAgo);
+
+    List<User> findAllByStatus(Status status);
 }

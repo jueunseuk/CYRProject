@@ -5,6 +5,8 @@ import com.junsu.cyr.domain.notification.Type;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.notification.NotificationResponse;
 import com.junsu.cyr.repository.NotificationRepository;
+import com.junsu.cyr.response.exception.code.NotificationExceptionCode;
+import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -24,6 +26,10 @@ public class NotificationService {
 
     @Transactional
     public Notification createNotification(User user, Type type, String message, Long targetId) {
+        if(message.length() < 5) {
+            throw new BaseException(NotificationExceptionCode.TOO_SHORT_MESSAGE);
+        }
+
         Notification notification = Notification.builder()
             .user(user)
             .type(type)

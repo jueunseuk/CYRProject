@@ -16,7 +16,7 @@ public class UserNicknameSettingController {
     private final UserNicknameSettingService userNicknameSettingService;
 
     @PostMapping
-    public ResponseEntity<String> setUserNicknameColor(@RequestParam Integer shopItemId, @RequestAttribute Integer userId) {
+    public ResponseEntity<String> setUserNicknameColor(@RequestBody Integer shopItemId, @RequestAttribute Integer userId) {
         updateUserNicknameColorFlow.updateUserNicknameColor(shopItemId, userId);
         return ResponseEntity.ok("success to update user nickname color");
     }

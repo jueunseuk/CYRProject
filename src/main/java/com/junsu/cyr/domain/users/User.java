@@ -1,7 +1,7 @@
 package com.junsu.cyr.domain.users;
 
 import com.junsu.cyr.domain.globals.BaseTime;
-import com.junsu.cyr.model.user.UserProfileUpdateRequest;
+import com.junsu.cyr.response.exception.code.ShopItemExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
 import jakarta.persistence.*;
@@ -206,10 +206,6 @@ public class User extends BaseTime {
         this.sand -= 100;
     }
 
-    public void useGlass(Integer amount) {
-        this.glass -= amount;
-    }
-
     public void updateWarnCnt(int amount) {
         if(this.warn == 0 && amount < 0) {
             throw new BaseException(UserExceptionCode.WARNING_ALREADY_ZERO);
@@ -256,6 +252,8 @@ public class User extends BaseTime {
     }
 
     public void updateGlass(Integer amount) {
+        System.out.println(amount);
+        System.out.println(this.glass);
         if(this.glass == 0 && amount < 0) {
             throw new BaseException(UserExceptionCode.INVALID_VALUE_INJECTION);
         }

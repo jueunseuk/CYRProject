@@ -25,8 +25,9 @@ public class UserProfileResponse {
     private LocalDateTime createdAt;
     private Integer warn;
     private LocalDateTime passwordUpdatedAt;
+    private String color;
 
-    public UserProfileResponse(User user) {
+    public UserProfileResponse(User user, String color) {
         this.userId = user.getUserId();
         this.name = user.getName();
         this.nickname = user.getNickname();
@@ -42,5 +43,6 @@ public class UserProfileResponse {
         this.createdAt = user.getCreatedAt();
         this.warn = user.getWarn();
         this.passwordUpdatedAt = user.getPasswordUpdatedAt();
+        this.color = color;
     }
 }

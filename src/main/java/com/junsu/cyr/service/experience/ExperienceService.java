@@ -88,9 +88,9 @@ public class ExperienceService {
 
     public List<GraphResponse> getExperienceHistory(Integer userId) {
         LocalDateTime today = LocalDateTime.now();
-        LocalDateTime aYearAgo = today.minusYears(1);
+        LocalDateTime aMonthAgo = today.minusMonths(1);
 
-        List<DailyMaxProjection> rows = experienceLogRepository.findDailyMaxByUserId(userId, aYearAgo, today);
+        List<DailyMaxProjection> rows = experienceLogRepository.findDailyMaxByUserId(userId, aMonthAgo, today);
 
         List<GraphResponse.Point> points = rows.stream()
                 .map(r -> new GraphResponse.Point(

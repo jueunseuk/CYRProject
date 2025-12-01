@@ -13,15 +13,17 @@ import java.time.LocalDateTime;
 public class ChatMessageResponse {
     private Integer userId;
     private String nickname;
+    private String color;
     private String profileUrl;
     private String content;
     private Type type;
     private LocalDateTime createdAt;
 
-    public ChatMessageResponse(ChatMessage chatMessage) {
+    public ChatMessageResponse(ChatMessage chatMessage, String color) {
         this.content = chatMessage.getContent();
         this.type = chatMessage.getType();
         this.createdAt = chatMessage.getCreatedAt();
+        this.color = color;
         if(chatMessage.getUser() != null) {
             User user = chatMessage.getUser();
             this.userId = user.getUserId();

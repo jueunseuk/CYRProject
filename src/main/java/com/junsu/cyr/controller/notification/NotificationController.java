@@ -1,5 +1,7 @@
 package com.junsu.cyr.controller.notification;
 
+import com.junsu.cyr.flow.notify.NotifyToAllUserFlow;
+import com.junsu.cyr.model.notification.NotificationAllRequest;
 import com.junsu.cyr.model.notification.NotificationResponse;
 import com.junsu.cyr.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import java.util.List;
 public class NotificationController {
 
     private final NotificationService notificationService;
+    private final NotifyToAllUserFlow notifyToAllUserFlow;
 
     @PatchMapping("/read/all")
     public ResponseEntity<String> readAllNotification(@RequestAttribute Integer userId) {
@@ -31,5 +34,11 @@ public class NotificationController {
     public ResponseEntity<List<NotificationResponse>> getAllNotification(@RequestAttribute Integer userId) {
         List<NotificationResponse> notificationResponses = notificationService.getNotificationByUser(userId);
         return ResponseEntity.ok(notificationResponses);
+    }
+
+    @PostMapping("/all")
+    public ResponseEntity<String> notifyAllUser(@RequestBody NotificationAllRequest request, @RequestAttribute Integer userId) {
+        notifyToAllUserFlow.notifyToAllUser(request, userId);
+        return ResponseEntity.ok("success to notify all user");
     }
 }

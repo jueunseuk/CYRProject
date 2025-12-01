@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserNicknameSettingService {
 
     private final UserNicknameSettingRepository userNicknameSettingRepository;
-    private final UserService userService;
 
     @Transactional
     public void createUserNicknameSetting(User user, ShopItem shopItem) {
@@ -47,8 +46,7 @@ public class UserNicknameSettingService {
     }
 
     public ShopItemResponse getUserNicknameSetting(Integer userId) {
-        User user = userService.getUserById(userId);
-        UserNicknameSetting userNicknameSetting = getUserNicknameSetting(user);
+        UserNicknameSetting userNicknameSetting = userNicknameSettingRepository.getUserNicknameSettingByUser_UserId(userId);
         if(userNicknameSetting == null) {
             return null;
         }

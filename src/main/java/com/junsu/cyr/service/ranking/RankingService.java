@@ -10,7 +10,7 @@ import com.junsu.cyr.model.ranking.RankingResponse;
 import com.junsu.cyr.repository.RankingRepository;
 import com.junsu.cyr.response.exception.code.RankingExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
-import com.junsu.cyr.service.user.UserService;
+import com.junsu.cyr.service.user.UserNicknameSettingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,8 +26,8 @@ import java.util.List;
 public class RankingService {
 
     private final RankingRepository rankingRepository;
-    private final UserService userService;
     private final RankingCategoryService rankingCategoryService;
+    private final UserNicknameSettingService userNicknameSettingService;
 
     public Ranking getRankingByRankId(Integer rankId) {
         return rankingRepository.findById(rankId)
@@ -78,7 +78,7 @@ public class RankingService {
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), sort);
         List<Ranking> rankingResponses = rankingRepository.findAllByRankingCategory(rankingCategory, pageable);
 
-        return rankingResponses.stream().map(RankingResponse::new).toList();
+        return rankingResponses.stream().map(ranking -> new RankingResponse(ranking, userNicknameSettingService.getUserNicknameColor(ranking.getUser()))).toList();
     }
 
     public List<RankingResponse> getSummaryRanking() {

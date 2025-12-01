@@ -24,6 +24,7 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserNicknameSettingService userNicknameSettingService;
 
     public User getUserById(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() -> new BaseException(UserExceptionCode.NOT_EXIST_USER));
@@ -44,17 +45,17 @@ public class UserService {
 
     public UserSidebarResponse getUserSidebar(Integer userId) {
         User user = getUserById(userId);
-        return new UserSidebarResponse(userId, user.getEpxCnt(), user.getSand(), user.getGlass(), user.getTemperature(), user.getCreatedAt().toLocalDate(), user.getRole());
+        return new UserSidebarResponse(user, userNicknameSettingService.getUserNicknameColor(user));
     }
 
     public UserProfileResponse getUserProfile(Integer userId) {
         User user = getUserById(userId);
-        return new UserProfileResponse(user);
+        return new UserProfileResponse(user, userNicknameSettingService.getUserNicknameColor(user));
     }
 
     public OtherProfileResponse getOtherProfile(Integer otherId) {
         User user = getUserById(otherId);
-        return new OtherProfileResponse(user);
+        return new OtherProfileResponse(user, userNicknameSettingService.getUserNicknameColor(user));
     }
 
     public UserActivityResponse getUserActivityData(Integer userId) {

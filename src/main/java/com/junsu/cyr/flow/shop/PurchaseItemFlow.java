@@ -49,8 +49,6 @@ public class PurchaseItemFlow {
             throw new BaseException(ShopItemExceptionCode.GLASSES_ARE_INSUFFICIENT);
         }
 
-        user.useGlass(shopItem.getPrice());
-
         if(shopItem.getShopCategory().getShopCategoryId() == MagicNumberConstant.SHOP_CATEGORY_CONSUME_TYPE) {
             UserInventory userInventory = userInventoryRepository.findByUserAndShopItem(user, shopItem)
                     .orElse(null);

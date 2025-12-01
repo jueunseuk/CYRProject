@@ -23,8 +23,9 @@ public class OtherProfileResponse {
     private Integer attendanceCnt;
     private Role role;
     private LocalDateTime createdAt;
+    private String color;
 
-    public OtherProfileResponse(User user) {
+    public OtherProfileResponse(User user, String color) {
         this.userId = user.getUserId();
         this.name = user.getName();
         this.nickname = user.getNickname();
@@ -38,5 +39,6 @@ public class OtherProfileResponse {
         this.attendanceCnt = user.getAttendanceCnt();
         this.role = user.getRole();
         this.createdAt = user.getCreatedAt();
+        this.color = color;
     }
 }

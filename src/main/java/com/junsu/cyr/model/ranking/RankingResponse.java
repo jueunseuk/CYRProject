@@ -13,6 +13,7 @@ public class RankingResponse {
     private Long priority;
     private Integer userId;
     private String nickname;
+    private String color;
     private String profileUrl;
     private Integer rankingCategoryId;
     private Type type;
@@ -23,7 +24,7 @@ public class RankingResponse {
     private Refresh refresh;
     private LocalDateTime createdAt;
 
-    public RankingResponse(Ranking ranking) {
+    public RankingResponse(Ranking ranking, String color) {
         this.rankingId = ranking.getRankingId();
         this.score = ranking.getScore();
         this.priority = ranking.getPriority();
@@ -32,6 +33,7 @@ public class RankingResponse {
         User user = ranking.getUser();
         this.userId = user.getUserId();
         this.nickname = user.getNickname();
+        this.color = color;
         this.profileUrl = user.getProfileUrl();
 
         RankingCategory rankingCategory = ranking.getRankingCategory();

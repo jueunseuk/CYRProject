@@ -77,9 +77,9 @@ public class SandService {
 
     public List<GraphResponse> getSandHistory(Integer userId) {
         LocalDateTime today = LocalDateTime.now();
-        LocalDateTime aYearAgo = today.minusYears(1);
+        LocalDateTime aMonthAgo = today.minusMonths(1);
 
-        List<DailyMaxProjection> rows = sandLogRepository.findDailyMaxByUserId(userId, aYearAgo, today);
+        List<DailyMaxProjection> rows = sandLogRepository.findDailyMaxByUserId(userId, aMonthAgo, today);
 
         List<GraphResponse.Point> points = rows.stream()
                 .map(r -> new GraphResponse.Point(

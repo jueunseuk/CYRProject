@@ -76,9 +76,9 @@ public class CheerService {
 
     public List<GraphResponse> getCheerHistory(Integer userId) {
         LocalDate today = LocalDate.now();
-        LocalDate aYearAgo = today.minusYears(1);
+        LocalDate aMonthAgo = today.minusMonths(1);
 
-        List<CheerSummary> summaries = cheerSummaryRepository.findAllByCheerSummaryId_UserIdAndCheerSummaryId_DateBetween(userId, aYearAgo, today);
+        List<CheerSummary> summaries = cheerSummaryRepository.findAllByCheerSummaryId_UserIdAndCheerSummaryId_DateBetween(userId, aMonthAgo, today);
 
         List<GraphResponse.Point> points = summaries.stream()
                 .map(cheerSummary -> new GraphResponse.Point(

@@ -88,9 +88,9 @@ public class TemperatureService {
 
     public List<GraphResponse> getTemperatureHistory(Integer userId) {
         LocalDateTime today = LocalDateTime.now();
-        LocalDateTime aYearAgo = today.minusYears(1);
+        LocalDateTime aMonthAgo = today.minusMonths(1);
 
-        List<DailyMaxProjection> rows = temperatureLogRepository.findDailyMaxByUserId(userId, aYearAgo, today);
+        List<DailyMaxProjection> rows = temperatureLogRepository.findDailyMaxByUserId(userId, aMonthAgo, today);
 
         List<GraphResponse.Point> points = rows.stream()
                 .map(r -> new GraphResponse.Point(

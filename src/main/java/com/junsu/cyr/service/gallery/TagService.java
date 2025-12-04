@@ -1,6 +1,7 @@
 package com.junsu.cyr.service.gallery;
 
 import com.junsu.cyr.domain.gallery.Tag;
+import com.junsu.cyr.model.gallery.TagResponse;
 import com.junsu.cyr.repository.TagRepository;
 import com.junsu.cyr.response.exception.code.GalleryExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
@@ -37,7 +38,7 @@ public class TagService {
         }
     }
 
-    public List<Tag> getAllTags() {
-        return tagRepository.findAllByOrderByNameAsc();
+    public List<TagResponse> getAllTags() {
+        return tagRepository.findAllByOrderByNameAsc().stream().map(TagResponse::new).toList();
     }
 }

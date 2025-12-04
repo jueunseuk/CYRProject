@@ -3,17 +3,22 @@ package com.junsu.cyr.flow.gallery;
 import com.junsu.cyr.domain.experiences.Experience;
 import com.junsu.cyr.domain.gallery.Gallery;
 import com.junsu.cyr.domain.gallery.GalleryImage;
+import com.junsu.cyr.domain.gallery.GalleryTag;
+import com.junsu.cyr.domain.gallery.Tag;
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.sand.Sand;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.gallery.GalleryUploadRequest;
 import com.junsu.cyr.repository.GalleryImageRepository;
+import com.junsu.cyr.repository.GalleryTagRepository;
 import com.junsu.cyr.response.exception.code.GalleryExceptionCode;
 import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.service.experience.ExperienceRewardService;
 import com.junsu.cyr.service.experience.ExperienceService;
 import com.junsu.cyr.service.gallery.GalleryService;
+import com.junsu.cyr.service.gallery.GalleryTagService;
+import com.junsu.cyr.service.gallery.TagService;
 import com.junsu.cyr.service.image.S3Service;
 import com.junsu.cyr.service.sand.SandRewardService;
 import com.junsu.cyr.service.sand.SandService;
@@ -39,6 +44,9 @@ public class UpdateGalleryFlow {
     private final SandRewardService sandRewardService;
     private final ExperienceService experienceService;
     private final ExperienceRewardService experienceRewardService;
+    private final GalleryTagService galleryTagService;
+    private final GalleryTagRepository galleryTagRepository;
+    private final TagService tagService;
 
     @Transactional
     public void updateGallery(Long galleryId, GalleryUploadRequest request, Integer userId) {
@@ -55,6 +63,8 @@ public class UpdateGalleryFlow {
                 request.getDescription(),
                 LocalDateTime.parse(request.getPicturedAt())
         );
+
+        updateGalleryTags(gallery, request.getTag());
 
         if(request.getImages() != null) {
             Long originGalleryImageCnt = galleryImageRepository.countByGallery(gallery);
@@ -94,5 +104,31 @@ public class UpdateGalleryFlow {
         }
 
         galleryImageRepository.saveAll(newImages);
+    }
+
+    private void updateGalleryTags(Gallery gallery, List<String> tagNames) {
+        List<GalleryTag> existing = galleryTagService.getGalleryTagByGallery(gallery);
+
+        if (tagNames == null || tagNames.isEmpty()) {
+            galleryTagRepository.deleteAll(existing);
+            return;
+        }
+
+        List<Tag> newTags = tagNames.stream()
+                .map(tagService::getOrCreateTag)
+                .toList();
+
+        for (GalleryTag gt : existing) {
+            if (!newTags.contains(gt.getTag())) {
+                galleryTagRepository.delete(gt);
+            }
+        }
+
+        for (Tag tag : newTags) {
+            boolean exists = existing.stream().anyMatch(gt -> gt.getTag().equals(tag));
+            if (!exists) {
+                galleryTagService.createGalleryTag(gallery, tag);
+            }
+        }
     }
 }

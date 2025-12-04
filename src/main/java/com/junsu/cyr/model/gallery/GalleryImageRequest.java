@@ -1,6 +1,5 @@
 package com.junsu.cyr.model.gallery;
 
-import com.junsu.cyr.domain.gallery.Gallery;
 import lombok.Data;
 
 @Data
@@ -13,4 +12,5 @@ public class GalleryImageRequest {
     private String sort = "createdAt";
     private String direction = "DESC";
 
+    private String name;
 }

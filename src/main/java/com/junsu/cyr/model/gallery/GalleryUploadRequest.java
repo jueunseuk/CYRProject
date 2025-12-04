@@ -12,6 +12,7 @@ public class GalleryUploadRequest {
     private String description;
     private Type type;
     private String picturedAt;
+    private List<String> tag;
     private List<String> originalImages;
     private List<MultipartFile> images;
 }

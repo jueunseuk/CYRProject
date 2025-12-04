@@ -3,6 +3,7 @@ package com.junsu.cyr.flow.gallery;
 import com.junsu.cyr.domain.experiences.Experience;
 import com.junsu.cyr.domain.gallery.Gallery;
 import com.junsu.cyr.domain.gallery.GalleryImage;
+import com.junsu.cyr.domain.gallery.Tag;
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.sand.Sand;
 import com.junsu.cyr.domain.users.User;
@@ -14,6 +15,8 @@ import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.service.experience.ExperienceRewardService;
 import com.junsu.cyr.service.experience.ExperienceService;
+import com.junsu.cyr.service.gallery.GalleryTagService;
+import com.junsu.cyr.service.gallery.TagService;
 import com.junsu.cyr.service.image.S3Service;
 import com.junsu.cyr.service.sand.SandRewardService;
 import com.junsu.cyr.service.sand.SandService;
@@ -39,6 +42,8 @@ public class CreateGalleryFlow {
     private final SandService sandService;
     private final ExperienceService experienceService;
     private final ExperienceRewardService experienceRewardService;
+    private final TagService tagService;
+    private final GalleryTagService galleryTagService;
 
     @Transactional
     public void createGallery(GalleryUploadRequest request, Integer userId) {
@@ -56,8 +61,14 @@ public class CreateGalleryFlow {
                 .picturedAt(LocalDateTime.parse(request.getPicturedAt()))
                 .type(request.getType())
                 .build();
-
         galleryRepository.save(gallery);
+
+        if(!request.getTag().isEmpty()) {
+            for(String name : request.getTag()) {
+                Tag tag = tagService.getOrCreateTag(name);
+                galleryTagService.createGalleryTag(gallery, tag);
+            }
+        }
 
         user.updateImageCnt(0L, request.getImages().size());
 

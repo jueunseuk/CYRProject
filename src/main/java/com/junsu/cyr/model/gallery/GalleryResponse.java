@@ -19,9 +19,9 @@ public class GalleryResponse {
     private LocalDateTime createdAt;
     private LocalDateTime picturedAt;
     private List<String> imageUrls;
-    private List<Tag> tags;
+    private List<TagResponse> tags;
 
-    public GalleryResponse(Gallery gallery, List<String> imageUrls, List<Tag> tags) {
+    public GalleryResponse(Gallery gallery, List<String> imageUrls, List<TagResponse> tags) {
         this.galleryId = gallery.getGalleryId();
         this.author = gallery.getUser().getNickname();
         this.authorId = gallery.getUser().getUserId();

@@ -64,10 +64,11 @@ public class GalleryService {
         }
 
         List<GalleryTag> tags = galleryTagRepository.findAllByGallery(gallery);
+        List<TagResponse> tagResponses = tags.stream().map(galleryTag -> new TagResponse(galleryTag.getTag())).toList();
 
         gallery.updateViewCnt();
 
-        return new GalleryResponse(gallery, galleryImages, tags.stream().map(GalleryTag::getTag).toList());
+        return new GalleryResponse(gallery, galleryImages, tagResponses);
     }
 
     public Page<GalleryImageResponse> getImagesByUser(Integer searchId, GallerySearchConditionRequest condition) {

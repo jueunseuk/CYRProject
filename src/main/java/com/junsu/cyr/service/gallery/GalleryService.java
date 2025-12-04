@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ public class GalleryService {
         return galleryImages.map(GalleryImageResponse::new);
     }
 
+    @Transactional
     public GalleryResponse getGallery(Long galleryId) {
         Gallery gallery = galleryRepository.findByGalleryId(galleryId)
                 .orElseThrow(() -> new BaseException(GalleryExceptionCode.NO_EXIST_GALLERY));

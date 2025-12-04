@@ -64,7 +64,7 @@ public class GalleryService {
         }
 
         List<GalleryTag> tags = galleryTagRepository.findAllByGallery(gallery);
-        List<TagResponse> tagResponses = tags.stream().map(galleryTag -> new TagResponse(galleryTag.getTag())).toList();
+        List<String> tagResponses = tags.stream().map(galleryTag -> galleryTag.getTag().getName()).toList();
 
         gallery.updateViewCnt();
 

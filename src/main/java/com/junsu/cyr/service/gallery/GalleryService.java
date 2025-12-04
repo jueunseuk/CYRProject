@@ -2,11 +2,13 @@ package com.junsu.cyr.service.gallery;
 
 import com.junsu.cyr.domain.gallery.Gallery;
 import com.junsu.cyr.domain.gallery.GalleryImage;
+import com.junsu.cyr.domain.gallery.GalleryTag;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.gallery.*;
 import com.junsu.cyr.model.search.SearchConditionRequest;
 import com.junsu.cyr.repository.GalleryImageRepository;
 import com.junsu.cyr.repository.GalleryRepository;
+import com.junsu.cyr.repository.GalleryTagRepository;
 import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.GalleryExceptionCode;
@@ -31,6 +33,7 @@ public class GalleryService {
     private final GalleryRepository galleryRepository;
     private final GalleryImageRepository galleryImageRepository;
     private final UserRepository userRepository;
+    private final GalleryTagRepository galleryTagRepository;
 
     public Gallery getGalleryByGalleryId(Long galleryId) {
         return galleryRepository.findByGalleryId(galleryId)
@@ -40,7 +43,12 @@ public class GalleryService {
     public Page<GalleryImageResponse> getAllGalleryImages(GalleryImageRequest condition) {
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), Sort.by(condition.getSort()).descending());
 
-        Page<GalleryImage> galleryImages = galleryImageRepository.findAll(pageable);
+        Page<GalleryImage> galleryImages;
+        if(condition.getName() == null) {
+            galleryImages = galleryImageRepository.findAll(pageable);
+        } else {
+            galleryImages = galleryImageRepository.findAllByTagName(condition.getName(), pageable);
+        }
 
         return galleryImages.map(GalleryImageResponse::new);
     }
@@ -55,9 +63,11 @@ public class GalleryService {
             throw new BaseException(GalleryExceptionCode.NO_EXIST_IMAGE);
         }
 
+        List<GalleryTag> tags = galleryTagRepository.findAllByGallery(gallery);
+
         gallery.updateViewCnt();
 
-        return new GalleryResponse(gallery, galleryImages);
+        return new GalleryResponse(gallery, galleryImages, tags.stream().map(GalleryTag::getTag).toList());
     }
 
     public Page<GalleryImageResponse> getImagesByUser(Integer searchId, GallerySearchConditionRequest condition) {

@@ -1,6 +1,7 @@
 package com.junsu.cyr.model.gallery;
 
 import com.junsu.cyr.domain.gallery.Gallery;
+import com.junsu.cyr.domain.gallery.Tag;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -18,8 +19,9 @@ public class GalleryResponse {
     private LocalDateTime createdAt;
     private LocalDateTime picturedAt;
     private List<String> imageUrls;
+    private List<Tag> tags;
 
-    public GalleryResponse(Gallery gallery, List<String> imageUrls) {
+    public GalleryResponse(Gallery gallery, List<String> imageUrls, List<Tag> tags) {
         this.galleryId = gallery.getGalleryId();
         this.author = gallery.getUser().getNickname();
         this.authorId = gallery.getUser().getUserId();
@@ -30,5 +32,6 @@ public class GalleryResponse {
         this.createdAt = gallery.getCreatedAt();
         this.picturedAt = gallery.getPicturedAt();
         this.imageUrls = imageUrls;
+        this.tags = tags;
     }
 }

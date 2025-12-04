@@ -13,6 +13,8 @@ public enum GalleryExceptionCode implements ExceptionCode {
     NO_EXIST_GALLERY("GALLERY_003", "해당 갤러리가 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
     REQUESTED_PERSON_IS_NOT_AUTHOR("GALLERY_004", "요청한 사람의 아이디가 작성자의 아이디와 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
     INVALID_VALUE_INJECTION("GALLERY_005", "올바르지 않은 갑 주입 시도입니다.", HttpStatus.BAD_REQUEST),
+    NOT_FOUND_TAG_NAME("GALLERY_006", "갤러리의 태그 이름이 존재하지 않습니다.", HttpStatus.BAD_REQUEST),
+    NOT_FOUND_TAG("GALLERY_007", "해당 태그는 존재하지 않습니다.", HttpStatus.NOT_FOUND),
     ;
 
     private final String code;

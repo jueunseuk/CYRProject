@@ -35,8 +35,8 @@ public class GalleryController {
     }
 
     @GetMapping("")
-    public ResponseEntity<Page<GalleryImageResponse>> getAllGalleryImage(GalleryImageRequest galleryImageRequest) {
-        Page<GalleryImageResponse> galleryImageResponses = galleryService.getAllGalleryImages(galleryImageRequest);
+    public ResponseEntity<Page<GalleryImageResponse>> getAllGalleryImage(GalleryImageRequest request) {
+        Page<GalleryImageResponse> galleryImageResponses = galleryService.getAllGalleryImages(request);
         return ResponseEntity.ok(galleryImageResponses);
     }
 

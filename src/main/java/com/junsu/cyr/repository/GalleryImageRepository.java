@@ -31,6 +31,6 @@ public interface GalleryImageRepository extends JpaRepository<GalleryImage, Inte
 
     List<GalleryImage> findAllByGallery(Gallery gallery);
 
-    @Query("select gi from GalleryImage gi join GalleryTag gt on gt.gallery.galleryId = gi.galleryImageId join Tag t on t.tagId = gt.tag.tagId where t.name = :name")
+    @Query("select gi from GalleryImage gi join GalleryTag gt on gt.gallery.galleryId = gi.gallery.galleryId join Tag t on t.tagId = gt.tag.tagId where t.name = :name")
     Page<GalleryImage> findAllByTagName(String name, Pageable pageable);
 }

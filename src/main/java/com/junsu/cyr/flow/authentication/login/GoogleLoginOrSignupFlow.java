@@ -12,6 +12,7 @@ import com.junsu.cyr.response.exception.code.AuthExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.service.auth.AuthService;
 import com.junsu.cyr.service.auth.OAuthService;
+import com.junsu.cyr.service.notification.usecase.UserNotificationUseCase;
 import com.junsu.cyr.util.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class GoogleLoginOrSignupFlow {
     private final UserRepository userRepository;
     private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserNotificationUseCase userNotificationUseCase;
 
     @Transactional
     public SignupResponse googleLoginOrSignUp(GoogleUserRequest request, HttpServletResponse response) {
@@ -48,8 +50,11 @@ public class GoogleLoginOrSignupFlow {
             if(user.getMethod() != Method.GOOGLE) {
                 throw new BaseException(AuthExceptionCode.DIFFERENT_LOGIN_METHOD);
             }
+
+            userNotificationUseCase.login(user);
         } else {
             user = authService.createUserWithOAuth(userInfo);
+            userNotificationUseCase.register(user);
         }
 
         return jwtTokenProvider.generateToken(user, response);

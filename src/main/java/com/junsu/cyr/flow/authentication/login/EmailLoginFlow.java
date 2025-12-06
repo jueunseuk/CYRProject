@@ -8,6 +8,7 @@ import com.junsu.cyr.repository.UserRepository;
 import com.junsu.cyr.response.exception.code.AuthExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
+import com.junsu.cyr.service.notification.usecase.UserNotificationUseCase;
 import com.junsu.cyr.util.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class EmailLoginFlow {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserNotificationUseCase userNotificationUseCase;
 
     public SignupResponse emailLogin(EmailLoginRequest request, HttpServletResponse response) {
         User user = userRepository.findByEmail(request.getEmail())
@@ -37,6 +39,8 @@ public class EmailLoginFlow {
         if(user.getStatus() == Status.SECESSION) {
             user.updateStatus(Status.ACTIVE);
         }
+
+        userNotificationUseCase.login(user);
 
         return jwtTokenProvider.generateToken(user, response);
     }

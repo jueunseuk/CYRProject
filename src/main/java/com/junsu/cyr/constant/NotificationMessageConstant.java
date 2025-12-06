@@ -1,12 +1,14 @@
 package com.junsu.cyr.constant;
 
 public class NotificationMessageConstant {
+    public static final String NEW_REGISTER_OCCURRED = "CYR 커뮤니티의 가족이 되선 것을 환영합니다.";
+    public static final String NEW_LOGIN_OCCURRED = "로그인에 성공했씁니다.";
     public static final String CHAT_INVITATION = "%s님이 1대1 대화방에 초대했습니다.";
     public static final String NEW_ANNOUNCEMENT = "새로운 공지사항 '%s'(이)가 등록되었습니다.";
-    public static final String ACCOMPLISH_ACHIEVEMENT = "새로운 업적 '%s'(을)를 달성했습니다.";
     public static final String NEW_POLL = "새로운 투표가 등록되었습니다.";
+    public static final String NEW_EVENT = "새로운 이벤트 '%s'(이)가 등록되었습니다.";
+    public static final String ACCOMPLISH_ACHIEVEMENT = "새로운 업적 '%s'(을)를 달성했습니다.";
     public static final String ENTER_RANKING = "현재 랭킹 10위 안에 들었습니다. 랭킹 페이지를 확인해주세요.";
-    public static final String EVENT = "새로운 이벤트 '%s'(이)가 등록되었습니다.";
     public static final String TEMPERATURE_MAXIMUM = "활동 온도가 최대치인 1800℃에 도달했습니다.";
     public static final String TEMPERATURE_MAXIMUM_AND_CRAFT_GLASS = "활동 온도가 최대치인 1800℃에 도달해서 공방 제작 조건을 만족합니다.";
     public static final String RECEIVED_ADDITIONAL_TEMPERATURE = "연속 출석으로 활동 온도를 추가로 획득했습니다.";

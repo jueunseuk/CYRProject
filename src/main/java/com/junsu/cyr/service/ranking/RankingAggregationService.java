@@ -54,6 +54,7 @@ public class RankingAggregationService {
             case HOURLY -> updateHourlyRankings(userList);
             case THREE_HOURLY -> updateThreeHourlyRankings(userList);
             case TEN_MINUTES -> updateTenMinutesRankings(userList);
+            case THIRTY_MINUTES -> updateThirtyMinutesRankings(userList);
         }
     }
 
@@ -91,8 +92,12 @@ public class RankingAggregationService {
         updateExperienceRanking(Period.DAILY, userList);
     }
 
-    public void updateTenMinutesRankings(Set<Integer> userList) {
+    public void updateThirtyMinutesRankings(Set<Integer> userList) {
         updateCheerRanking(Period.DAILY, userList);
+    }
+
+    public void updateTenMinutesRankings(Set<Integer> userList) {
+//        updateCheerRanking(Period.DAILY, userList);
     }
 
     public void updateCheerRanking(Period period, Set<Integer> userList) {

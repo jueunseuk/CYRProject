@@ -36,6 +36,11 @@ public class RankingScheduler {
         executeRefresh(Refresh.TEN_MINUTES);
     }
 
+    @Scheduled(cron = "0 */30 * * * *")
+    public void refresh30MinRankings() {
+        executeRefresh(Refresh.THIRTY_MINUTES);
+    }
+
     private void executeRefresh(Refresh refreshType) {
         log.info("[RankingScheduler] {} : {} 타입의 랭킹 집계 시작", LocalDateTime.now(), refreshType);
         rankingAggregationService.refreshByPeriodWithScheduler(refreshType);

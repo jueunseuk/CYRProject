@@ -3,10 +3,9 @@ package com.junsu.cyr.flow.calendar;
 import com.junsu.cyr.domain.calendar.Calendar;
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.global.annotation.ManagerOnly;
 import com.junsu.cyr.model.calendar.CalendarUploadRequest;
 import com.junsu.cyr.repository.CalendarRepository;
-import com.junsu.cyr.response.exception.code.CalendarExceptionCode;
-import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.service.image.S3Service;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +22,10 @@ public class CreateCalendarFlow {
     private final S3Service s3Service;
     private final CalendarRepository calendarRepository;
 
+    @ManagerOnly
     @Transactional
     public void createCalendar(CalendarUploadRequest request, Integer userId) {
         User user = userService.getUserById(userId);
-
-        if(!userService.isLeastManager(user)) {
-            throw new BaseException(CalendarExceptionCode.DO_NOT_HAVE_PERMISSION_TO_PROCESS);
-        }
 
         Calendar calendar = Calendar.builder()
                 .title(request.getTitle())

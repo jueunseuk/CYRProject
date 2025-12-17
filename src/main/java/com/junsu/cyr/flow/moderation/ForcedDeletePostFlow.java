@@ -3,12 +3,10 @@ package com.junsu.cyr.flow.moderation;
 import com.junsu.cyr.domain.comments.Comment;
 import com.junsu.cyr.domain.empathys.Empathy;
 import com.junsu.cyr.domain.posts.Post;
-import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.global.annotation.ManagerOnly;
 import com.junsu.cyr.repository.CommentRepository;
 import com.junsu.cyr.repository.EmpathyRepository;
 import com.junsu.cyr.repository.PostRepository;
-import com.junsu.cyr.response.exception.code.UserExceptionCode;
-import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.service.post.PostService;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -27,13 +25,10 @@ public class ForcedDeletePostFlow {
     private final EmpathyRepository empathyRepository;
     private final PostRepository postRepository;
 
+    @ManagerOnly
     @Transactional
     public void forcedDeletePost(Long postId, Integer userId) {
-        User user = userService.getUserById(userId);
-
-        if(!userService.isLeastManager(user)) {
-            throw new BaseException(UserExceptionCode.REQUIRES_AT_LEAST_MANAGER);
-        }
+        userService.getUserById(userId);
 
         Post post = postService.getPostByPostId(postId);
 

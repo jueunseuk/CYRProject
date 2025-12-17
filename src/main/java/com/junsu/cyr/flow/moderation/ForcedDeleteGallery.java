@@ -2,11 +2,9 @@ package com.junsu.cyr.flow.moderation;
 
 import com.junsu.cyr.domain.gallery.Gallery;
 import com.junsu.cyr.domain.gallery.GalleryImage;
-import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.global.annotation.ManagerOnly;
 import com.junsu.cyr.repository.GalleryImageRepository;
 import com.junsu.cyr.repository.GalleryRepository;
-import com.junsu.cyr.response.exception.code.UserExceptionCode;
-import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.service.gallery.GalleryService;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +22,10 @@ public class ForcedDeleteGallery {
     private final GalleryImageRepository galleryImageRepository;
     private final GalleryRepository galleryRepository;
 
+    @ManagerOnly
     @Transactional
     public void forcedDeleteGallery(Long galleryId, Integer userId) {
-        User user = userService.getUserById(userId);
-
-        if(!userService.isLeastManager(user)) {
-            throw new BaseException(UserExceptionCode.REQUIRES_AT_LEAST_MANAGER);
-        }
+        userService.getUserById(userId);
 
         Gallery gallery = galleryService.getGalleryByGalleryId(galleryId);
         List<GalleryImage> galleryImages = galleryImageRepository.findGalleryImage(galleryId);

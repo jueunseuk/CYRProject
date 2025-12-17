@@ -2,10 +2,9 @@ package com.junsu.cyr.service.user;
 
 import com.junsu.cyr.domain.users.Role;
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.global.annotation.ManagerOnly;
 import com.junsu.cyr.model.user.UserConditionRequest;
 import com.junsu.cyr.model.user.UserManagementResponse;
-import com.junsu.cyr.response.exception.code.UserExceptionCode;
-import com.junsu.cyr.response.exception.http.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +16,9 @@ public class ManagerService {
 
     private final UserService userService;
 
+    @ManagerOnly
     public List<UserManagementResponse> getMemberList(UserConditionRequest condition, Role role, Integer userId) {
-        User user = userService.getUserById(userId);
-        if(!userService.isLeastManager(user)) {
-            throw new BaseException(UserExceptionCode.REQUIRES_AT_LEAST_MANAGER);
-        }
+        userService.getUserById(userId);
 
         List<User> users = userService.getUserListByRole(role, condition);
 

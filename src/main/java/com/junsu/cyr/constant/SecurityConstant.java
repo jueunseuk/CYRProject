@@ -43,6 +43,8 @@ public class SecurityConstant {
             "/calendar/after",
             "/statistic",
             "/ranking/summary",
-            "/ws/**"
+            "/ws/**",
+            "/album/all",
+            "/song/all"
     );
 }

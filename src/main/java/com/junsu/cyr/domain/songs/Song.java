@@ -80,4 +80,8 @@ public class Song {
         }
         this.lyrics = lyrics;
     }
+
+    public void updateAlbum(Album album) {
+        this.album = album;
+    }
 }

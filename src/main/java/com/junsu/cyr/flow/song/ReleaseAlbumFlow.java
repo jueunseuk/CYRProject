@@ -51,6 +51,7 @@ public class ReleaseAlbumFlow {
             if(song.getExistsInUnreleased()) {
                 newSong = songService.getSongBySongId(song.getSongId());
                 newSong.updateRelease();
+                newSong.updateAlbum(album);
                 newSong.updateSequence(song.getSequence());
                 newSong.updateLink(song.getLink());
                 newSong.updateLyrics(song.getLyrics());

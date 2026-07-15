@@ -2,15 +2,15 @@ package com.junsu.cyr.service.event;
 
 import com.junsu.cyr.domain.events.Event;
 import com.junsu.cyr.domain.events.EventComment;
+import com.junsu.cyr.domain.images.Image;
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.event.EventCommentResponse;
 import com.junsu.cyr.model.event.EventCommentUploadRequest;
 import com.junsu.cyr.repository.EventCommentRepository;
 import com.junsu.cyr.response.exception.code.EventCommentExceptionCode;
-import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
-import com.junsu.cyr.service.image.S3Service;
+import com.junsu.cyr.service.image.ImageService;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class EventCommentService {
     private final EventCommentRepository eventCommentRepository;
     private final UserService userService;
     private final EventService eventService;
-    private final S3Service s3Service;
+    private final ImageService imageService;
 
     public EventComment findEventCommentByEventCommentId(Long eventCommentId) {
         return eventCommentRepository.findById(eventCommentId)
@@ -58,19 +58,19 @@ public class EventCommentService {
 
         isValidUploadData(request);
 
-        String imageUrl = null;
-        if(request.getFile() != null) {
-            imageUrl = s3Service.uploadFile(request.getFile(), Type.EVENT_COMMENT);
-        }
-
         EventComment eventComment = EventComment.builder()
                 .user(user)
                 .event(event)
                 .content(request.getContent())
-                .imageUrl(imageUrl)
                 .build();
         eventCommentRepository.save(eventComment);
         event.increaseCommentCnt();
+
+        Image image;
+        if(request.getFile() != null) {
+            image = imageService.uploadImage(request.getFile(), eventComment.getEventCommentId(), Type.EVENT_COMMENT);
+            eventComment.updateCaptureUrl(image.getUrl());
+        }
 
         return new EventCommentResponse(eventComment);
     }

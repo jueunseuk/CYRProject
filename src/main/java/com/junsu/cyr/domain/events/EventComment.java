@@ -33,4 +33,8 @@ public class EventComment extends BaseTime {
 
     @Column(name = "imageUrl")
     private String imageUrl;
+
+    public void updateCaptureUrl(String url) {
+        this.imageUrl = url;
+    }
 }

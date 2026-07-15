@@ -62,4 +62,8 @@ public class Complaint extends BaseTime {
         this.processMessage = message;
         this.processedAt = LocalDateTime.now();
     }
+
+    public void updateCaptureUrl(String url) {
+        this.captureUrl = url;
+    }
 }

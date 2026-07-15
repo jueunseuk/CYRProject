@@ -1,11 +1,12 @@
 package com.junsu.cyr.flow.calendar;
 
 import com.junsu.cyr.domain.calendar.Calendar;
+import com.junsu.cyr.domain.images.Image;
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.global.annotation.ManagerOnly;
 import com.junsu.cyr.model.calendar.CalendarEditRequest;
 import com.junsu.cyr.service.calendar.CalendarService;
-import com.junsu.cyr.service.image.S3Service;
+import com.junsu.cyr.service.image.ImageService;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ public class UpdateCalendarFlow {
 
     private final UserService userService;
     private final CalendarService calendarService;
-    private final S3Service s3Service;
+    private final ImageService imageService;
 
     @ManagerOnly
     @Transactional
@@ -26,10 +27,10 @@ public class UpdateCalendarFlow {
 
         Calendar calendar = calendarService.getCalendarByCalendarId(calendarId);
 
-        String newImageUrl = null;
+        Image image = null;
         if (request.getFile() != null && !request.getFile().isEmpty()) {
-            newImageUrl = s3Service.uploadFile(request.getFile(), Type.SCHEDULE);
-            calendar.updateImageUrl(newImageUrl);
+            image = imageService.uploadImage(request.getFile(), calendarId, Type.SCHEDULE);
+            calendar.updateImageUrl(image.getUrl());
         } else if (request.getImageUrl() != null && !request.getImageUrl().isBlank()) {
             calendar.updateImageUrl(request.getImageUrl());
         }

@@ -4,6 +4,7 @@ import com.junsu.cyr.constant.MagicNumberConstant;
 import com.junsu.cyr.domain.complaints.Complaint;
 import com.junsu.cyr.domain.complaints.ComplaintCategory;
 import com.junsu.cyr.domain.complaints.Status;
+import com.junsu.cyr.domain.images.Image;
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.complaint.ComplaintConditionRequest;
@@ -14,9 +15,8 @@ import com.junsu.cyr.repository.ComplaintCategoryRepository;
 import com.junsu.cyr.repository.ComplaintRepository;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.ComplaintExceptionCode;
-import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
-import com.junsu.cyr.service.image.S3Service;
+import com.junsu.cyr.service.image.ImageService;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,10 +30,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ComplaintService {
 
-    private final S3Service s3Service;
     private final UserService userService;
     private final ComplaintRepository complaintRepository;
     private final ComplaintCategoryRepository complaintCategoryRepository;
+    private final ImageService imageService;
 
     public Complaint getComplaintByComplaintId(Long complaintId) {
         return complaintRepository.findById(complaintId)
@@ -107,23 +107,22 @@ public class ComplaintService {
     public void uploadComplaint(ComplaintRequest request, User user) {
         ComplaintCategory complaintCategory = complaintCategoryRepository.findByName(request.getCategoryName());
 
-        String uploadUrl = null;
-        if(request.getFile() != null) {
-            uploadUrl = s3Service.uploadFile(request.getFile(), Type.COMPLAINT);
-        }
-
         String link = request.getLink().equals("/complaint") ? null : MagicNumberConstant.FRONT_DOMAIN+request.getLink();
 
         Complaint complaint = Complaint.builder()
                 .user(user)
                 .complaintCategory(complaintCategory)
-                .captureUrl(uploadUrl)
                 .title(request.getTitle())
                 .reason(request.getReason())
                 .link(link)
                 .status(Status.WAIT)
                 .build();
-
         complaintRepository.save(complaint);
+
+        Image image;
+        if(request.getFile() != null) {
+            image = imageService.uploadImage(request.getFile(), complaint.getComplaintId(), Type.COMPLAINT);
+            complaint.updateCaptureUrl(image.getUrl());
+        }
     }
 }

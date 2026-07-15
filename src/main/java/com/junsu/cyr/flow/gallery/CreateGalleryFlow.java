@@ -4,6 +4,7 @@ import com.junsu.cyr.domain.experiences.Experience;
 import com.junsu.cyr.domain.gallery.Gallery;
 import com.junsu.cyr.domain.gallery.GalleryImage;
 import com.junsu.cyr.domain.gallery.Tag;
+import com.junsu.cyr.domain.images.Image;
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.sand.Sand;
 import com.junsu.cyr.domain.users.User;
@@ -17,7 +18,7 @@ import com.junsu.cyr.service.experience.ExperienceRewardService;
 import com.junsu.cyr.service.experience.ExperienceService;
 import com.junsu.cyr.service.gallery.GalleryTagService;
 import com.junsu.cyr.service.gallery.TagService;
-import com.junsu.cyr.service.image.S3Service;
+import com.junsu.cyr.service.image.ImageService;
 import com.junsu.cyr.service.sand.SandRewardService;
 import com.junsu.cyr.service.sand.SandService;
 import com.junsu.cyr.service.user.UserService;
@@ -36,7 +37,6 @@ public class CreateGalleryFlow {
 
     private final UserService userService;
     private final GalleryRepository galleryRepository;
-    private final S3Service s3Service;
     private final GalleryImageRepository galleryImageRepository;
     private final SandRewardService sandRewardService;
     private final SandService sandService;
@@ -44,6 +44,7 @@ public class CreateGalleryFlow {
     private final ExperienceRewardService experienceRewardService;
     private final TagService tagService;
     private final GalleryTagService galleryTagService;
+    private final ImageService imageService;
 
     @Transactional
     public void createGallery(GalleryUploadRequest request, Integer userId) {
@@ -81,9 +82,12 @@ public class CreateGalleryFlow {
     }
 
     private void uploadFileAndCreateGalleryImage(List<MultipartFile> images, Gallery gallery) {
-        List<String> imageUrls;
+        List<String> imageUrls = new ArrayList<>();
         try {
-            imageUrls = s3Service.uploadFiles(images, Type.CYR);
+            for(MultipartFile file : images) {
+                Image image = imageService.uploadImage(file, gallery.getGalleryId(), Type.CYR);
+                imageUrls.add(image.getUrl());
+            }
         } catch (Exception e) {
             throw new BaseException(ImageExceptionCode.FAILED_TO_UPLOAD_IMAGE);
         }

@@ -3,6 +3,7 @@ package com.junsu.cyr.service.achievement;
 import com.junsu.cyr.domain.achievements.Achievement;
 import com.junsu.cyr.domain.achievements.AchievementLog;
 import com.junsu.cyr.domain.achievements.AchievementReward;
+import com.junsu.cyr.domain.images.Image;
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.achievement.AchievementLogConditionRequest;
@@ -13,7 +14,7 @@ import com.junsu.cyr.response.exception.code.AchievementExceptionCode;
 import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.code.UserExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
-import com.junsu.cyr.service.image.S3Service;
+import com.junsu.cyr.service.image.ImageService;
 import com.junsu.cyr.service.user.UserService;
 import com.junsu.cyr.util.PageableMaker;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +31,9 @@ public class AchievementLogService {
 
     private final AchievementLogRepository achievementLogRepository;
     private final UserService userService;
-    private final S3Service s3Service;
     private final AchievementService achievementService;
     private final AchievementRewardService achievementRewardService;
+    private final ImageService imageService;
 
     public AchievementLog getAchievementLog(Long achievementLogId) {
         return achievementLogRepository.findById(achievementLogId)
@@ -89,7 +90,7 @@ public class AchievementLogService {
             throw new BaseException(ImageExceptionCode.NO_PHOTOS_TO_UPLOAD);
         }
 
-        String imageUrl = s3Service.uploadFile(file, Type.ACHIEVEMENT);
-        achievement.updateImage(imageUrl);
+        Image image = imageService.uploadImage(file, achievementId.longValue(), Type.ACHIEVEMENT);
+        achievement.updateImage(image.getUrl());
     }
 }

@@ -1,5 +1,6 @@
 package com.junsu.cyr.controller.image;
 
+import com.junsu.cyr.domain.images.Image;
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.service.image.ImageService;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +15,8 @@ public class ImageController {
     private final ImageService imageService;
 
     @PostMapping
-    public ResponseEntity<String> uploadChatImage(@RequestParam("image") MultipartFile image, @RequestAttribute Integer userId) {
-        String imageUrl = imageService.uploadImage(image, Type.CHAT, userId);
-        return ResponseEntity.ok(imageUrl);
+    public ResponseEntity<String> uploadChatImage(@RequestParam("image") MultipartFile file, @RequestAttribute Integer userId) {
+        Image image = imageService.uploadImage(file, userId.longValue(), Type.CHAT);
+        return ResponseEntity.ok(image.getUrl());
     }
 }

@@ -1,6 +1,7 @@
 package com.junsu.cyr.service.shop;
 
 import com.junsu.cyr.constant.MagicNumberConstant;
+import com.junsu.cyr.domain.images.Image;
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.shop.ShopCategory;
 import com.junsu.cyr.domain.shop.ShopItem;
@@ -12,7 +13,7 @@ import com.junsu.cyr.repository.*;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.response.exception.code.ImageExceptionCode;
 import com.junsu.cyr.response.exception.code.ShopItemExceptionCode;
-import com.junsu.cyr.service.image.S3Service;
+import com.junsu.cyr.service.image.ImageService;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -28,11 +29,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ShopItemService {
 
-    private final S3Service s3Service;
     private final ShopItemRepository shopItemRepository;
     private final ShopCategoryRepository shopCategoryRepository;
     private final ShopLogRepository shopLogRepository;
     private final UserService userService;
+    private final ImageService imageService;
 
     @Transactional
     public void uploadItemImage(Integer itemId, MultipartFile file, Integer userId) {
@@ -49,9 +50,9 @@ public class ShopItemService {
             throw new BaseException(ImageExceptionCode.NO_PHOTOS_TO_UPLOAD);
         }
 
-        String itemUrl = s3Service.uploadFile(file, Type.SHOP);
+        Image image = imageService.uploadImage(file, itemId.longValue(), Type.SHOP);
 
-        shopItem.updateImageUrl(itemUrl);
+        shopItem.updateImageUrl(image.getUrl());
     }
 
     public List<ShopItemResponse> getShopItemsByCategoryId(Integer categoryId, ShopItemConditionRequest condition, Integer userId) {

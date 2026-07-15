@@ -1,16 +1,16 @@
 package com.junsu.cyr.flow.song;
 
+import com.junsu.cyr.domain.images.Image;
 import com.junsu.cyr.domain.images.Type;
 import com.junsu.cyr.domain.songs.Album;
 import com.junsu.cyr.domain.songs.Song;
-import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.global.annotation.ManagerOnly;
 import com.junsu.cyr.model.song.AlbumUploadRequest;
 import com.junsu.cyr.model.song.SongCreatorUploadRequest;
 import com.junsu.cyr.model.song.SongUploadRequest;
 import com.junsu.cyr.response.exception.code.AlbumExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
-import com.junsu.cyr.service.image.S3Service;
+import com.junsu.cyr.service.image.ImageService;
 import com.junsu.cyr.service.song.AlbumService;
 import com.junsu.cyr.service.song.SongCreatorService;
 import com.junsu.cyr.service.song.SongService;
@@ -25,22 +25,22 @@ public class ReleaseAlbumFlow {
 
     private final UserService userService;
     private final AlbumService albumService;
-    private final S3Service s3Service;
     private final SongService songService;
     private final SongCreatorService songCreatorService;
+    private final ImageService imageService;
 
     @ManagerOnly
     @Transactional
     public void releaseAlbum(AlbumUploadRequest request, Integer userId) {
-        User user = userService.getUserById(userId);
+        userService.getUserById(userId);
 
-        String imageUrl = null;
         if(request.getFile().isEmpty()) {
             throw new BaseException(AlbumExceptionCode.FAILED_TO_UPLOAD_ALBUM);
         }
-        imageUrl = s3Service.uploadFile(request.getFile(), Type.ALBUM);
 
-        Album album = albumService.createAlbum(request.getTitle(), imageUrl, request.getReleasedAt(), request.getIntroduction(), request.getAgency(), request.getPublisher());
+        Album album = albumService.createAlbum(request.getTitle(), null, request.getReleasedAt(), request.getIntroduction(), request.getAgency(), request.getPublisher());
+        Image image = imageService.uploadImage(request.getFile(), album.getAlbumId().longValue(), Type.ALBUM);
+        album.updateImageUrl(image.getUrl());
 
         if(request.getSongs().isEmpty()) {
             throw new BaseException(AlbumExceptionCode.FAILED_TO_UPLOAD_ALBUM);

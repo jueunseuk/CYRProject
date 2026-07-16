@@ -24,7 +24,7 @@ public class GallerySearchResponse extends SearchResponse {
         this.content = gallery.getDescription();
         this.viewCnt = gallery.getViewCnt();
         this.picturedAt = gallery.getPicturedAt();
-        this.thumbnailUrl = images.getFirst().getUrl();
+        this.thumbnailUrl = images.get(0).getUrl();
         this.imageCnt = images.size();
     }
 

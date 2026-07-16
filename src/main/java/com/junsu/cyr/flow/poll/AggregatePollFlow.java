@@ -42,7 +42,7 @@ public class AggregatePollFlow {
             throw new BaseException(PollExceptionCode.NO_VOTES_TO_AGGREGATE);
         }
 
-        PollOptionCount max = pollLogs.getFirst();
+        PollOptionCount max = pollLogs.get(0);
         for(PollOptionCount pollOptionCount : pollLogs) {
             PollOption pollOption = pollOptionService.getPollOptionBYPollOptionId(pollOptionCount.getPollOptionId());
             pollOption.updateVoteCount(pollOptionCount.getVoteCount());

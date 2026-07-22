@@ -22,10 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -86,6 +83,11 @@ public class GalleryService {
 
     public List<GalleryImageResponse> getRandomImages(Integer amount) {
         List<GalleryImage> galleryImages = galleryImageRepository.findAll();
+
+        if(galleryImages.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         List<GalleryImageResponse> galleryImageResponses = new ArrayList<>();
 
         int size = galleryImages.size();

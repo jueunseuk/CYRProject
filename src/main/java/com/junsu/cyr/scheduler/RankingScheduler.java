@@ -42,7 +42,7 @@ public class RankingScheduler {
     }
 
     private void executeRefresh(Refresh refreshType) {
-        log.info("[RankingScheduler] {} : {} 타입의 랭킹 집계 시작", LocalDateTime.now(), refreshType);
+        log.info("Start ranking aggregation of {} type", refreshType);
         rankingAggregationService.refreshByPeriodWithScheduler(refreshType);
     }
 }

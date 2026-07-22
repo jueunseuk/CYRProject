@@ -19,7 +19,7 @@ public class ExposurePostScheduler {
     @Scheduled(cron = "0 0 * * * *")
     @Transactional
     public void deleteBeforeAMonth() {
-        log.info("[ExposurePostScheduler] {} => 24시간이 경과한 노출 게시글 제거", LocalDateTime.now());
+        log.info("Remove exposure posts after 24 hours");
         exposurePostService.concealingPosts(24L);
     }
 }

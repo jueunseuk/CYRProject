@@ -19,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -47,8 +48,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = cookie.get().getValue();
 
-        if (token == null || jwtTokenProvider.isValidToken(token)) {
-            throw new BaseException(AuthExceptionCode.INVALID_ACCESS_TOKEN);
+        try {
+            if (token == null || jwtTokenProvider.isValidToken(token)) {
+                throw new BaseException(AuthExceptionCode.INVALID_ACCESS_TOKEN);
+            }
+        } catch (BaseException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write(
+                    """
+                    {
+                      "code": "INVALID_ACCESS_TOKEN",
+                      "message": "Invalid access token."
+                    }
+                    """
+            );
+            return;
         }
 
         Claims claims = jwtTokenProvider.parseClaims(token);
@@ -76,7 +91,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-
-        return SecurityConstant.PERMIT_ENDPOINTS.contains(path);
+        return CorsUtils.isPreFlightRequest(request) || request.getRequestURI().startsWith("/images/") || SecurityConstant.PERMIT_ENDPOINTS.contains(path);
     }
 }

@@ -19,13 +19,13 @@ public class UserScheduler {
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void generateHourlyStatistic() {
-        log.info("[UserScheduler] {} => 탈퇴한 지 일주일이 지난 사용자 찾기", LocalDateTime.now());
+        log.info("[UserScheduler] Find users who have left a week ago");
 
         try {
             Integer size = userCleanupFlow.userCleanup();
-            log.info("{} => 일주일이 지난 사용자 {}명 삭제 완료", LocalDateTime.now(), size);
+            log.info("[UserScheduler] Deleted {} users after one week", size);
         } catch (Exception e) {
-            log.error("사용자 삭제 중 오류 발생", e);
+            log.error("[UserScheduler] Error deleting user", e);
         }
     }
 }

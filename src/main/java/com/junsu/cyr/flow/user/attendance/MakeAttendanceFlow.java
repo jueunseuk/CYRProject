@@ -81,7 +81,6 @@ public class MakeAttendanceFlow {
         }
 
         boolean flag = false;
-        int amount = 0;
         if(user.getConsecutiveAttendanceCnt() % 7 == 0) {
             temperatureRewardService.addTemperature(user, 3);
             flag = true;

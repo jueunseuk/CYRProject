@@ -22,16 +22,16 @@ public class PollScheduler {
     @Scheduled(cron = "0 */10 * * * *")
     @Transactional
     public void closeExpiredPolls() {
-        log.info("[PollScheduler] {} : 만료된 투표 검색 시작", LocalDateTime.now());
+        log.info("Start searching for expired votes");
 
         LocalDateTime now = LocalDateTime.now().plusSeconds(5);
         List<Poll> polls = pollRepository.findByStatusAndClosedAtBefore(Status.IN_PROGRESS, now);
         polls.forEach(poll -> poll.updateStatus(Status.CLOSED));
 
         if (polls.isEmpty()) {
-            log.info("[PollScheduler] 이번 회차에 마감된 투표 없음.");
+            log.info("No vote closed this time round.");
         } else {
-            log.info("[PollScheduler] {} : {}개의 투표 마감 완료", LocalDateTime.now(), polls.size());
+            log.info("{} polls closed", polls.size());
         }
     }
 }

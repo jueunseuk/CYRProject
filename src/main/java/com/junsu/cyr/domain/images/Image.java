@@ -49,10 +49,9 @@ public class Image extends BaseTime {
         }
     }
 
-    @Value("${app.image-base-url}")
-    private String imageBaseUrl;
+    private final String IMAGE_BASE_URL = "https://returns.ddns.net";
 
     public String getUrl() {
-        return imageBaseUrl + "/images/" + this.getPath() + this.getStoredName();
+        return IMAGE_BASE_URL + "/images/" + this.getPath() + "/" + this.getStoredName();
     }
 }

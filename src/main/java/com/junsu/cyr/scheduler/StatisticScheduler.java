@@ -19,13 +19,13 @@ public class StatisticScheduler {
     @Scheduled(cron = "0 0 */2 * * *")
     @Transactional
     public void generateHourlyStatistic() {
-        log.info("[StatisticScheduler] {} => 통계 생성 스케줄 시작", LocalDateTime.now());
+        log.info("Start Statistics Generation Schedule");
 
         try {
             statisticService.createStatistic();
-            log.info("{} => 통계 저장 완료", LocalDateTime.now());
+            log.info("Stats saved complete");
         } catch (Exception e) {
-            log.error("❌ 통계 생성 중 오류 발생", e);
+            log.error("Error generating statistics", e);
         }
     }
 }

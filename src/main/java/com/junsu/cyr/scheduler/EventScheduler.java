@@ -22,16 +22,16 @@ public class EventScheduler {
     @Scheduled(cron = "0 0 * * * *")
     @Transactional
     public void closeExpiredEvents() {
-        log.info("[EventScheduler] {} : 만료된 이벤트 검색 시작", LocalDateTime.now());
+        log.info("Start scanning expired events");
 
         LocalDateTime now = LocalDateTime.now().plusSeconds(10);
         List<Event> events = eventRepository.findByStatusAndClosedAtBefore(Status.ACTIVE, now);
         events.forEach(event -> event.updateStatus(Status.CLOSED));
 
         if (events.isEmpty()) {
-            log.info("[EventScheduler] 이번 회차에 마감된 이벤트 없음.");
+            log.info("No event closed for this round.");
         } else {
-            log.info("[EventScheduler] {} : {}개의 이벤트 마감 완료", LocalDateTime.now(), events.size());
+            log.info("{} events closed", events.size());
         }
     }
 }

@@ -44,11 +44,14 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        .requestMatchers("/images/**").permitAll()
+
                         .requestMatchers(
                                 SecurityConstant.PERMIT_ENDPOINTS
                                         .toArray(new String[0])
-                        )
-                        .permitAll()
+                        ).permitAll()
+
                         .anyRequest()
                         .authenticated()
                 )

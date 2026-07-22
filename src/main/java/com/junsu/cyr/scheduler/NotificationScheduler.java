@@ -19,13 +19,13 @@ public class NotificationScheduler {
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void deleteBeforeAMonth() {
-        log.info("[NotificationScheduler] {} => 한 달 지난 알림 삭제", LocalDateTime.now());
+        log.info("Delete a month old notification");
 
         try {
             notificationService.deleteBeforeNotification(30);
-            log.info("{} => 알림 삭제 완료", LocalDateTime.now());
+            log.info("Clear notification complete");
         } catch (Exception e) {
-            log.error("❌ 알림 삭제 중 에러 발생", e);
+            log.error("Error deleting notification", e);
         }
     }
 }

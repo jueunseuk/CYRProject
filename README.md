@@ -3,7 +3,7 @@
 <!-- HEADER STYLE: CLASSIC -->
 <div align="center">
 
-# CYR PROJECT
+# Yureeya - BE
 
 <em>Empowering Innovation, Accelerating Impact Every Step</em>
 

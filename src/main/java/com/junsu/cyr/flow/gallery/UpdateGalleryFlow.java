@@ -25,6 +25,7 @@ import com.junsu.cyr.service.sand.SandRewardService;
 import com.junsu.cyr.service.sand.SandService;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +34,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UpdateGalleryFlow {
@@ -98,6 +100,7 @@ public class UpdateGalleryFlow {
                 imageUrls.add(image.getUrl());
             }
         } catch (Exception e) {
+            log.warn("Error with upload gallery", e);
             throw new BaseException(ImageExceptionCode.FAILED_TO_UPLOAD_IMAGE);
         }
 

@@ -16,7 +16,8 @@ public class UserItemToRandomSandBoxFlow implements UseConsumableItem {
 
     @Override
     public ItemUseResult use(User user, ItemUseRequest request) {
-        Integer randomCnt = (int) (Math.random() * 250) + 50;
+        int randomCnt = generateRandomSandCount();
+
         user.updateSand(randomCnt);
         sandRewardService.addSand(user, 15, randomCnt);
 
@@ -26,5 +27,27 @@ public class UserItemToRandomSandBoxFlow implements UseConsumableItem {
                 .data(randomCnt)
                 .type("RANDOM_SAND_BOX")
                 .build();
+    }
+
+    private int generateRandomSandCount() {
+        int probability = (int) (Math.random() * 100) + 1;
+
+        if (probability <= 25) {
+            return randomBetween(80, 110);
+        }
+
+        if (probability <= 70) {
+            return randomBetween(111, 160);
+        }
+
+        if (probability <= 95) {
+            return randomBetween(161, 220);
+        }
+
+        return randomBetween(221, 300);
+    }
+
+    private int randomBetween(int min, int max) {
+        return (int) (Math.random() * (max - min + 1)) + min;
     }
 }

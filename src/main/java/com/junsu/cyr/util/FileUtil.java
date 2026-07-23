@@ -26,7 +26,10 @@ public class FileUtil {
     public String[] storeFile(MultipartFile file, Type imageType) {
         String relativePath = imageType.name();
 
-        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        if(file.getOriginalFilename() == null) {
+            throw new BaseException(ImageExceptionCode.INVALID_IMAGE_NAME);
+        }
+        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename().substring(0, Math.min(file.getOriginalFilename().length(), 16));
 
         Path targetLocation = Paths.get(uploadDir).resolve(relativePath).resolve(fileName);
 
@@ -37,7 +40,7 @@ public class FileUtil {
             log.info("Success to save image - saveDir: {}", targetLocation);
             return new String[] {relativePath, fileName};
         } catch (IOException e) {
-            log.warn("Error saving file");
+            log.warn("Error saving file", e);
             throw new BaseException(ImageExceptionCode.FAILED_TO_UPLOAD_IMAGE);
         }
     }

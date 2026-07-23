@@ -87,6 +87,7 @@ public class GalleryService {
         if(galleryImages.isEmpty()) {
             return Collections.emptyList();
         }
+        amount = Math.min(amount, galleryImages.size());
 
         List<GalleryImageResponse> galleryImageResponses = new ArrayList<>();
 

@@ -10,7 +10,8 @@ public enum Refresh {
     HOURLY("1시간마다", "0 0 * * * *"),
     THREE_HOURLY("3시간마다", "0 0 */3 * * *"),
     THIRTY_MINUTES("30분마다", "0 */30 * * * *"),
-    TEN_MINUTES("10분마다", "0 */10 * * * *");
+    TEN_MINUTES("10분마다", "0 */10 * * * *"),
+    DISABLE("사용하지 않음", "");
 
     private final String description;
     private final String cron;

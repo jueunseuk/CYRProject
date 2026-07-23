@@ -81,6 +81,7 @@ public class AnnouncementService {
                 .locked(request.getLocked())
                 .updatedAt(LocalDateTime.now())
                 .announcementCategory(announcementCategory)
+                .viewCnt(0L)
                 .build();
 
         announcementRepository.save(announcement);

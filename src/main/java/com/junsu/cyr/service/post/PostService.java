@@ -44,6 +44,10 @@ public class PostService {
         Post post = postRepository.findByPostId(postId)
                 .orElseThrow(() -> new BaseException(PostExceptionCode.POST_NOT_BE_FOUND));
 
+        if(post.getLocked() == Locked.PRIVATE && !post.getUser().getUserId().equals(userId)) {
+            throw new BaseException(PostExceptionCode.DO_NOT_HAVE_PERMISSION);
+        }
+
         Boolean alreadyEmpathy = empathyRepository.existsById(new EmpathyId(postId, userId));
 
         post.increaseViewCnt();
@@ -81,9 +85,23 @@ public class PostService {
 
         Board board = boardService.findBoardByBoardId(condition.getBoardId());
 
-        Page<Post> posts = postRepository.findAllByBoard(board, PageableMaker.of(condition.getPage(), condition.getSize(), condition.getSort(), condition.getDirection()));
+        Page<Post> posts = postRepository.findAllByBoard(
+                board,
+                PageableMaker.of(
+                        condition.getPage(),
+                        condition.getSize(),
+                        condition.getSort(),
+                        condition.getDirection()
+                )
+        );
 
-        return posts.map(PostListResponse::new);
+        return posts.map(post -> {
+            PostListResponse response = new PostListResponse(post);
+            if (response.getLocked() == Locked.PRIVATE) {
+                response.setTitle("비밀글입니다.");
+            }
+            return response;
+        });
     }
 
     public Page<PostListResponse> getPostsByUser(Integer searchId, Integer userId, PostSearchConditionRequest condition) {

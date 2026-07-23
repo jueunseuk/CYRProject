@@ -46,7 +46,7 @@ public class PageableMaker {
     }
 
     private static void validDirection(String direction) {
-        if(!direction.equals(ASC) && !direction.equals(DESC)) {
+        if(!direction.equalsIgnoreCase(ASC) && !direction.equalsIgnoreCase(DESC)) {
             throw new BaseException(PaginationExceptionCode.CANNOT_USE_DIRECTION_VALUE);
         }
     }

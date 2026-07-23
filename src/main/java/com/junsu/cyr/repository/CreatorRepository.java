@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SongCreatorRepository extends JpaRepository<Creator, Integer> {
+public interface CreatorRepository extends JpaRepository<Creator, Integer> {
     List<Creator> findAllBySong(Song song);
     List<Creator> findAllByName(String name);
     List<Creator> findAllBySong_SongIdIn(List<Integer> songIds);

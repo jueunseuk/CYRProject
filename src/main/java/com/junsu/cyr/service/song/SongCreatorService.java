@@ -3,7 +3,7 @@ package com.junsu.cyr.service.song;
 import com.junsu.cyr.domain.songs.CreatorRole;
 import com.junsu.cyr.domain.songs.Song;
 import com.junsu.cyr.domain.songs.Creator;
-import com.junsu.cyr.repository.SongCreatorRepository;
+import com.junsu.cyr.repository.CreatorRepository;
 import com.junsu.cyr.response.exception.code.CreatorExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SongCreatorService {
 
-    private final SongCreatorRepository songCreatorRepository;
+    private final CreatorRepository songCreatorRepository;
 
     @Transactional
     public void createCreator(Song song, String name, CreatorRole creatorRole) {

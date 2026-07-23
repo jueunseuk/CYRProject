@@ -2,6 +2,7 @@ package com.junsu.cyr.service.song;
 
 import com.junsu.cyr.domain.songs.Album;
 import com.junsu.cyr.domain.songs.Song;
+import com.junsu.cyr.domain.songs.SongStatus;
 import com.junsu.cyr.repository.SongRepository;
 import com.junsu.cyr.response.exception.code.SongExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
@@ -21,68 +22,42 @@ public class SongService {
     private final SongRepository songRepository;
 
     @Transactional
-    public Song createReleasedSong(Album album, String title, String link, Integer sequence, Boolean representative, String lyrics) {
+    public Song createReleasedSong(Album album, String title, String link, Integer sequence, Boolean isTitle, String lyrics) {
         if(album == null) {
             throw new BaseException(SongExceptionCode.INVALID_ALBUM);
         }
-        if(title == null || title.isEmpty()) {
-            throw new BaseException(SongExceptionCode.TOO_SHORT_TITLE);
-        }
-        if(link == null && link.isEmpty()) {
-            throw new BaseException(SongExceptionCode.TOO_SHORT_LINK);
-        }
-        if(sequence == null || sequence < 0) {
-            throw new BaseException(SongExceptionCode.INVALID_SEQUENCE);
-        }
-        if(lyrics == null || lyrics.isEmpty()) {
-            throw new BaseException(SongExceptionCode.TOO_SHORT_LYRICS);
-        }
 
-        Song song = Song.builder()
-                .album(album)
-                .imageUrl(album.getImageUrl())
-                .title(title)
-                .link(link)
-                .isReleased(true)
-                .sequence(sequence)
-                .representative(false)
-                .lyrics(lyrics)
-                .build();
-
-        songRepository.save(song);
-        return song;
+        Song song = Song.of(
+                album,
+                album.getImageUrl(),
+                title,
+                link,
+                sequence,
+                isTitle,
+                lyrics,
+                SongStatus.RELEASED
+        );
+        return songRepository.save(song);
     }
 
     @Transactional
-    public void createUnreleasedSong(String title, String link) {
-        if(title == null || title.isEmpty()) {
-            throw new BaseException(SongExceptionCode.TOO_SHORT_TITLE);
-        }
-        if(link == null && link.isEmpty()) {
-            throw new BaseException(SongExceptionCode.TOO_SHORT_LINK);
-        }
-
-        Song song = Song.builder()
-                .album(null)
-                .imageUrl(null)
-                .title(title)
-                .link(link)
-                .isReleased(false)
-                .sequence(1)
-                .representative(false)
-                .lyrics(null)
-                .build();
-
-        songRepository.save(song);
+    public Song createUnreleasedSong(String title, String link, String lyrics) {
+        Song song = Song.of(
+                null,
+                null,
+                title,
+                link,
+                1,
+                false,
+                lyrics,
+                SongStatus.UNRELEASED
+        );
+        return songRepository.save(song);
     }
 
     public Song getSongBySongId(Integer songId) {
         return songRepository.findById(songId)
                 .orElseThrow(() -> new BaseException(SongExceptionCode.NOT_FOUND_SONG_ID));
-    }
-
-    public List<Song> getSongsByIsReleased(Boolean isReleased, Pageable pageable) {
-        return songRepository.findAllByIsReleased(isReleased, pageable);
     }
 
     public List<Song> getSongByTitle(String title) {

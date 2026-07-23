@@ -14,5 +14,4 @@ public interface SongRepository extends JpaRepository<Song, Integer> {
     List<Song> findAllByTitle(String title);
     List<Song> findAllByAlbum(Album album, Pageable pageable);
     Page<Song> findAll(Pageable pageable);
-    List<Song> findAllByIsReleased(Boolean isReleased, Pageable pageable);
 }

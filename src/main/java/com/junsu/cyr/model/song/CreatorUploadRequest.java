@@ -1,6 +1,6 @@
 package com.junsu.cyr.model.song;
 
-import com.junsu.cyr.domain.songs.Type;
+import com.junsu.cyr.domain.songs.CreatorRole;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SongCreatorUploadRequest {
+public class CreatorUploadRequest {
     private String name;
-    private Type type;
+    private CreatorRole creatorRole;
 }

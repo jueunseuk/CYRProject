@@ -13,9 +13,8 @@ public class SongUploadRequest {
     private String title;
     private String link;
     private Integer songId;
-    private Boolean existsInUnreleased;
     private Integer sequence;
-    private Boolean representative;
+    private Boolean isTitle;
     private String lyrics;
-    private List<SongCreatorUploadRequest> songCreators;
+    private List<CreatorUploadRequest> songCreators;
 }

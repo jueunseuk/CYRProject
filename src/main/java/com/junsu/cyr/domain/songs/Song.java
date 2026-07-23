@@ -9,8 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Builder
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "song")
@@ -33,55 +33,89 @@ public class Song {
     @Column(name = "link")
     private String link;
 
-    @Column(name = "is_released")
-    private Boolean isReleased;
-
     @Column(name = "sequence", nullable = false)
     private Integer sequence;
 
-    @Column(name = "representative")
-    private Boolean representative;
+    @Column(name = "is_title")
+    private Boolean isTitle;
 
     @Column(name = "lyrics")
     private String lyrics;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private SongStatus status;
+
+    public static Song of(Album album, String imageUrl, String title, String link, Integer sequence, Boolean isTitle, String lyrics, SongStatus status) {
+        validateTitle(title);
+        validateLink(link);
+        validateSequence(sequence);
+        validateLyrics(lyrics);
+        return Song.builder()
+                .album(album)
+                .imageUrl(imageUrl)
+                .title(title)
+                .link(link)
+                .sequence(sequence)
+                .isTitle(isTitle)
+                .lyrics(lyrics)
+                .status(status)
+                .build();
+    }
+
     public void updateTitle(String title) {
-        if(title == null || title.isEmpty()) {
-            throw new BaseException(SongExceptionCode.TOO_SHORT_TITLE);
-        }
+        validateTitle(title);
         this.title = title;
     }
 
-    public void updateRepresentative(Boolean representative) {
-        this.representative = representative;
+    public void updateIsTitle(Boolean isTitle) {
+        this.isTitle = isTitle;
     }
 
     public void updateLink(String link) {
-        if(link == null || link.isEmpty()) {
-            throw new BaseException(SongExceptionCode.TOO_SHORT_LINK);
-        }
+        validateLink(link);
         this.link = link;
     }
 
-    public void updateRelease() {
-        this.isReleased = true;
-    }
-
     public void updateSequence(Integer sequence) {
-        if(sequence == null || sequence < 1) {
-            throw new BaseException(SongExceptionCode.INVALID_SEQUENCE);
-        }
+        validateSequence(sequence);
         this.sequence = sequence;
     }
 
     public void updateLyrics(String lyrics) {
-        if(lyrics == null || lyrics.isEmpty()) {
-            throw new BaseException(SongExceptionCode.TOO_SHORT_LYRICS);
-        }
+        validateLyrics(lyrics);
         this.lyrics = lyrics;
     }
 
     public void updateAlbum(Album album) {
         this.album = album;
+    }
+
+    public void updateStatus(SongStatus songStatus) {
+        this.status = songStatus;
+    }
+
+    private static void validateTitle(String title) {
+        if(title == null || title.isEmpty()) {
+            throw new BaseException(SongExceptionCode.TOO_SHORT_TITLE);
+        }
+    }
+
+    private static void validateLink(String link) {
+        if(link == null || link.isEmpty()) {
+            throw new BaseException(SongExceptionCode.TOO_SHORT_LINK);
+        }
+    }
+
+    private static void validateSequence(Integer sequence) {
+        if(sequence == null || sequence < 0) {
+            throw new BaseException(SongExceptionCode.INVALID_SEQUENCE);
+        }
+    }
+
+    private static void validateLyrics(String lyrics) {
+        if(lyrics == null || lyrics.isEmpty()) {
+            throw new BaseException(SongExceptionCode.TOO_SHORT_LYRICS);
+        }
     }
 }

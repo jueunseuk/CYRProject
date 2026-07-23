@@ -37,7 +37,7 @@ public class QuestionService {
     }
 
     public List<QuestionResponse> getAllQuestions(String sort, String direction) {
-        List<Question> questions = questionRepository.findAllQuestion(PageableMaker.of(sort, direction));
+        List<Question> questions = questionRepository.findAllBy(PageableMaker.of(sort, direction));
         return questions.stream().map(QuestionResponse::new).toList();
     }
 

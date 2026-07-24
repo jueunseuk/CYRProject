@@ -1,9 +1,12 @@
 package com.junsu.cyr.service.qna;
 
+import com.junsu.cyr.domain.achievements.Scope;
+import com.junsu.cyr.domain.achievements.Type;
 import com.junsu.cyr.domain.qnas.Answer;
 import com.junsu.cyr.domain.qnas.Question;
 import com.junsu.cyr.domain.qnas.Status;
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.flow.user.achievement.UnlockAchievementFlow;
 import com.junsu.cyr.model.qna.AnswerResponse;
 import com.junsu.cyr.model.qna.AnswerUploadRequest;
 import com.junsu.cyr.repository.AnswerRepository;
@@ -27,6 +30,7 @@ public class AnswerService {
     private final AnswerRepository answerRepository;
     private final SandRewardService sandRewardService;
     private final ExperienceRewardService experienceRewardService;
+    private final UnlockAchievementFlow unlockAchievementFlow;
 
     public Answer findAnswerById(Long id) {
         return answerRepository.findById(id).
@@ -47,11 +51,13 @@ public class AnswerService {
         experienceRewardService.addExperience(user, 10);
 
         boolean isQuestionWriter = question.getUser().equals(user);
-        boolean hasAlreadyAnswered = answerRepository.findAllByQuestion(question).stream()
-                .anyMatch(a -> a.getUser().equals(user));
+        boolean hasAlreadyAnswered = answerRepository.findAllByQuestion(question).stream().anyMatch(a -> a.getUser().equals(user));
         if(!isQuestionWriter && !hasAlreadyAnswered) {
             sandRewardService.addSand(user, 18);
         }
+
+        Long cnt = answerRepository.countAnswerByUser(user);
+        unlockAchievementFlow.unlockAchievement(user, Type.ANSWER, Scope.TOTAL, cnt);
 
         question.increaseAnswerCnt();
         if(question.getStatus() == Status.OPEN) question.updateStatus(Status.HOLD);

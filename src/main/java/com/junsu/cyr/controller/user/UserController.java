@@ -1,6 +1,7 @@
 package com.junsu.cyr.controller.user;
 
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.flow.user.asset.ConvertGlassFlow;
 import com.junsu.cyr.flow.user.profile.RefreshActivityFlow;
 import com.junsu.cyr.flow.user.profile.UpdateUserInformationFlow;
 import com.junsu.cyr.flow.user.profile.UpdateUserProfileImageFlow;
@@ -17,7 +18,6 @@ import com.junsu.cyr.model.user.*;
 import com.junsu.cyr.service.comment.CommentService;
 import com.junsu.cyr.service.empathy.EmpathyService;
 import com.junsu.cyr.service.gallery.GalleryService;
-import com.junsu.cyr.service.glass.GlassService;
 import com.junsu.cyr.service.post.PostService;
 import com.junsu.cyr.service.shop.ShopItemService;
 import com.junsu.cyr.service.shop.ShopLogService;
@@ -40,13 +40,13 @@ public class UserController {
     private final CommentService commentService;
     private final GalleryService galleryService;
     private final EmpathyService empathyService;
-    private final GlassService glassService;
     private final ShopItemService shopItemService;
     private final ShopLogService shopLogService;
     private final RefreshActivityFlow refreshActivityFlow;
     private final UpdateUserInformationFlow updateUserInformationFlow;
     private final UpdateUserProfileImageFlow updateUserProfileImageFlow;
     private final UpdateUserProfileRandomImageFlow updateUserProfileRandomImageFlow;
+    private final ConvertGlassFlow convertGlassFlow;
 
     @GetMapping("/me/basic")
     public ResponseEntity<SignupResponse> getUserLocalStorageInfo(@RequestAttribute Integer userId) {
@@ -122,7 +122,7 @@ public class UserController {
 
     @PostMapping("/glass/convert")
     public ResponseEntity<?> convertSandToGlass(@RequestAttribute Integer userId) {
-        glassService.convertSandToGlass(userId);
+        convertGlassFlow.convertGlass(userId);
         return ResponseEntity.ok("success to convert glass");
     }
 

@@ -1,8 +1,11 @@
 package com.junsu.cyr.service.qna;
 
+import com.junsu.cyr.domain.achievements.Scope;
+import com.junsu.cyr.domain.achievements.Type;
 import com.junsu.cyr.domain.qnas.Question;
 import com.junsu.cyr.domain.qnas.Status;
 import com.junsu.cyr.domain.users.User;
+import com.junsu.cyr.flow.user.achievement.UnlockAchievementFlow;
 import com.junsu.cyr.model.qna.QuestionResponse;
 import com.junsu.cyr.model.qna.QuestionUploadRequest;
 import com.junsu.cyr.repository.QuestionRepository;
@@ -26,6 +29,7 @@ public class QuestionService {
     private final UserService userService;
     private final SandRewardService sandRewardService;
     private final ExperienceRewardService experienceRewardService;
+    private final UnlockAchievementFlow unlockAchievementFlow;
 
     public Question findQuestionById(Long id) {
         return questionRepository.findById(id).
@@ -43,6 +47,9 @@ public class QuestionService {
 
         sandRewardService.addSand(user, 2, -question.getSandCnt());
         experienceRewardService.addExperience(user, 1);
+
+        Long cnt = questionRepository.countQuestionByUser(user);
+        unlockAchievementFlow.unlockAchievement(user, Type.QUESTION, Scope.TOTAL, cnt);
 
         questionRepository.save(question);
     }

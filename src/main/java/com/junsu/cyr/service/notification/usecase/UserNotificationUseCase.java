@@ -17,8 +17,19 @@ public class UserNotificationUseCase {
     public void refreshActivity(User user) {
         Notification notification = notificationService.createNotification(
                 user,
-                Type.ACHIEVEMENT,
+                Type.SYSTEM,
                 NotificationMessageConstant.REFRESH_ACTIVITY_FORCE,
+                null
+        );
+
+        notificationService.pushNotification(user.getUserId(), notification);
+    }
+
+    public void refreshAchievement(User user, Long cnt) {
+        Notification notification = notificationService.createNotification(
+                user,
+                Type.SYSTEM,
+                NotificationMessageConstant.format(NotificationMessageConstant.REFRESH_ACHIEVEMENT_FORCE, String.valueOf(cnt)),
                 null
         );
 

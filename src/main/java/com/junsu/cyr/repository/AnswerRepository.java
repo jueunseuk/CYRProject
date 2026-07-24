@@ -17,5 +17,5 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
     @Query("select a from Answer a where a.question = :question and a.adoptedAt is not null")
     boolean existsByAdoptAnswer(Question question);
 
-    Long countAnswerByUser(User user);
+    Long countByUser(User user);
 }

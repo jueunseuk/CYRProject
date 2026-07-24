@@ -15,5 +15,5 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     List<Question> findAllByStatus(Status status, Pageable of);
 
-    Long countQuestionByUser(User user);
+    Long countByUser(User user);
 }

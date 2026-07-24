@@ -2,10 +2,8 @@ package com.junsu.cyr.controller.user;
 
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.flow.user.asset.ConvertGlassFlow;
-import com.junsu.cyr.flow.user.profile.RefreshActivityFlow;
-import com.junsu.cyr.flow.user.profile.UpdateUserInformationFlow;
-import com.junsu.cyr.flow.user.profile.UpdateUserProfileImageFlow;
-import com.junsu.cyr.flow.user.profile.UpdateUserProfileRandomImageFlow;
+import com.junsu.cyr.flow.user.profile.*;
+import com.junsu.cyr.model.achievement.AchievementRefreshResponse;
 import com.junsu.cyr.model.auth.SignupResponse;
 import com.junsu.cyr.model.comment.CommentSearchConditionRequest;
 import com.junsu.cyr.model.comment.UserCommentResponse;
@@ -47,6 +45,7 @@ public class UserController {
     private final UpdateUserProfileImageFlow updateUserProfileImageFlow;
     private final UpdateUserProfileRandomImageFlow updateUserProfileRandomImageFlow;
     private final ConvertGlassFlow convertGlassFlow;
+    private final RefreshAchievementFlow refreshAchievementFlow;
 
     @GetMapping("/me/basic")
     public ResponseEntity<SignupResponse> getUserLocalStorageInfo(@RequestAttribute Integer userId) {
@@ -94,6 +93,12 @@ public class UserController {
     public ResponseEntity<UserActivityResponse> refreshUserProfile(@RequestAttribute Integer userId) {
         UserActivityResponse userActivityResponse = refreshActivityFlow.refreshActivity(userId);
         return ResponseEntity.ok(userActivityResponse);
+    }
+
+    @PostMapping("/achievement/refresh")
+    public ResponseEntity<Long> refreshUserActivity(@RequestAttribute Integer userId) {
+        Long response = refreshAchievementFlow.refreshAchievement(userId);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{searchId}/posts")

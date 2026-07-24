@@ -56,7 +56,7 @@ public class AnswerService {
             sandRewardService.addSand(user, 18);
         }
 
-        Long cnt = answerRepository.countAnswerByUser(user);
+        Long cnt = answerRepository.countByUser(user);
         unlockAchievementFlow.unlockAchievement(user, Type.ANSWER, Scope.TOTAL, cnt);
 
         question.increaseAnswerCnt();

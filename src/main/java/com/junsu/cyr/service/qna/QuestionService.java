@@ -48,7 +48,7 @@ public class QuestionService {
         sandRewardService.addSand(user, 2, -question.getSandCnt());
         experienceRewardService.addExperience(user, 1);
 
-        Long cnt = questionRepository.countQuestionByUser(user);
+        Long cnt = questionRepository.countByUser(user);
         unlockAchievementFlow.unlockAchievement(user, Type.QUESTION, Scope.TOTAL, cnt);
 
         questionRepository.save(question);

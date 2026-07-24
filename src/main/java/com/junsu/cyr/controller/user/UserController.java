@@ -1,10 +1,9 @@
 package com.junsu.cyr.controller.user;
 
 import com.junsu.cyr.domain.users.User;
-import com.junsu.cyr.flow.user.profile.RefreshActivityFlow;
-import com.junsu.cyr.flow.user.profile.UpdateUserInformationFlow;
-import com.junsu.cyr.flow.user.profile.UpdateUserProfileImageFlow;
-import com.junsu.cyr.flow.user.profile.UpdateUserProfileRandomImageFlow;
+import com.junsu.cyr.flow.user.asset.ConvertGlassFlow;
+import com.junsu.cyr.flow.user.profile.*;
+import com.junsu.cyr.model.achievement.AchievementRefreshResponse;
 import com.junsu.cyr.model.auth.SignupResponse;
 import com.junsu.cyr.model.comment.CommentSearchConditionRequest;
 import com.junsu.cyr.model.comment.UserCommentResponse;
@@ -17,7 +16,6 @@ import com.junsu.cyr.model.user.*;
 import com.junsu.cyr.service.comment.CommentService;
 import com.junsu.cyr.service.empathy.EmpathyService;
 import com.junsu.cyr.service.gallery.GalleryService;
-import com.junsu.cyr.service.glass.GlassService;
 import com.junsu.cyr.service.post.PostService;
 import com.junsu.cyr.service.shop.ShopItemService;
 import com.junsu.cyr.service.shop.ShopLogService;
@@ -40,13 +38,14 @@ public class UserController {
     private final CommentService commentService;
     private final GalleryService galleryService;
     private final EmpathyService empathyService;
-    private final GlassService glassService;
     private final ShopItemService shopItemService;
     private final ShopLogService shopLogService;
     private final RefreshActivityFlow refreshActivityFlow;
     private final UpdateUserInformationFlow updateUserInformationFlow;
     private final UpdateUserProfileImageFlow updateUserProfileImageFlow;
     private final UpdateUserProfileRandomImageFlow updateUserProfileRandomImageFlow;
+    private final ConvertGlassFlow convertGlassFlow;
+    private final RefreshAchievementFlow refreshAchievementFlow;
 
     @GetMapping("/me/basic")
     public ResponseEntity<SignupResponse> getUserLocalStorageInfo(@RequestAttribute Integer userId) {
@@ -96,6 +95,12 @@ public class UserController {
         return ResponseEntity.ok(userActivityResponse);
     }
 
+    @PostMapping("/achievement/refresh")
+    public ResponseEntity<Long> refreshUserActivity(@RequestAttribute Integer userId) {
+        Long response = refreshAchievementFlow.refreshAchievement(userId);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/{searchId}/posts")
     public ResponseEntity<Page<PostListResponse>> getWritePosts(@PathVariable Integer searchId, @ModelAttribute PostSearchConditionRequest condition, @RequestAttribute Integer userId) {
         Page<PostListResponse> postListResponses = postService.getPostsByUser(searchId, userId, condition);
@@ -122,7 +127,7 @@ public class UserController {
 
     @PostMapping("/glass/convert")
     public ResponseEntity<?> convertSandToGlass(@RequestAttribute Integer userId) {
-        glassService.convertSandToGlass(userId);
+        convertGlassFlow.convertGlass(userId);
         return ResponseEntity.ok("success to convert glass");
     }
 

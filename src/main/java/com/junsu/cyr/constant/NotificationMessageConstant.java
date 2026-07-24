@@ -12,6 +12,7 @@ public class NotificationMessageConstant {
     public static final String RECEIVED_ADDITIONAL_TEMPERATURE = "연속 출석으로 활동 온도를 추가로 획득했습니다.";
     public static final String RECEIVED_GLASS_FROM_OTHER = "다른 사용자 '%s'(으)로부터 유리 조각을 하나 선물 받았습니다.";
     public static final String REFRESH_ACTIVITY_FORCE = "활동 내역을 강제로 새로고침하는 데 성공했습니다.";
+    public static final String REFRESH_ACHIEVEMENT_FORCE = "업적을 강제로 새로고침해서 %s개를 해금했습니다.";
 
     public static String format(String template, String targetName) {
         return String.format(template, targetName);

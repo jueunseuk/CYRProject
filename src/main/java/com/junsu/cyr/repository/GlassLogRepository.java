@@ -2,6 +2,7 @@ package com.junsu.cyr.repository;
 
 import com.junsu.cyr.domain.glass.Glass;
 import com.junsu.cyr.domain.glass.GlassLog;
+import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.model.ranking.CountRankingProjection;
 import com.junsu.cyr.repository.projection.DailyMaxProjection;
 import org.springframework.data.domain.Pageable;
@@ -38,4 +39,6 @@ public interface GlassLogRepository extends JpaRepository<GlassLog, Long> {
 
     @Query("select gl.user.userId as userId, count(gl) as count from GlassLog as gl where gl.glass = :glass and gl.createdAt between :start and :end group by gl.user order by count(gl) desc")
     List<CountRankingProjection> countAllByGlassCreatedAtBetween(Glass glass, LocalDateTime start, LocalDateTime end, Pageable pageable);
+
+    Long countByUserAndGlass(User user, Glass glass);
 }

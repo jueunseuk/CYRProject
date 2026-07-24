@@ -47,8 +47,14 @@ public class QuestionService {
         questionRepository.save(question);
     }
 
-    public List<QuestionResponse> getAllQuestions(String sort, String direction) {
-        List<Question> questions = questionRepository.findAllBy(PageableMaker.of(sort, direction));
+    public List<QuestionResponse> getQuestions(String status, String sort, String direction) {
+        List<Question> questions;
+        if(status.equals("ALL")) {
+            questions = questionRepository.findAllBy(PageableMaker.of(sort, direction));
+        } else {
+            Status s = Status.valueOf(status);
+            questions = questionRepository.findAllByStatus(s, PageableMaker.of(sort, direction));
+        }
         return questions.stream().map(QuestionResponse::new).toList();
     }
 

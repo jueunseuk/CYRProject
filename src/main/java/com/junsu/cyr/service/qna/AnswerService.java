@@ -46,10 +46,10 @@ public class AnswerService {
         answerRepository.save(answer);
         experienceRewardService.addExperience(user, 10);
 
-        List<Answer> answers = answerRepository.findAllByQuestion(question).stream().filter(
-                a -> a.getUser().equals(user) && !question.getUser().equals(user)
-        ).toList();
-        if(answers.isEmpty()) {
+        boolean isQuestionWriter = question.getUser().equals(user);
+        boolean hasAlreadyAnswered = answerRepository.findAllByQuestion(question).stream()
+                .anyMatch(a -> a.getUser().equals(user));
+        if(!isQuestionWriter && !hasAlreadyAnswered) {
             sandRewardService.addSand(user, 18);
         }
 

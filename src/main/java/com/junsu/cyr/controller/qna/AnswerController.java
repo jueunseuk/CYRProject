@@ -28,7 +28,7 @@ public class AnswerController {
         return ResponseEntity.ok(responses);
     }
 
-    @PatchMapping("/{answerId}")
+    @PatchMapping("/{answerId}/adopt")
     public ResponseEntity<String> adoptAnswer(@RequestAttribute Integer userId, @PathVariable Long questionId, @PathVariable Long answerId) {
         answerService.adoptAnswer(userId, questionId, answerId);
         return ResponseEntity.ok("success to adopt answer");

@@ -23,8 +23,8 @@ public class QuestionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<QuestionResponse>> getAllQuestions(@RequestParam String sort, @RequestParam String direction) {
-        List<QuestionResponse> responses = questionService.getAllQuestions(sort, direction);
+    public ResponseEntity<List<QuestionResponse>> getAllQuestions(@RequestParam String status, @RequestParam String sort, @RequestParam String direction) {
+        List<QuestionResponse> responses = questionService.getQuestions(status, sort, direction);
         return ResponseEntity.ok(responses);
     }
 

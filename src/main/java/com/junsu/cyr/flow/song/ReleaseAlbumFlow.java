@@ -6,7 +6,7 @@ import com.junsu.cyr.domain.songs.Album;
 import com.junsu.cyr.domain.songs.Song;
 import com.junsu.cyr.global.annotation.ManagerOnly;
 import com.junsu.cyr.model.song.AlbumUploadRequest;
-import com.junsu.cyr.model.song.SongCreatorUploadRequest;
+import com.junsu.cyr.model.song.CreatorUploadRequest;
 import com.junsu.cyr.model.song.SongUploadRequest;
 import com.junsu.cyr.response.exception.code.AlbumExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
@@ -38,7 +38,7 @@ public class ReleaseAlbumFlow {
             throw new BaseException(AlbumExceptionCode.FAILED_TO_UPLOAD_ALBUM);
         }
 
-        Album album = albumService.createAlbum(request.getTitle(), null, request.getReleasedAt(), request.getIntroduction(), request.getAgency(), request.getPublisher());
+        Album album = albumService.createAlbum(request.getTitle(), null, request.getReleasedAt(), request.getIntroduction(), request.getAlbumType());
         Image image = imageService.uploadImage(request.getFile(), album.getAlbumId().longValue(), Type.ALBUM);
         album.updateImageUrl(image.getUrl());
 
@@ -47,28 +47,14 @@ public class ReleaseAlbumFlow {
         }
 
         for(SongUploadRequest song : request.getSongs()) {
-            Song newSong;
-            if(song.getExistsInUnreleased()) {
-                newSong = songService.getSongBySongId(song.getSongId());
-                newSong.updateRelease();
-                newSong.updateAlbum(album);
-                newSong.updateSequence(song.getSequence());
-                newSong.updateLink(song.getLink());
-                newSong.updateLyrics(song.getLyrics());
-            } else {
-                newSong = songService.createReleasedSong(album, song.getTitle(), song.getLink(), song.getSequence(), song.getRepresentative(), song.getLyrics());
-            }
-
-            if(song.getRepresentative() != null || song.getRepresentative()) {
-                newSong.updateRepresentative(true);
-            }
+            Song newSong = songService.createReleasedSong(album, song.getTitle(), song.getLink(), song.getSequence(), song.getIsTitle(), song.getLyrics());
 
             if(song.getSongCreators().isEmpty()) {
                 throw new BaseException(AlbumExceptionCode.FAILED_TO_UPLOAD_ALBUM);
             }
 
-            for(SongCreatorUploadRequest songCreator : song.getSongCreators()) {
-                songCreatorService.createSongCreator(newSong, songCreator.getName(), songCreator.getType());
+            for(CreatorUploadRequest songCreator : song.getSongCreators()) {
+                songCreatorService.createCreator(newSong, songCreator.getName(), songCreator.getCreatorRole());
             }
         }
     }

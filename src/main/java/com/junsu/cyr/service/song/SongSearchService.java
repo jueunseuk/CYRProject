@@ -2,7 +2,7 @@ package com.junsu.cyr.service.song;
 
 import com.junsu.cyr.domain.songs.Album;
 import com.junsu.cyr.domain.songs.Song;
-import com.junsu.cyr.domain.songs.SongCreator;
+import com.junsu.cyr.domain.songs.Creator;
 import com.junsu.cyr.model.song.AlbumTotalResponse;
 import com.junsu.cyr.model.song.SongTotalResponse;
 import com.junsu.cyr.service.user.UserService;
@@ -33,11 +33,11 @@ public class SongSearchService {
         List<Song> songs = songService.getSongsByAlbum(album);
         List<Integer> songIds = songs.stream().map(s -> s.getSongId()).collect(Collectors.toList());
 
-        List<SongCreator> creators = songCreatorService.getSongCreatorsInSongId(songIds);
+        List<Creator> creators = songCreatorService.getSongCreatorsInSongId(songIds);
 
         List<SongTotalResponse> songTotalResponses = new ArrayList<>();
         for(Song song : songs) {
-            List<SongCreator> songCreator = creators.stream().filter(s -> song.equals(s.getSong())).collect(Collectors.toList());
+            List<Creator> songCreator = creators.stream().filter(s -> song.equals(s.getSong())).collect(Collectors.toList());
             SongTotalResponse songTotalResponse = new SongTotalResponse();
             songTotalResponse.saveSong(song);
             songTotalResponse.saveSongCreator(songCreator);

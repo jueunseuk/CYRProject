@@ -1,10 +1,11 @@
 package com.junsu.cyr.model.song;
 
 import com.junsu.cyr.domain.songs.Album;
+import com.junsu.cyr.domain.songs.AlbumType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -12,18 +13,16 @@ public class AlbumResponse {
     private Integer albumId;
     private String title;
     private String imageUrl;
-    private LocalDate releasedAt;
     private String introduction;
-    private String publisher;
-    private String agency;
+    private AlbumType albumType;
+    private LocalDateTime releasedAt;
 
     public AlbumResponse(Album album) {
         this.albumId = album.getAlbumId();
         this.title = album.getTitle();
         this.imageUrl = album.getImageUrl();
-        this.releasedAt = album.getReleasedAt();
         this.introduction = album.getIntroduction();
-        this.publisher = album.getPublisher();
-        this.agency = album.getAgency();
+        this.albumType = album.getAlbumType();
+        this.releasedAt = album.getReleasedAt();
     }
 }

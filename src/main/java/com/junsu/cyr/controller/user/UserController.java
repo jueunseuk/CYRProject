@@ -4,6 +4,7 @@ import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.flow.user.profile.RefreshActivityFlow;
 import com.junsu.cyr.flow.user.profile.UpdateUserInformationFlow;
 import com.junsu.cyr.flow.user.profile.UpdateUserProfileImageFlow;
+import com.junsu.cyr.flow.user.profile.UpdateUserProfileRandomImageFlow;
 import com.junsu.cyr.model.auth.SignupResponse;
 import com.junsu.cyr.model.comment.CommentSearchConditionRequest;
 import com.junsu.cyr.model.comment.UserCommentResponse;
@@ -45,6 +46,7 @@ public class UserController {
     private final RefreshActivityFlow refreshActivityFlow;
     private final UpdateUserInformationFlow updateUserInformationFlow;
     private final UpdateUserProfileImageFlow updateUserProfileImageFlow;
+    private final UpdateUserProfileRandomImageFlow updateUserProfileRandomImageFlow;
 
     @GetMapping("/me/basic")
     public ResponseEntity<SignupResponse> getUserLocalStorageInfo(@RequestAttribute Integer userId) {
@@ -141,5 +143,11 @@ public class UserController {
     public ResponseEntity<List<RetainEmoticonResponse>> getEmoticon(@RequestAttribute Integer userId) {
         List<RetainEmoticonResponse> retainEmoticonResponses = shopLogService.getEmoticonByUser(userId);
         return ResponseEntity.ok(retainEmoticonResponses);
+    }
+
+    @PatchMapping("/me/profile/random")
+    public ResponseEntity<String> patchMyProfileRandom(@RequestAttribute Integer userId) {
+        String response = updateUserProfileRandomImageFlow.updateUserProfileImage(userId);
+        return ResponseEntity.ok(response);
     }
 }

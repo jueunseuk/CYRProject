@@ -21,12 +21,11 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findByPostId(Long postId);
 
-    @Query("SELECT p FROM Post p WHERE p.locked = :locked AND p.board.boardId BETWEEN :start AND :end")
-    Page<Post> findAllNew(Integer start, Integer end, Locked locked, Pageable pageable);
+    @Query("SELECT p FROM Post p WHERE p.locked = :locked AND p.board.boardId IN :boardIds")
+    Page<Post> findAllNew(List<Integer> boardIds, Locked locked, Pageable pageable);
 
-    @Query("SELECT p FROM Post p WHERE p.locked = :locked AND p.board.boardId BETWEEN :startId AND :endId AND p.createdAt BETWEEN :start AND :end")
-    Page<Post> findPopularPostsWithinDates(@Param("startId") Integer startId,
-                                           @Param("endId") Integer endId,
+    @Query("SELECT p FROM Post p WHERE p.locked = :locked AND p.board.boardId IN :boardIds AND p.createdAt BETWEEN :start AND :end")
+    Page<Post> findPopularPostsWithinDates(List<Integer> boardIds,
                                            @Param("start") LocalDateTime start,
                                            @Param("end") LocalDateTime end,
                                            Locked locked,

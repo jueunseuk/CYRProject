@@ -9,6 +9,8 @@ import com.junsu.cyr.model.qna.AnswerUploadRequest;
 import com.junsu.cyr.repository.AnswerRepository;
 import com.junsu.cyr.response.exception.code.QnaExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
+import com.junsu.cyr.service.experience.ExperienceRewardService;
+import com.junsu.cyr.service.sand.SandRewardService;
 import com.junsu.cyr.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,12 +23,14 @@ import java.util.List;
 public class AnswerService {
 
     private final UserService userService;
-    private final AnswerRepository answerRepository;
     private final QuestionService questionService;
+    private final AnswerRepository answerRepository;
+    private final SandRewardService sandRewardService;
+    private final ExperienceRewardService experienceRewardService;
 
     public Answer findAnswerById(Long id) {
         return answerRepository.findById(id).
-                orElseThrow(() -> new BaseException(QnaExceptionCode.NOT_FOUNT_RESOURCE));
+                orElseThrow(() -> new BaseException(QnaExceptionCode.NOT_FOUND_RESOURCE));
     }
 
     @Transactional
@@ -40,6 +44,14 @@ public class AnswerService {
 
         Answer answer = Answer.of(user, question, request.getContent());
         answerRepository.save(answer);
+        experienceRewardService.addExperience(user, 10);
+
+        List<Answer> answers = answerRepository.findAllByQuestion(question).stream().filter(
+                a -> a.getUser().equals(user) && !question.getUser().equals(user)
+        ).toList();
+        if(answers.isEmpty()) {
+            sandRewardService.addSand(user, 18);
+        }
 
         question.increaseAnswerCnt();
         if(question.getStatus() == Status.OPEN) question.updateStatus(Status.HOLD);
@@ -74,6 +86,12 @@ public class AnswerService {
         }
 
         answer.adopt();
+        User adoptUser = answer.getUser();
+        int bounty = Math.max(
+                1,
+                (int) Math.floor(question.getSandCnt() * 0.9)
+        );
+        sandRewardService.addSand(adoptUser, 10, bounty);
         question.updateStatus(Status.RESOLVED);
     }
 }

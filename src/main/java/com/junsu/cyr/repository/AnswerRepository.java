@@ -13,6 +13,6 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
     @Query("select a from Answer a where a.question = :question order by a.createdAt desc")
     List<Answer> findAllByQuestion(Question question);
 
-    @Query("select a from Answer a where a.question = :question and a.adoptedAt is null")
+    @Query("select a from Answer a where a.question = :question and a.adoptedAt is not null")
     boolean existsByAdoptAnswer(Question question);
 }

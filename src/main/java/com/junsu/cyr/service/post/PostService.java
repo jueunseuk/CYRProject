@@ -1,5 +1,6 @@
 package com.junsu.cyr.service.post;
 
+import com.junsu.cyr.constant.MagicNumberConstant;
 import com.junsu.cyr.constant.PostSortFieldConstant;
 import com.junsu.cyr.domain.boards.Board;
 import com.junsu.cyr.domain.empathys.EmpathyId;
@@ -58,7 +59,7 @@ public class PostService {
     public Page<PostListResponse> getAllPosts(PostSearchConditionRequest condition) {
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), Sort.by(condition.getSort()).descending());
 
-        Page<Post> posts = postRepository.findAllNew(9, 17, Locked.PUBLIC, pageable);
+        Page<Post> posts = postRepository.findAllNew(MagicNumberConstant.BASIC_BOARD_NUMBERS, Locked.PUBLIC, pageable);
 
         return posts.map(PostListResponse::new);
     }
@@ -67,8 +68,7 @@ public class PostService {
         Pageable pageable = PageRequest.of(condition.getPage(), condition.getSize(), Sort.by(condition.getSort()).descending());
 
         Page<Post> posts = postRepository.findPopularPostsWithinDates(
-                9,
-                17,
+                MagicNumberConstant.BASIC_BOARD_NUMBERS,
                 LocalDateTime.parse(condition.getStart()),
                 LocalDateTime.parse(condition.getEnd()),
                 Locked.PUBLIC,
@@ -84,6 +84,9 @@ public class PostService {
         }
 
         Board board = boardService.findBoardByBoardId(condition.getBoardId());
+        if(!MagicNumberConstant.BASIC_BOARD_NUMBERS.contains(board.getBoardId())) {
+            throw new BaseException(BoardExceptionCode.INVALID_BOARD_ID);
+        }
 
         Page<Post> posts = postRepository.findAllByBoard(
                 board,

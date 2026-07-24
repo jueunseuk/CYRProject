@@ -82,7 +82,7 @@ public class Question extends BaseTime {
     }
 
     private static void validateSandCnt(Integer sandCnt) {
-        if(sandCnt == null || sandCnt < 1) {
+        if(sandCnt == null || sandCnt < 1 || sandCnt > 100) {
             throw new BaseException(QnaExceptionCode.INVALID_SAND_CNT);
         }
     }

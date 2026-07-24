@@ -8,6 +8,8 @@ import com.junsu.cyr.model.qna.QuestionUploadRequest;
 import com.junsu.cyr.repository.QuestionRepository;
 import com.junsu.cyr.response.exception.code.QnaExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
+import com.junsu.cyr.service.experience.ExperienceRewardService;
+import com.junsu.cyr.service.sand.SandRewardService;
 import com.junsu.cyr.service.user.UserService;
 import com.junsu.cyr.util.PageableMaker;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +24,12 @@ public class QuestionService {
 
     private final QuestionRepository questionRepository;
     private final UserService userService;
+    private final SandRewardService sandRewardService;
+    private final ExperienceRewardService experienceRewardService;
 
     public Question findQuestionById(Long id) {
         return questionRepository.findById(id).
-                orElseThrow(() -> new BaseException(QnaExceptionCode.NOT_FOUNT_RESOURCE));
+                orElseThrow(() -> new BaseException(QnaExceptionCode.NOT_FOUND_RESOURCE));
     }
 
     @Transactional
@@ -33,6 +37,13 @@ public class QuestionService {
         User user = userService.getUserById(userId);
 
         Question question = Question.of(user, request.getTitle(), request.getContent(), request.getSandCnt());
+        if(user.getSand() < question.getSandCnt()) {
+            throw new BaseException(QnaExceptionCode.NOT_ENOUGH_SAND);
+        }
+
+        sandRewardService.addSand(user, 2, -question.getSandCnt());
+        experienceRewardService.addExperience(user, 1);
+
         questionRepository.save(question);
     }
 

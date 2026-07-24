@@ -1,5 +1,6 @@
 package com.junsu.cyr.flow.post;
 
+import com.junsu.cyr.constant.MagicNumberConstant;
 import com.junsu.cyr.domain.achievements.Scope;
 import com.junsu.cyr.domain.achievements.Type;
 import com.junsu.cyr.domain.boards.Board;
@@ -9,6 +10,7 @@ import com.junsu.cyr.flow.user.achievement.UnlockAchievementFlow;
 import com.junsu.cyr.model.post.PostUploadRequest;
 import com.junsu.cyr.model.post.PostUploadResponse;
 import com.junsu.cyr.repository.PostRepository;
+import com.junsu.cyr.response.exception.code.BoardExceptionCode;
 import com.junsu.cyr.response.exception.code.PostExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
 import com.junsu.cyr.service.board.BoardService;
@@ -38,6 +40,9 @@ public class CreatePostFlow {
         User user = userService.getUserById(userId);
 
         Board board = boardService.findBoardByBoardId(Integer.parseInt(request.getBoardId()));
+        if(MagicNumberConstant.SPECIAL_BOARD_NUMBERS.contains(board.getBoardId())) {
+            throw new BaseException(BoardExceptionCode.INVALID_BOARD_ID);
+        }
 
         if(request.getContent() == null){
             throw new BaseException(PostExceptionCode.CONTENT_IS_EMPTY);
@@ -54,7 +59,6 @@ public class CreatePostFlow {
 
         switch(board.getBoardId()) {
             case 9 -> sandRewardService.addSand(user, 1);
-            case 10 -> sandRewardService.addSand(user, 2);
             case 11 -> sandRewardService.addSand(user, 3);
             case 12 -> sandRewardService.addSand(user, 4);
             case 13 -> sandRewardService.addSand(user, 5);
@@ -62,7 +66,7 @@ public class CreatePostFlow {
             case 15 -> sandRewardService.addSand(user, 7);
             case 16 -> sandRewardService.addSand(user, 8);
             case 17 -> sandRewardService.addSand(user, 9);
-            default -> sandRewardService.addSand(user, 10);
+            case 18 -> sandRewardService.addSand(user, 19);
         }
         experienceRewardService.addExperience(user, 1);
 

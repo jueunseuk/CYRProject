@@ -47,7 +47,7 @@ public class ReleaseAlbumFlow {
         }
 
         for(SongUploadRequest song : request.getSongs()) {
-            Song newSong = songService.createReleasedSong(album, song.getTitle(), song.getLink(), song.getSequence(), song.getIsTitle(), song.getLyrics());
+            Song newSong = songService.createReleasedSong(album, song.getTitle(), song.getLink(), song.getSequence(), song.getIsTitle(), song.getLyrics(), song.getIntroduction());
 
             if(song.getSongCreators().isEmpty()) {
                 throw new BaseException(AlbumExceptionCode.FAILED_TO_UPLOAD_ALBUM);

@@ -47,6 +47,8 @@ public class SecurityConfig {
 
                         .requestMatchers("/images/**").permitAll()
 
+                        .requestMatchers("/albums/**").permitAll()
+
                         .requestMatchers(
                                 SecurityConstant.PERMIT_ENDPOINTS
                                         .toArray(new String[0])

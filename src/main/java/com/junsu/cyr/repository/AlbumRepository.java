@@ -12,5 +12,5 @@ import java.util.List;
 public interface AlbumRepository extends JpaRepository<Album, Integer> {
     List<Album> findAllByReleasedAtBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
     Album findByTitle(String title);
-    List<Album> findAllByOrderByReleasedAt();
+    List<Album> findAllByOrderByReleasedAtDesc();
 }

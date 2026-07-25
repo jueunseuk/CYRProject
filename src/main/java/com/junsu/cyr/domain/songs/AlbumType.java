@@ -14,7 +14,8 @@ public enum AlbumType {
     LIVE("라이브"),
     COMPILATION("컴필레이션"),
     REMAKE("리메이크"),
-    ETC("기타");
+    ETC("기타"),
+    UNRELEASED("미발매");
 
     private final String description;
 }

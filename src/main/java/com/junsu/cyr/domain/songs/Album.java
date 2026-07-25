@@ -29,7 +29,7 @@ public class Album extends BaseTime {
     @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(name = "introduction")
+    @Column(name = "introduction", columnDefinition = "TEXT")
     private String introduction;
 
     @Enumerated(EnumType.STRING)

@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/album")
+@RequestMapping("/albums")
 public class AlbumController {
 
     private final AlbumService albumService;
@@ -35,6 +35,12 @@ public class AlbumController {
     }
 
     @GetMapping("/{albumId}")
+    public ResponseEntity<AlbumResponse> getAlbums(@PathVariable Integer albumId) {
+        Album albums = albumService.getAlbumByAlbumId(albumId);
+        return ResponseEntity.ok(new AlbumResponse(albums));
+    }
+
+    @GetMapping("/{albumId}/all")
     public ResponseEntity<AlbumTotalResponse> getAlbumDetail(@PathVariable Integer albumId, @RequestAttribute Integer userId) {
         AlbumTotalResponse albumTotalResponse = songSearchService.getTotalAlbumData(albumId, userId);
         return ResponseEntity.ok(albumTotalResponse);

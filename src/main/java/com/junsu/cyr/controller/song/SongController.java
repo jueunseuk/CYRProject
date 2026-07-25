@@ -1,30 +1,36 @@
 package com.junsu.cyr.controller.song;
 
 import com.junsu.cyr.domain.songs.Song;
+import com.junsu.cyr.model.song.SimpleSongResponse;
 import com.junsu.cyr.model.song.SongResponse;
-import com.junsu.cyr.model.song.SongSearchConditionRequest;
+import com.junsu.cyr.service.song.SongSearchService;
 import com.junsu.cyr.service.song.SongService;
-import com.junsu.cyr.util.PageableMaker;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/song")
+@RequestMapping("/albums/{albumId}/songs")
 public class SongController {
 
     private final SongService songService;
+    private final SongSearchService songSearchService;
 
-    @GetMapping("/all")
-    public ResponseEntity<List<SongResponse>> getAllSongs(@RequestParam SongSearchConditionRequest condition) {
-        Page<Song> songResponses = songService.getAllSong(PageableMaker.of(condition.getSort(), condition.getDirection()));
-        return ResponseEntity.ok(songResponses.getContent().stream().map(SongResponse::new).toList());
+    @GetMapping
+    public ResponseEntity<List<SimpleSongResponse>> getAllSongs(@PathVariable Integer albumId) {
+        List<Song> songResponses = songService.getSongsByAlbumId(albumId);
+        return ResponseEntity.ok(songResponses.stream().map(SimpleSongResponse::new).toList());
+    }
+
+    @GetMapping("/{songId}")
+    public ResponseEntity<SongResponse> getAllSongs(@PathVariable Integer albumId, @PathVariable Integer songId) {
+        SongResponse responses = songSearchService.getSongInformation(albumId, songId);
+        return ResponseEntity.ok(responses);
     }
 }

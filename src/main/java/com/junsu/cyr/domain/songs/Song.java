@@ -39,14 +39,13 @@ public class Song {
     @Column(name = "is_title")
     private Boolean isTitle;
 
-    @Column(name = "lyrics")
+    @Column(name = "lyrics", columnDefinition = "TEXT")
     private String lyrics;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private SongStatus status;
+    @Column(name = "introduction", columnDefinition = "TEXT")
+    private String introduction;
 
-    public static Song of(Album album, String imageUrl, String title, String link, Integer sequence, Boolean isTitle, String lyrics, SongStatus status) {
+    public static Song of(Album album, String imageUrl, String title, String link, Integer sequence, Boolean isTitle, String lyrics, String introduction) {
         validateTitle(title);
         validateLink(link);
         validateSequence(sequence);
@@ -59,7 +58,7 @@ public class Song {
                 .sequence(sequence)
                 .isTitle(isTitle)
                 .lyrics(lyrics)
-                .status(status)
+                .introduction(introduction)
                 .build();
     }
 
@@ -89,10 +88,6 @@ public class Song {
 
     public void updateAlbum(Album album) {
         this.album = album;
-    }
-
-    public void updateStatus(SongStatus songStatus) {
-        this.status = songStatus;
     }
 
     private static void validateTitle(String title) {

@@ -1,15 +1,12 @@
 package com.junsu.cyr.service.song;
 
+import com.junsu.cyr.constant.MagicNumberConstant;
 import com.junsu.cyr.domain.songs.Album;
 import com.junsu.cyr.domain.songs.Song;
-import com.junsu.cyr.domain.songs.SongStatus;
 import com.junsu.cyr.repository.SongRepository;
 import com.junsu.cyr.response.exception.code.SongExceptionCode;
 import com.junsu.cyr.response.exception.http.BaseException;
-import com.junsu.cyr.util.PageableMaker;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,9 +17,10 @@ import java.util.List;
 public class SongService {
 
     private final SongRepository songRepository;
+    private final AlbumService albumService;
 
     @Transactional
-    public Song createReleasedSong(Album album, String title, String link, Integer sequence, Boolean isTitle, String lyrics) {
+    public Song createReleasedSong(Album album, String title, String link, Integer sequence, Boolean isTitle, String lyrics, String introduction) {
         if(album == null) {
             throw new BaseException(SongExceptionCode.INVALID_ALBUM);
         }
@@ -35,22 +33,22 @@ public class SongService {
                 sequence,
                 isTitle,
                 lyrics,
-                SongStatus.RELEASED
+                introduction
         );
         return songRepository.save(song);
     }
 
     @Transactional
-    public Song createUnreleasedSong(String title, String link, String lyrics) {
+    public Song createUnreleasedSong(String title, String link, String lyrics, String introduction) {
         Song song = Song.of(
-                null,
+                albumService.getAlbumByAlbumId(MagicNumberConstant.UNRELEASED_ALBUM_ID),
                 null,
                 title,
                 link,
                 1,
                 false,
                 lyrics,
-                SongStatus.UNRELEASED
+                introduction
         );
         return songRepository.save(song);
     }
@@ -65,11 +63,14 @@ public class SongService {
     }
 
     public List<Song> getSongsByAlbum(Album album) {
-        Pageable pageable = PageableMaker.of("sequence", PageableMaker.ASC);
-        return songRepository.findAllByAlbum(album, pageable);
+        return songRepository.findAllByAlbumOrderBySequence(album);
     }
 
-    public Page<Song> getAllSong(Pageable pageable) {
-        return songRepository.findAll(pageable);
+    public List<Song> getSongsByAlbumId(Integer albumId) {
+        return getSongsByAlbum(albumService.getAlbumByAlbumId(albumId));
+    }
+
+    public List<Song> getAllSong() {
+        return songRepository.findAllByHierarchyOrder();
     }
 }

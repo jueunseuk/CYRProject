@@ -2,7 +2,6 @@ package com.junsu.cyr.model.song;
 
 import com.junsu.cyr.domain.songs.Song;
 import com.junsu.cyr.domain.songs.Creator;
-import com.junsu.cyr.domain.songs.SongStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +16,6 @@ public class SongTotalResponse {
     private String imageUrl;
     private Integer sequence;
     private Boolean isTitle;
-    private SongStatus songStatus;
     private String lyrics;
     private List<Creator> songCreators;
 
@@ -29,7 +27,6 @@ public class SongTotalResponse {
         this.sequence = song.getSequence();
         this.isTitle = song.getIsTitle();
         this.lyrics = song.getLyrics();
-        this.songStatus = song.getStatus();
     }
 
     public void saveSongCreator(List<Creator> songCreators) {

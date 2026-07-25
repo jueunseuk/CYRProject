@@ -48,6 +48,6 @@ public class AlbumService {
     }
 
     public List<Album> getAllAlbums() {
-        return albumRepository.findAllByOrderByReleasedAt();
+        return albumRepository.findAllByOrderByReleasedAtDesc();
     }
 }

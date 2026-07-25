@@ -141,8 +141,8 @@ public class User extends BaseTime {
         }
         this.postCnt = postCnt;
         this.commentCnt = commentCnt;
-        this.imageCnt = empathyCnt;
-        this.empathyCnt = imageCnt;
+        this.imageCnt = imageCnt;
+        this.empathyCnt = empathyCnt;
     }
 
     public void updateToSecession() {

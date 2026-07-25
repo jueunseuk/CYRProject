@@ -16,5 +16,6 @@ public class SongUploadRequest {
     private Integer sequence;
     private Boolean isTitle;
     private String lyrics;
+    private String introduction;
     private List<CreatorUploadRequest> songCreators;
 }

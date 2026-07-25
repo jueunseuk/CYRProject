@@ -3,7 +3,6 @@ package com.junsu.cyr.controller.user;
 import com.junsu.cyr.domain.users.User;
 import com.junsu.cyr.flow.user.asset.ConvertGlassFlow;
 import com.junsu.cyr.flow.user.profile.*;
-import com.junsu.cyr.model.achievement.AchievementRefreshResponse;
 import com.junsu.cyr.model.auth.SignupResponse;
 import com.junsu.cyr.model.comment.CommentSearchConditionRequest;
 import com.junsu.cyr.model.comment.UserCommentResponse;

@@ -39,6 +39,9 @@ public class Album extends BaseTime {
     @Column(name = "released_at")
     private LocalDateTime releasedAt;
 
+    @Column(name = "song_cnt")
+    private Integer songCnt;
+
     public static Album of(String title, String imageUrl, LocalDateTime releasedAt, String introduction, AlbumType albumType) {
         validateTitle(title);
         validateIntroduction(introduction);
@@ -51,6 +54,10 @@ public class Album extends BaseTime {
                 .introduction(introduction)
                 .albumType(albumType)
                 .build();
+    }
+
+    public void updateSongCnt(Integer songCnt) {
+        this.songCnt = songCnt;
     }
 
     public void updateTitle(String title) {

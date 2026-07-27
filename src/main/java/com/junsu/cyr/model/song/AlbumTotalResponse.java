@@ -17,6 +17,7 @@ public class AlbumTotalResponse {
     private String introduction;
     private AlbumType albumType;
     private LocalDateTime releasedAt;
+    private Integer songCnt;
     private List<SongTotalResponse> songs;
 
     public void saveAlbum(Album album) {
@@ -26,6 +27,7 @@ public class AlbumTotalResponse {
         this.albumType = album.getAlbumType();
         this.introduction = album.getIntroduction();
         this.releasedAt = album.getReleasedAt();
+        this.songCnt = album.getSongCnt();
     }
 
     public void saveSong(List<SongTotalResponse> songs) {

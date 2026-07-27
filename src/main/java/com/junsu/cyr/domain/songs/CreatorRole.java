@@ -29,7 +29,8 @@ public enum CreatorRole {
     A_AND_R("A&R"),
     MANAGEMENT("매니지먼트"),
     DESIGN("디자인"),
-    CONTENTS("콘텐츠");
+    CONTENTS("콘텐츠"),
+    TRANSLATION("번역");
 
     private final String description;
 }

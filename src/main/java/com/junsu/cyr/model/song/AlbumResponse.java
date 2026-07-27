@@ -16,6 +16,7 @@ public class AlbumResponse {
     private String introduction;
     private AlbumType albumType;
     private LocalDateTime releasedAt;
+    private Integer songCnt;
 
     public AlbumResponse(Album album) {
         this.albumId = album.getAlbumId();
@@ -24,5 +25,6 @@ public class AlbumResponse {
         this.introduction = album.getIntroduction();
         this.albumType = album.getAlbumType();
         this.releasedAt = album.getReleasedAt();
+        this.songCnt = album.getSongCnt();
     }
 }
